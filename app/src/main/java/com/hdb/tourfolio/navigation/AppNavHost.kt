@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.hdb.tourfolio.ui.search.SearchScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -26,7 +27,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            composable(Screen.Tab1.route) { SampleScreen() }
+            composable(Screen.Search.route) { SearchScreen() }
             composable(Screen.Trade.route) { TradeScreen() }
             composable(Screen.Home.route) { HomeScreen() }
             composable(Screen.Tab2.route) { SampleScreen() }
