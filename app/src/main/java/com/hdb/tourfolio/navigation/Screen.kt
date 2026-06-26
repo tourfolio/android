@@ -9,7 +9,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class Screen(val route: String) {
-    data object Tab1 : Screen("tab1")
+    data object Search : Screen("search")
 
     data object Trade : Screen("trade")
 
@@ -28,9 +28,9 @@ data class BottomNavItem(
 
 val bottomNavItems =
     listOf(
-        BottomNavItem(Screen.Tab1, "탭1", Icons.Outlined.Search),
+        BottomNavItem(Screen.Search, "탐색", Icons.Outlined.Search),
         BottomNavItem(Screen.Trade, "주식", Icons.Outlined.Menu),
         BottomNavItem(Screen.Home, "홈", Icons.Outlined.Home),
-        BottomNavItem(Screen.Tab2, "탭2", Icons.Outlined.Star),
-        BottomNavItem(Screen.Tab3, "탭3", Icons.Outlined.Person),
+        BottomNavItem(Screen.Tab2, "Tab2", Icons.Outlined.Star),
+        BottomNavItem(Screen.Tab3, "Tab3", Icons.Outlined.Person),
     )
