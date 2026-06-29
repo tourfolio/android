@@ -61,7 +61,7 @@ data class TourSpotItem(
 )
 
 @Composable
-fun SearchScreen() {
+fun ExploreScreen() {
     val tourSpotLikedStates =
         remember {
             mutableStateListOf(false, false)
@@ -351,8 +351,8 @@ private fun SectionTitle(title: String) {
     heightDp = 915,
 )
 @Composable
-fun SearchScreenPreview() {
+fun ExploreScreenPreview() {
     TourfolioTheme {
-        SearchScreen()
+        ExploreScreen()
     }
 }

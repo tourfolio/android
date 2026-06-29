@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hdb.tourfolio.ui.search.SearchScreen
+import com.hdb.tourfolio.ui.search.ExploreScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -27,27 +27,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            composable(Screen.Search.route) { SearchScreen() }
+            composable(Screen.Explore.route) { ExploreScreen() }
             composable(Screen.Trade.route) { TradeScreen() }
             composable(Screen.Home.route) { HomeScreen() }
-            composable(Screen.Tab2.route) { SampleScreen() }
-            composable(Screen.Tab3.route) { SampleScreen() }
+            composable(Screen.Quest.route) { QuestScreen() }
+            composable(Screen.Card.route) { CardScreen() }
         }
     }
 }
 
 // todo: 화면 구성 후 제거
 @Composable
-fun SampleScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("샘플")
-    }
-}
-
-@Composable
 fun TradeScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("주식")
+        Text("투자")
     }
 }
 
@@ -55,5 +48,19 @@ fun TradeScreen() {
 fun HomeScreen() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text("홈")
+    }
+}
+
+@Composable
+fun QuestScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("업적")
+    }
+}
+
+@Composable
+fun CardScreen() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("수집")
     }
 }
