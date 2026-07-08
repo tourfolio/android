@@ -4,6 +4,8 @@ import androidx.annotation.DrawableRes
 import com.hdb.tourfolio.R
 
 sealed class Screen(val route: String) {
+    data object ExploreCarousel : Screen("explore_carousel")
+
     data object Explore : Screen("explore")
 
     data object Trade : Screen("trade")
@@ -24,7 +26,7 @@ data class BottomNavItem(
 
 val bottomNavItems =
     listOf(
-        BottomNavItem(Screen.Explore, "탐색", R.drawable.ic_explore_filled, R.drawable.ic_explore_outlined),
+        BottomNavItem(Screen.ExploreCarousel, "탐색", R.drawable.ic_explore_filled, R.drawable.ic_explore_outlined),
         BottomNavItem(Screen.Trade, "투자", R.drawable.ic_trade_filled, R.drawable.ic_trade_outlined),
         BottomNavItem(Screen.Home, "홈", R.drawable.ic_home_filled, R.drawable.ic_home_outlined),
         BottomNavItem(Screen.Quest, "업적", R.drawable.ic_quest_filled, R.drawable.ic_quest_outlined),

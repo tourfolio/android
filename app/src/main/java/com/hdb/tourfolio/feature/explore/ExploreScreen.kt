@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.ui.search
+package com.hdb.tourfolio.feature.explore
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,10 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.ui.search.components.PlaceCard
-import com.hdb.tourfolio.ui.search.components.RegionCard
-import com.hdb.tourfolio.ui.search.components.SearchBar
-import com.hdb.tourfolio.ui.search.components.TourSpotCard
+import com.hdb.tourfolio.feature.explore.components.PlaceCard
+import com.hdb.tourfolio.feature.explore.components.RegionCard
+import com.hdb.tourfolio.feature.explore.components.SearchBar
+import com.hdb.tourfolio.feature.explore.components.TourSpotCard
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
@@ -176,9 +176,9 @@ fun ExploreScreen() {
                     .padding(top = 20.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(25.dp),
         ) {
-            SearchHeader()
+            ExploreHeader()
 
-            SearchIntroText()
+            ExploreIntroText()
 
             SearchBar(
                 value = searchText.value,
@@ -256,7 +256,7 @@ fun ExploreScreen() {
 }
 
 @Composable
-private fun SearchHeader() {
+private fun ExploreHeader() {
     Row(
         modifier =
             Modifier
@@ -283,7 +283,7 @@ private fun SearchHeader() {
 }
 
 @Composable
-private fun SearchIntroText() {
+private fun ExploreIntroText() {
     Column(
         modifier = Modifier.padding(top = 26.dp),
     ) {
@@ -345,7 +345,7 @@ private fun SectionTitle(title: String) {
 
 // preview
 @Preview(
-    name = "Search Screen Preview",
+    name = "Explore Screen Preview",
     showBackground = true,
     widthDp = 412,
     heightDp = 915,

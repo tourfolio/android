@@ -12,7 +12,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.hdb.tourfolio.ui.search.ExploreScreen
+import com.hdb.tourfolio.feature.explore.ExploreCarouselScreen
+import com.hdb.tourfolio.feature.explore.ExploreScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -27,6 +28,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
+            composable(Screen.ExploreCarousel.route) { ExploreCarouselScreen(navController) }
             composable(Screen.Explore.route) { ExploreScreen() }
             composable(Screen.Trade.route) { TradeScreen() }
             composable(Screen.Home.route) { HomeScreen() }

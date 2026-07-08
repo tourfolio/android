@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.ui.search.components
+package com.hdb.tourfolio.feature.explore.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border

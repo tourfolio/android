@@ -27,7 +27,9 @@ fun BottomNavBar(navController: NavController) {
         tonalElevation = 0.dp,
     ) {
         bottomNavItems.forEach { item ->
-            val selected = currentRoute == item.screen.route
+            val selected =
+                currentRoute == item.screen.route ||
+                    (item.screen == Screen.ExploreCarousel && currentRoute == Screen.Explore.route)
 
             val iconColor = if (selected) Color(0xFF1A1A2E) else Color(0xFFAAAAAA)
 
