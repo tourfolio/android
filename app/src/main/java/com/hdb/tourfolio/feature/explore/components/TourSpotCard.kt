@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
@@ -109,9 +110,8 @@ fun TourSpotCard(
             Text(
                 text = title,
                 style =
-                    MaterialTheme.typography.titleLarge.copy(
+                    LocalAppTypography.current.titleLarge.copy(
                         color = Color.White,
-                        fontWeight = FontWeight.Bold,
                     ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
 
 @Composable
 fun SearchBar(
@@ -61,7 +61,7 @@ fun SearchBar(
                 Text(
                     text = placeholder,
                     style =
-                        MaterialTheme.typography.titleMedium.copy(
+                        LocalAppTypography.current.titleMedium.bold.copy(
                             color = Color.White,
                         ),
                 )
@@ -72,7 +72,7 @@ fun SearchBar(
                 onValueChange = onValueChange,
                 singleLine = true,
                 textStyle =
-                    MaterialTheme.typography.titleMedium.copy(
+                    LocalAppTypography.current.titleMedium.bold.copy(
                         color = Color.White,
                     ),
                 cursorBrush = SolidColor(Color.White),

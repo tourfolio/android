@@ -16,12 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,11 +29,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural30
+import com.hdb.tourfolio.ui.theme.Natural90
+import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private val OrangeAccent = Color(0xFFFF5C35)
@@ -85,9 +87,8 @@ fun CarouselContent(
                 Text(
                     text = title,
                     style =
-                        MaterialTheme.typography.headlineLarge.copy(
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
+                        LocalAppTypography.current.headlineLarge.bold.copy(
+                            color = Natural100,
                         ),
                     modifier = Modifier.weight(1f),
                 )
@@ -114,8 +115,8 @@ fun CarouselContent(
             Text(
                 text = content,
                 style =
-                    MaterialTheme.typography.bodyLarge.copy(
-                        color = Color.White.copy(alpha = 0.85f),
+                    LocalAppTypography.current.bodyLarge.medium.copy(
+                        color = Natural90,
                         letterSpacing = 0.1.sp,
                     ),
             )
@@ -126,7 +127,7 @@ fun CarouselContent(
                 Image(
                     painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(24.dp),
                     colorFilter = ColorFilter.tint(OrangeAccent),
                 )
 
@@ -135,8 +136,8 @@ fun CarouselContent(
                 Text(
                     text = place,
                     style =
-                        MaterialTheme.typography.bodyLarge.copy(
-                            color = Color.White,
+                        LocalAppTypography.current.bodySmall.medium.copy(
+                            color = Natural90,
                         ),
                 )
             }
@@ -167,22 +168,21 @@ private fun CarouselTag(
     Box(
         modifier =
             modifier
+                .width(47.dp)
+                .height(31.dp)
                 .background(
-                    color = Color(0xFF3A3A3A).copy(alpha = 0.9f),
+                    color = Natural30,
                     shape = RoundedCornerShape(10.dp),
-                )
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+                ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "#$text",
             style =
-                MaterialTheme.typography.bodyMedium.copy(
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
+                LocalAppTypography.current.labelLarge.bold.copy(
+                    color = Natural95,
                 ),
             maxLines = 1,
-            modifier = Modifier.widthIn(max = 100.dp),
         )
     }
 }
@@ -230,7 +230,7 @@ private fun CarouselContentPreview() {
             place = "서울특별시 종로구",
             tags = listOf("역사", "궁궐", "공원", "산책"),
             currentIndex = 0,
-            totalCount = 5,
+            totalCount = 4,
             onNextClick = {},
         )
     }

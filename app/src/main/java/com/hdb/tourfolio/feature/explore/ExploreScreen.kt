@@ -39,6 +39,7 @@ import com.hdb.tourfolio.feature.explore.components.PlaceCard
 import com.hdb.tourfolio.feature.explore.components.RegionCard
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.TourSpotCard
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
@@ -229,9 +230,8 @@ fun ExploreScreen() {
                 Text(
                     text = "지금 뜨는 여행지",
                     style =
-                        MaterialTheme.typography.titleMedium.copy(
+                        LocalAppTypography.current.titleMedium.bold.copy(
                             color = Color.White,
-                            fontWeight = FontWeight.Bold,
                         ),
                 )
 
@@ -310,7 +310,7 @@ private fun ExploreIntroText() {
         Text(
             text = "당신의 다음 여행이 기다리고 있어요",
             style =
-                MaterialTheme.typography.bodyLarge.copy(
+                LocalAppTypography.current.bodyLarge.medium.copy(
                     color = Color.White,
                 ),
         )
@@ -327,9 +327,8 @@ private fun SectionTitle(title: String) {
         Text(
             text = title,
             style =
-                MaterialTheme.typography.titleMedium.copy(
+                LocalAppTypography.current.titleMedium.bold.copy(
                     color = Color.White,
-                    fontWeight = FontWeight.Bold,
                 ),
         )
 

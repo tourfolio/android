@@ -8,10 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +26,8 @@ import androidx.navigation.NavController
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
 import com.hdb.tourfolio.navigation.Screen
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural100
 import kotlinx.coroutines.delay
 
 private data class CarouselItem(
@@ -128,13 +129,12 @@ private fun ExploreCarouselHeader(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_tourfolio_logo),
-            contentDescription = "Tourfolio",
-            modifier =
-                Modifier
-                    .width(138.dp)
-                    .height(36.dp),
+        Text(
+            text = "Tourfolio",
+            style =
+                LocalAppTypography.current.headlineLarge.bold.copy(
+                    color = Natural100,
+                ),
         )
 
         Image(
