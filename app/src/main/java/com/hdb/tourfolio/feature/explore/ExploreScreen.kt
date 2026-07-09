@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.ui.search
+package com.hdb.tourfolio.feature.explore
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,10 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.ui.search.components.PlaceCard
-import com.hdb.tourfolio.ui.search.components.RegionCard
-import com.hdb.tourfolio.ui.search.components.SearchBar
-import com.hdb.tourfolio.ui.search.components.TourSpotCard
+import com.hdb.tourfolio.feature.explore.components.PlaceCard
+import com.hdb.tourfolio.feature.explore.components.RegionCard
+import com.hdb.tourfolio.feature.explore.components.SearchBar
+import com.hdb.tourfolio.feature.explore.components.TourSpotCard
+import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
@@ -61,7 +62,7 @@ data class TourSpotItem(
 )
 
 @Composable
-fun SearchScreen() {
+fun ExploreScreen() {
     val tourSpotLikedStates =
         remember {
             mutableStateListOf(false, false)
@@ -176,9 +177,9 @@ fun SearchScreen() {
                     .padding(top = 20.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(25.dp),
         ) {
-            SearchHeader()
+            ExploreHeader()
 
-            SearchIntroText()
+            ExploreIntroText()
 
             SearchBar(
                 value = searchText.value,
@@ -229,9 +230,8 @@ fun SearchScreen() {
                 Text(
                     text = "지금 뜨는 여행지",
                     style =
-                        MaterialTheme.typography.titleMedium.copy(
+                        LocalAppTypography.current.titleMedium.bold.copy(
                             color = Color.White,
-                            fontWeight = FontWeight.Bold,
                         ),
                 )
 
@@ -256,7 +256,7 @@ fun SearchScreen() {
 }
 
 @Composable
-private fun SearchHeader() {
+private fun ExploreHeader() {
     Row(
         modifier =
             Modifier
@@ -283,7 +283,7 @@ private fun SearchHeader() {
 }
 
 @Composable
-private fun SearchIntroText() {
+private fun ExploreIntroText() {
     Column(
         modifier = Modifier.padding(top = 26.dp),
     ) {
@@ -310,7 +310,7 @@ private fun SearchIntroText() {
         Text(
             text = "당신의 다음 여행이 기다리고 있어요",
             style =
-                MaterialTheme.typography.bodyLarge.copy(
+                LocalAppTypography.current.bodyLarge.medium.copy(
                     color = Color.White,
                 ),
         )
@@ -327,9 +327,8 @@ private fun SectionTitle(title: String) {
         Text(
             text = title,
             style =
-                MaterialTheme.typography.titleMedium.copy(
+                LocalAppTypography.current.titleMedium.bold.copy(
                     color = Color.White,
-                    fontWeight = FontWeight.Bold,
                 ),
         )
 
@@ -345,14 +344,14 @@ private fun SectionTitle(title: String) {
 
 // preview
 @Preview(
-    name = "Search Screen Preview",
+    name = "Explore Screen Preview",
     showBackground = true,
     widthDp = 412,
     heightDp = 915,
 )
 @Composable
-fun SearchScreenPreview() {
+fun ExploreScreenPreview() {
     TourfolioTheme {
-        SearchScreen()
+        ExploreScreen()
     }
 }

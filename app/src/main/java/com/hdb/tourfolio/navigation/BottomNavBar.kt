@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,7 +27,9 @@ fun BottomNavBar(navController: NavController) {
         tonalElevation = 0.dp,
     ) {
         bottomNavItems.forEach { item ->
-            val selected = currentRoute == item.screen.route
+            val selected =
+                currentRoute == item.screen.route ||
+                    (item.screen == Screen.ExploreCarousel && currentRoute == Screen.Explore.route)
 
             val iconColor = if (selected) Color(0xFF1A1A2E) else Color(0xFFAAAAAA)
 
@@ -45,7 +48,7 @@ fun BottomNavBar(navController: NavController) {
                 },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
+                        painter = painterResource(if (selected) item.selectedIcon else item.unselectedIcon),
                         contentDescription = item.label,
                         modifier = Modifier.size(24.dp),
                         tint = iconColor,
@@ -61,7 +64,7 @@ fun BottomNavBar(navController: NavController) {
                 },
                 colors =
                     NavigationBarItemDefaults.colors(
-                        indicatorColor = Color(0xFFF5F5F5),
+                        indicatorColor = Color.Transparent,
                     ),
             )
         }
