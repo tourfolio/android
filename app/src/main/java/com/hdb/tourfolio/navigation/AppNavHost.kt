@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hdb.tourfolio.feature.explore.ExploreCarouselScreen
 import com.hdb.tourfolio.feature.explore.ExploreScreen
+import com.hdb.tourfolio.feature.trade.TradeScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -39,12 +40,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 }
 
 // todo: 화면 구성 후 제거
-@Composable
-fun TradeScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("투자")
-    }
-}
 
 @Composable
 fun HomeScreen() {
