@@ -270,8 +270,8 @@ private fun ExploreHeader() {
             contentDescription = "Tourfolio",
             modifier =
                 Modifier
-                    .width(138.dp)
-                    .height(36.dp),
+                    .width(128.dp)
+                    .height(37.dp),
         )
 
         Image(
