@@ -43,6 +43,7 @@ import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
+    val id: Long,
     val title: String,
     val places: Int,
     val imageRes: Int,
@@ -62,7 +63,10 @@ data class TourSpotItem(
 )
 
 @Composable
-fun ExploreScreen() {
+fun ExploreScreen(
+    onCityTravelClick: (Long) -> Unit = {},
+    modifier: Modifier = Modifier,
+) {
     val tourSpotLikedStates =
         remember {
             mutableStateListOf(false, false)
@@ -81,16 +85,19 @@ fun ExploreScreen() {
     val themeTravelItems =
         listOf(
             ThemeTravelItem(
+                id = 1L,
                 title = "서울로 떠나는 맛집 탐방",
                 places = 10,
                 imageRes = R.drawable.bg_seoul_demo,
             ),
             ThemeTravelItem(
+                id = 2L,
                 title = "부산으로 떠나는 여름여행",
                 places = 6,
                 imageRes = R.drawable.bg_busan_demo,
             ),
             ThemeTravelItem(
+                id = 3L,
                 title = "경주로 떠나는 역사여행",
                 places = 10,
                 imageRes = R.drawable.bg_gyeongju_demo,
@@ -134,7 +141,7 @@ fun ExploreScreen() {
 
     Box(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .background(Color(0xFF2B2B2B)),
     ) {
@@ -210,7 +217,13 @@ fun ExploreScreen() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(18.dp),
             ) {
-                SectionTitle(title = "테마로 떠나는 여행")
+                Text(
+                    text = "도시별 추천여행",
+                    style =
+                        LocalAppTypography.current.titleMedium.bold.copy(
+                            color = Color.White,
+                        ),
+                )
 
                 themeTravelItems.forEach { item ->
                     PlaceCard(
@@ -218,7 +231,13 @@ fun ExploreScreen() {
                         places = item.places,
                         imageRes = item.imageRes,
                         onClick = {
-                            // 테마 여행 상세 화면 이동
+                            /*
+                             * 현재 상세 임시 데이터는 부산 하나만 해놓음
+                             * 추후 api 연동 시, 아래 if 조건을 제거
+                             */
+                            if (item.id == 2L) {
+                                onCityTravelClick(item.id)
+                            }
                         },
                     )
                 }

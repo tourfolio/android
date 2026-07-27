@@ -2,9 +2,9 @@
 
 package com.hdb.tourfolio.feature.explore.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.feature.explore.model.ExploreType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural30
@@ -48,9 +49,9 @@ fun CarouselContent(
     content: String,
     place: String,
     tags: List<String>,
+    exploreType: ExploreType,
     currentIndex: Int,
     totalCount: Int,
-    onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -90,24 +91,15 @@ fun CarouselContent(
                         LocalAppTypography.current.headlineLarge.bold.copy(
                             color = Natural100,
                         ),
-                    modifier = Modifier.weight(1f),
-                )
-
-                Box(
                     modifier =
                         Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(OrangeAccent)
-                            .clickable { onNextClick() },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_chevron_right_white),
-                        contentDescription = "next",
-                        modifier = Modifier.size(12.dp),
-                    )
-                }
+                            .weight(1f)
+                            .padding(end = 16.dp),
+                )
+
+                CarouselThemeMark(
+                    exploreType = exploreType,
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -123,7 +115,9 @@ fun CarouselContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = null,
@@ -144,7 +138,9 @@ fun CarouselContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 items(tags) { tag ->
                     CarouselTag(text = tag)
                 }
@@ -159,6 +155,35 @@ fun CarouselContent(
         }
     }
 }
+
+@Composable
+private fun CarouselThemeMark(
+    exploreType: ExploreType,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .background(OrangeAccent),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painter = painterResource(id = exploreType.toIconRes()),
+            contentDescription = exploreType.displayName,
+            modifier = Modifier.size(32.dp),
+        )
+    }
+}
+
+@DrawableRes
+private fun ExploreType.toIconRes(): Int =
+    when (this) {
+        ExploreType.HISTORY -> R.drawable.ic_theme_history
+        ExploreType.NATURE -> R.drawable.ic_theme_nature
+        ExploreType.CULTURE -> R.drawable.ic_theme_culture
+    }
 
 @Composable
 private fun CarouselTag(
@@ -200,14 +225,25 @@ private fun CarouselIndicator(
     ) {
         repeat(totalCount) { index ->
             val isSelected = index == currentIndex
+
             Box(
                 modifier =
                     Modifier
                         .height(8.dp)
-                        .then(if (isSelected) Modifier.width(24.dp) else Modifier.size(8.dp))
+                        .then(
+                            if (isSelected) {
+                                Modifier.width(24.dp)
+                            } else {
+                                Modifier.size(8.dp)
+                            },
+                        )
                         .clip(CircleShape)
                         .background(
-                            if (isSelected) Color.White else Color.White.copy(alpha = 0.4f),
+                            if (isSelected) {
+                                Natural100
+                            } else {
+                                Natural100.copy(alpha = 0.4f)
+                            },
                         ),
             )
         }
@@ -229,9 +265,9 @@ private fun CarouselContentPreview() {
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
             tags = listOf("역사", "궁궐", "공원", "산책"),
+            exploreType = ExploreType.HISTORY,
             currentIndex = 0,
-            totalCount = 4,
-            onNextClick = {},
+            totalCount = 3,
         )
     }
 }
