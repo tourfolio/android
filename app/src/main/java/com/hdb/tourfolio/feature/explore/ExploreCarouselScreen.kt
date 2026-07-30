@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
-import com.hdb.tourfolio.feature.explore.model.ExploreType
+import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import kotlinx.coroutines.delay
@@ -38,7 +38,7 @@ private data class CarouselItem(
     val content: String,
     val place: String,
     val tags: List<String>,
-    val exploreType: ExploreType,
+    val themeType: ThemeType,
 )
 
 private val carouselItems =
@@ -49,7 +49,7 @@ private val carouselItems =
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
             tags = listOf("역사", "궁궐", "공원", "산책"),
-            exploreType = ExploreType.HISTORY,
+            themeType = ThemeType.HISTORY,
         ),
         CarouselItem(
             imageRes = R.drawable.bg_explore_gyeongbokgung_demo,
@@ -57,7 +57,7 @@ private val carouselItems =
             content = "유네스코 세계자연유산\n제주의 상징적인 화산 분화구",
             place = "제주특별자치도 서귀포시",
             tags = listOf("자연", "세계유산", "트레킹"),
-            exploreType = ExploreType.NATURE,
+            themeType = ThemeType.NATURE,
         ),
         CarouselItem(
             imageRes = R.drawable.bg_explore_gyeongbokgung_demo,
@@ -65,7 +65,7 @@ private val carouselItems =
             content = "영화 같은 골목길\n부산 영도의 숨겨진 보석",
             place = "부산광역시 영도구",
             tags = listOf("골목", "바다", "사진"),
-            exploreType = ExploreType.CULTURE,
+            themeType = ThemeType.CULTURE,
         ),
     )
 
@@ -207,7 +207,7 @@ private fun ExploreCarouselPage(
             content = item.content,
             place = item.place,
             tags = item.tags,
-            exploreType = item.exploreType,
+            themeType = item.themeType,
             currentIndex = currentIndex,
             totalCount = totalCount,
             modifier =

@@ -5,7 +5,6 @@ package com.hdb.tourfolio.feature.explore
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,30 +15,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.feature.explore.components.TourSpotCarousel
 import com.hdb.tourfolio.feature.explore.components.PlaceCard
 import com.hdb.tourfolio.feature.explore.components.RegionCard
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.TourSpotCard
+import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural10
+import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
@@ -49,297 +50,233 @@ data class ThemeTravelItem(
     val imageRes: Int,
 )
 
-data class RegionTravelItem(
-    val title: String,
-    val content: String,
-    val imageRes: Int,
-)
-
-data class TourSpotItem(
-    val title: String,
-    val content: String,
-    val tags: List<String>,
-    val imageRes: Int,
-)
-
 @Composable
 fun ExploreScreen(
     onCityTravelClick: (Long) -> Unit = {},
+    onTourSpotClick: (Long) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val tourSpotLikedStates =
-        remember {
-            mutableStateListOf(false, false)
-        }
-
-    val regionLikedStates =
-        remember {
-            mutableStateListOf(false, true, false)
-        }
-
-    val searchText =
-        remember {
-            mutableStateOf("")
-        }
+    var searchText by remember {
+        mutableStateOf("")
+    }
 
     val themeTravelItems =
-        listOf(
-            ThemeTravelItem(
-                id = 1L,
-                title = "서울로 떠나는 맛집 탐방",
-                places = 10,
-                imageRes = R.drawable.bg_seoul_demo,
-            ),
-            ThemeTravelItem(
-                id = 2L,
-                title = "부산으로 떠나는 여름여행",
-                places = 6,
-                imageRes = R.drawable.bg_busan_demo,
-            ),
-            ThemeTravelItem(
-                id = 3L,
-                title = "경주로 떠나는 역사여행",
-                places = 10,
-                imageRes = R.drawable.bg_gyeongju_demo,
-            ),
-        )
+        remember {
+            listOf(
+                ThemeTravelItem(
+                    id = 1L,
+                    title = "서울로 떠나는 역사탐방",
+                    places = 10,
+                    imageRes = R.drawable.bg_seoul_demo,
+                ),
+                ThemeTravelItem(
+                    id = 3L,
+                    title = "경주로 떠나는 야경명소",
+                    places = 10,
+                    imageRes = R.drawable.bg_gyeongju_demo,
+                ),
+                ThemeTravelItem(
+                    id = 2L,
+                    title = "여름에 꼭 봐야할 부산 명소",
+                    places = 6,
+                    imageRes = R.drawable.bg_busan_demo,
+                ),
+            )
+        }
 
-    val regionTravelItems =
-        listOf(
-            RegionTravelItem(
-                title = "흰여울길",
-                content = "부산",
-                imageRes = R.drawable.bg_huinnyeoul_demo,
-            ),
-            RegionTravelItem(
-                title = "성산일출봉",
-                content = "제주도",
-                imageRes = R.drawable.bg_seongsan_demo,
-            ),
-            RegionTravelItem(
-                title = "남산타워",
-                content = "서울",
-                imageRes = R.drawable.bg_namsan_demo,
-            ),
-        )
+    val featuredItems =
+        remember {
+            TourSpotMockData.listItems.take(4)
+        }
 
-    val tourSpotItems =
-        listOf(
-            TourSpotItem(
-                title = "첨성대",
-                content = "동양에서 현존하는 가장 오래된 천문대",
-                tags = listOf("역사", "궁궐", "공원"),
-                imageRes = R.drawable.bg_cheomseongdae_demo,
-            ),
-            TourSpotItem(
-                title = "첨성대",
-                content = "동양에서 현존하는 가장 오래된 천문대",
-                tags = listOf("역사", "궁궐", "공원"),
-                imageRes = R.drawable.bg_cheomseongdae_demo,
-            ),
-        )
+    val recommendedItems =
+        remember {
+            TourSpotMockData.detailItems
+                .filter { item ->
+                    item.id in listOf(1L, 3L, 7L)
+                }
+        }
 
-    Box(
+    val trendingItems =
+        remember {
+            TourSpotMockData.listItems
+                .filter { item ->
+                    item.id in listOf(6L, 3L, 5L, 2L)
+                }
+        }
+
+    Column(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(Color(0xFF2B2B2B)),
+                .background(Natural100)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 36.dp),
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.bg_search_top),
-            contentDescription = null,
+        ExploreHeader(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(360.dp),
-            contentScale = ContentScale.Crop,
+                Modifier.padding(
+                    start = 22.dp,
+                    top = 20.dp,
+                    end = 22.dp,
+                ),
         )
 
-        Box(
+        Spacer(modifier = Modifier.height(28.dp))
+
+        SearchBar(
+            value = searchText,
+            onValueChange = {
+                searchText = it
+            },
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(360.dp)
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors =
-                                    listOf(
-                                        Color.Transparent,
-                                        Color.Transparent,
-                                        Color(0x802B2B2B),
-                                        Color(0xCC2B2B2B),
-                                        Color(0xFF2B2B2B),
-                                    ),
-                            ),
-                    ),
+                Modifier.padding(horizontal = 22.dp),
         )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
+        TourSpotCarousel(
+            items = featuredItems,
+            onItemClick = onTourSpotClick,
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        ExploreSectionTitle(
+            title = "지역별 맞춤 여행지",
+            modifier = Modifier.padding(horizontal = 22.dp),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp)
-                    .padding(top = 20.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(25.dp),
+                Modifier.padding(horizontal = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            ExploreHeader()
+            themeTravelItems.forEach { item ->
+                PlaceCard(
+                    title = item.title,
+                    places = item.places,
+                    imageRes = item.imageRes,
+                    onClick = {
+                        /*
+                         * 현재 CityTravelDetail 임시 데이터는
+                         * 부산 id 2만 연결된 상태입니다.
+                         */
+                        if (item.id == 2L) {
+                            onCityTravelClick(item.id)
+                        }
+                    },
+                )
+            }
+        }
 
-            ExploreIntroText()
+        Spacer(modifier = Modifier.height(34.dp))
 
-            SearchBar(
-                value = searchText.value,
-                onValueChange = {
-                    searchText.value = it
-                    // 추후 검색 API 연동
+        ExploreSectionTitle(
+            title = "놓치면 아쉬운 추천 명소",
+            modifier = Modifier.padding(horizontal = 22.dp),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding =
+                androidx.compose.foundation.layout.PaddingValues(
+                    horizontal = 22.dp,
+                ),
+        ) {
+            items(
+                items = recommendedItems,
+                key = { item ->
+                    item.id
                 },
-            )
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                itemsIndexed(tourSpotItems) { index, item ->
-                    TourSpotCard(
-                        title = item.title,
-                        content = item.content,
-                        tags = item.tags,
-                        imageRes = item.imageRes,
-                        isLiked = tourSpotLikedStates[index],
-                        onLikeClick = {
-                            tourSpotLikedStates[index] = !tourSpotLikedStates[index]
-                        },
-                        modifier = Modifier.width(360.dp),
-                    )
-                }
-            }
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(18.dp),
-            ) {
-                Text(
-                    text = "도시별 추천여행",
-                    style =
-                        LocalAppTypography.current.titleMedium.bold.copy(
-                            color = Color.White,
-                        ),
+            ) { item ->
+                TourSpotCard(
+                    id = item.id,
+                    title = item.title,
+                    content = item.description,
+                    tags = item.tags,
+                    imageRes = item.imageRes,
+                    onClick = onTourSpotClick,
+                    modifier = Modifier.width(360.dp),
                 )
-
-                themeTravelItems.forEach { item ->
-                    PlaceCard(
-                        title = item.title,
-                        places = item.places,
-                        imageRes = item.imageRes,
-                        onClick = {
-                            /*
-                             * 현재 상세 임시 데이터는 부산 하나만 해놓음
-                             * 추후 api 연동 시, 아래 if 조건을 제거
-                             */
-                            if (item.id == 2L) {
-                                onCityTravelClick(item.id)
-                            }
-                        },
-                    )
-                }
             }
+        }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(
-                    text = "지금 뜨는 여행지",
-                    style =
-                        LocalAppTypography.current.titleMedium.bold.copy(
-                            color = Color.White,
-                        ),
+        Spacer(modifier = Modifier.height(34.dp))
+
+        ExploreSectionTitle(
+            title = "지금 뜨는 여행지",
+            modifier = Modifier.padding(horizontal = 22.dp),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding =
+                androidx.compose.foundation.layout.PaddingValues(
+                    horizontal = 22.dp,
+                ),
+        ) {
+            items(
+                items = trendingItems,
+                key = { item ->
+                    item.id
+                },
+            ) { item ->
+                RegionCard(
+                    id = item.id,
+                    title = item.title,
+                    regionName = item.regionType.displayName,
+                    imageRes = item.imageRes,
+                    onClick = onTourSpotClick,
                 )
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    itemsIndexed(regionTravelItems) { index, item ->
-                        RegionCard(
-                            title = item.title,
-                            content = item.content,
-                            imageRes = item.imageRes,
-                            isLiked = regionLikedStates[index],
-                            onLikeClick = {
-                                regionLikedStates[index] = !regionLikedStates[index]
-                            },
-                        )
-                    }
-                }
             }
         }
     }
 }
 
 @Composable
-private fun ExploreHeader() {
+private fun ExploreHeader(
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
+            modifier
+                .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_tourfolio_logo),
-            contentDescription = "Tourfolio",
-            modifier =
-                Modifier
-                    .width(128.dp)
-                    .height(37.dp),
+        Text(
+            text = "Tourfolio",
+            style =
+                LocalAppTypography.current.headlineLarge.heavy.copy(
+                    color = Natural10,
+                ),
         )
 
         Image(
-            painter = painterResource(id = R.drawable.ic_bell),
-            contentDescription = "notification",
-            modifier = Modifier.size(28.dp),
+            painter = painterResource(id = R.drawable.ic_bell_black),
+            contentDescription = "알림",
+            modifier = Modifier.size(27.dp),
         )
     }
 }
 
 @Composable
-private fun ExploreIntroText() {
-    Column(
-        modifier = Modifier.padding(top = 26.dp),
-    ) {
-        Text(
-            text = "어디로",
-            style =
-                MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                ),
-        )
-
-        Text(
-            text = "떠나고 싶나요?",
-            style =
-                MaterialTheme.typography.headlineMedium.copy(
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                ),
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(
-            text = "당신의 다음 여행이 기다리고 있어요",
-            style =
-                LocalAppTypography.current.bodyLarge.medium.copy(
-                    color = Color.White,
-                ),
-        )
-    }
-}
-
-@Composable
-private fun SectionTitle(title: String) {
+private fun ExploreSectionTitle(
+    title: String,
+    modifier: Modifier = Modifier,
+    showMoreIcon: Boolean = false,
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -347,21 +284,26 @@ private fun SectionTitle(title: String) {
             text = title,
             style =
                 LocalAppTypography.current.titleMedium.bold.copy(
-                    color = Color.White,
+                    color = Natural10,
                 ),
         )
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_chevron_right_white),
-            contentDescription = "더보기",
-            modifier =
-                Modifier
-                    .size(16.dp),
-        )
+        if (showMoreIcon) {
+            Image(
+                painter =
+                    painterResource(
+                        id = R.drawable.ic_arrow_down_gray,
+                    ),
+                contentDescription = "더보기",
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .rotate(-90f),
+            )
+        }
     }
 }
 
-// preview
 @Preview(
     name = "Explore Screen Preview",
     showBackground = true,
@@ -369,7 +311,7 @@ private fun SectionTitle(title: String) {
     heightDp = 915,
 )
 @Composable
-fun ExploreScreenPreview() {
+private fun ExploreScreenPreview() {
     TourfolioTheme {
         ExploreScreen()
     }

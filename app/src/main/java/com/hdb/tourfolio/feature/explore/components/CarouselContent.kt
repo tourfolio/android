@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.model.ExploreType
+import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural30
@@ -49,7 +49,7 @@ fun CarouselContent(
     content: String,
     place: String,
     tags: List<String>,
-    exploreType: ExploreType,
+    themeType: ThemeType,
     currentIndex: Int,
     totalCount: Int,
     modifier: Modifier = Modifier,
@@ -98,7 +98,7 @@ fun CarouselContent(
                 )
 
                 CarouselThemeMark(
-                    exploreType = exploreType,
+                    themeType = themeType,
                 )
             }
 
@@ -158,7 +158,7 @@ fun CarouselContent(
 
 @Composable
 private fun CarouselThemeMark(
-    exploreType: ExploreType,
+    themeType: ThemeType,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -170,19 +170,19 @@ private fun CarouselThemeMark(
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = painterResource(id = exploreType.toIconRes()),
-            contentDescription = exploreType.displayName,
+            painter = painterResource(id = themeType.toIconRes()),
+            contentDescription = themeType.displayName,
             modifier = Modifier.size(32.dp),
         )
     }
 }
 
 @DrawableRes
-private fun ExploreType.toIconRes(): Int =
+private fun ThemeType.toIconRes(): Int =
     when (this) {
-        ExploreType.HISTORY -> R.drawable.ic_theme_history
-        ExploreType.NATURE -> R.drawable.ic_theme_nature
-        ExploreType.CULTURE -> R.drawable.ic_theme_culture
+        ThemeType.HISTORY -> R.drawable.ic_theme_history
+        ThemeType.NATURE -> R.drawable.ic_theme_nature
+        ThemeType.CULTURE -> R.drawable.ic_theme_culture
     }
 
 @Composable
@@ -265,7 +265,7 @@ private fun CarouselContentPreview() {
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
             tags = listOf("역사", "궁궐", "공원", "산책"),
-            exploreType = ExploreType.HISTORY,
+            themeType = ThemeType.HISTORY,
             currentIndex = 0,
             totalCount = 3,
         )
