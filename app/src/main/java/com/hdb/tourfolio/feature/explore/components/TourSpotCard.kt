@@ -33,9 +33,8 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
-
-private val TourSpotAccent = Color(0xFFFF6248)
 
 @Composable
 fun TourSpotCard(
@@ -134,7 +133,7 @@ private fun TourSpotTag(
         modifier =
             modifier
                 .background(
-                    color = TourSpotAccent,
+                    color = Primary,
                     shape = RoundedCornerShape(7.dp),
                 )
                 .padding(

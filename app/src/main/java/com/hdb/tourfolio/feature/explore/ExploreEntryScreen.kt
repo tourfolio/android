@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 fun ExploreEntryScreen(
     onCityTravelClick: (Long) -> Unit,
     onTourSpotClick: (Long) -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     var introFinished by rememberSaveable {
         mutableStateOf(false)
@@ -19,6 +20,7 @@ fun ExploreEntryScreen(
         ExploreScreen(
             onCityTravelClick = onCityTravelClick,
             onTourSpotClick = onTourSpotClick,
+            onSearchClick = onSearchClick,
         )
     } else {
         ExploreCarouselScreen(

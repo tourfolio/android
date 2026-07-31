@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Primary
 import kotlin.math.absoluteValue
 
 private val CarouselAccent = Color(0xFFFF6248)
@@ -168,7 +169,7 @@ private fun TourSpotCard(
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(50))
-                        .background(CarouselAccent)
+                        .background(Primary)
                         .padding(
                             horizontal = 10.dp,
                             vertical = 6.dp,

@@ -54,11 +54,9 @@ data class ThemeTravelItem(
 fun ExploreScreen(
     onCityTravelClick: (Long) -> Unit = {},
     onTourSpotClick: (Long) -> Unit = {},
+    onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    var searchText by remember {
-        mutableStateOf("")
-    }
 
     val themeTravelItems =
         remember {
@@ -125,10 +123,10 @@ fun ExploreScreen(
         Spacer(modifier = Modifier.height(28.dp))
 
         SearchBar(
-            value = searchText,
-            onValueChange = {
-                searchText = it
-            },
+            value = "",
+            onValueChange = {},
+            readOnly = true,
+            onClick = onSearchClick,
             modifier =
                 Modifier.padding(horizontal = 22.dp),
         )

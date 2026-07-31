@@ -95,10 +95,7 @@ fun CityTravelDetailScreen(
     modifier: Modifier = Modifier,
 ) {
     /*
-     * 현재는 부산 임시 데이터 하나만 사용합니다.
-     *
-     * 추후에는 ViewModel에서 travelId를 이용해 API를 호출한 후,
-     * StateFlow로 받은 상세 데이터를 이 화면에 전달하면 됩니다.
+     * 현재 부산 임시 데이터(travelId=2) 하나만 사용
      */
     val travelDetail =
         remember(travelId) {
@@ -128,10 +125,6 @@ private fun CityTravelDetailContent(
                 .fillMaxSize()
                 .background(Natural100),
     ) {
-        /*
-         * LazyVerticalGrid 바깥에 있으므로
-         * 아래 관광지 목록을 스크롤해도 고정됩니다.
-         */
         CityTravelTopBar(
             title = travelDetail.categoryTitle,
             onBackClick = onBackClick,
@@ -289,7 +282,6 @@ private fun CityTravelSummary(
                     painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = null,
                     modifier = Modifier.size(27.dp),
-                    colorFilter = ColorFilter.tint(Primary),
                 )
 
                 Spacer(modifier = Modifier.size(8.dp))

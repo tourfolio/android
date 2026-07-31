@@ -17,8 +17,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hdb.tourfolio.feature.explore.CityTravelDetailScreen
+import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
+import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
+import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.trade.TradeScreen
+import com.hdb.tourfolio.navigation.Screen.ExploreDetail.ARG_TOUR_SPOT_ID
 
 @Composable
 fun AppNavHost(
@@ -28,10 +32,7 @@ fun AppNavHost(
     val currentRoute = navBackStackEntry?.destination?.route
 
     /*
-     * 하단 내비게이션의 메인 화면 route에서만
-     * BottomNavBar를 표시합니다.
-     *
-     * CityTravelDetail 같은 상세 화면에서는 숨겨집니다.
+     * 하단 내비게이션의 메인 화면 라우트에서만 BottomNavBar를 표시(?)
      */
     val showBottomBar =
         bottomNavItems.any { bottomNavItem ->
@@ -65,13 +66,85 @@ fun AppNavHost(
                         )
                     },
                     onTourSpotClick = { tourSpotId ->
-                        /*
-                        추후 관광지 상세 페이지 연결
-                         */
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId = tourSpotId,
+                            ),
+                        )
+                    },
+                    onSearchClick = {
+                        navController.navigate(
+                            Screen.ExploreSearch.route,
+                        )
                     },
                 )
             }
 
+
+
+            /*
+             * 탐색 검색 화면
+             */
+            composable(Screen.ExploreSearch.route) {
+                ExploreSearchScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onTourSpotClick = { tourSpotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId = tourSpotId,
+                            ),
+                        )
+                    },
+                )
+            }
+
+            /*
+             * 탐색 상세 화면
+             */
+            composable(
+                route = Screen.ExploreDetail.route,
+                arguments =
+                    listOf(
+                        navArgument(Screen.ExploreDetail.ARG_TOUR_SPOT_ID) {
+                            type = NavType.LongType
+                        },
+                    ),
+            ) { backStackEntry ->
+                val tourSpotId =
+                    backStackEntry.arguments
+                        ?.getLong(Screen.ExploreDetail.ARG_TOUR_SPOT_ID)
+                        ?: return@composable
+
+                ExploreDetailScreen(
+                    tourSpotId = tourSpotId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onShareClick = {
+                        // 추후 공유 기능 연결
+                    },
+                    // 주변 관광지 상세 클릭 - 추후 의논 후 제거
+                    onNearbySpotClick = { nearbyTourSpotId ->
+                        if (
+                            TourSpotMockData.findDetailById(
+                                nearbyTourSpotId,
+                            ) != null
+                        ) {
+                            navController.navigate(
+                                Screen.ExploreDetail.createRoute(
+                                    tourSpotId = nearbyTourSpotId,
+                                ),
+                            )
+                        }
+                    },
+                )
+            }
+
+            /*
+            * 도시별 추천여행 상세 화면
+            */
             composable(
                 route = Screen.CityTravelDetail.route,
                 arguments =
@@ -92,10 +165,10 @@ fun AppNavHost(
                         navController.popBackStack()
                     },
                     onShareClick = {
-                        // 추후 Android Sharesheet 연결
+                        // 추후 연결
                     },
                     onSpotClick = { spotId ->
-                        // 추후 개별 관광지 상세 화면으로 이동
+                        // 추후 의논 후 제거 혹은 구현
                     },
                 )
             }

@@ -6,6 +6,8 @@ import com.hdb.tourfolio.R
 sealed class Screen(val route: String) {
     data object Explore : Screen("explore")
 
+    data object ExploreSearch : Screen("explore_search")
+
     data object Trade : Screen("trade")
 
     data object Home : Screen("home")
@@ -20,6 +22,14 @@ sealed class Screen(val route: String) {
 
         fun createRoute(travelId: Long): String =
             "city_travel_detail/$travelId"
+    }
+
+    data object ExploreDetail :
+        Screen("explore_detail/{tourSpotId}") {
+        const val ARG_TOUR_SPOT_ID = "tourSpotId"
+
+        fun createRoute(tourSpotId: Long): String =
+            "explore_detail/$tourSpotId"
     }
 }
 

@@ -39,6 +39,8 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural30
 import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Natural95
+import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private val OrangeAccent = Color(0xFFFF5C35)
@@ -196,7 +198,7 @@ private fun CarouselTag(
                 .width(47.dp)
                 .height(31.dp)
                 .background(
-                    color = Natural30,
+                    color = Primary,
                     shape = RoundedCornerShape(10.dp),
                 ),
         contentAlignment = Alignment.Center,

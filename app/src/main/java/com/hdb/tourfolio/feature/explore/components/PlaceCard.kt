@@ -6,30 +6,34 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,125 +44,70 @@ import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private val PlaceCardAccent = Color(0xFFE96B4B)
+private val PlaceCardHeight = 150.dp
+private val PlaceCardButtonSize = 52.dp
+private val PlaceCardButtonEndInset = 2.dp
+private val PlaceCardButtonVerticalOffset = 6.dp
 
-/**
- * 오른쪽 아래에 원형 버튼을 위한 오목한 공간이 있는 카드 모양입니다.
- */
 private class PlaceCardCutoutShape(
     private val cornerRadiusDp: Float = 12f,
-    private val cutoutRadiusDp: Float = 47f,
+    private val buttonRadiusDp: Float = PlaceCardButtonSize.value / 2f,
+    private val buttonEndInsetDp: Float = PlaceCardButtonEndInset.value,
+    private val buttonVerticalOffsetDp: Float = PlaceCardButtonVerticalOffset.value,
+    private val cutoutGapDp: Float = 7f,
 ) : Shape {
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
         density: Density,
     ): Outline {
-        val cornerRadius =
-            with(density) {
-                cornerRadiusDp.dp.toPx()
-            }
+        val cornerRadiusPx = with(density) { cornerRadiusDp.dp.toPx() }
+        val cutoutRadiusPx = with(density) { (buttonRadiusDp + cutoutGapDp).dp.toPx() }
+        val cutoutCenter =
+            Offset(
+                x = size.width - with(density) { (buttonEndInsetDp + buttonRadiusDp).dp.toPx() },
+                y = size.height - with(density) { (buttonRadiusDp - buttonVerticalOffsetDp).dp.toPx() },
+            )
 
-        val cutoutRadius =
-            with(density) {
-                cutoutRadiusDp.dp.toPx()
-            }
-
-        val width = size.width
-        val height = size.height
-
-        val path =
+        val roundedRect =
             Path().apply {
-                /*
-                 * 왼쪽 위
-                 */
-                moveTo(cornerRadius, 0f)
-
-                /*
-                 * 위쪽 → 오른쪽 위
-                 */
-                lineTo(width - cornerRadius, 0f)
-
-                quadraticTo(
-                    x1 = width,
-                    y1 = 0f,
-                    x2 = width,
-                    y2 = cornerRadius,
+                addOutline(
+                    Outline.Rounded(
+                        RoundRect(
+                            rect = Rect(Offset.Zero, size),
+                            cornerRadius = CornerRadius(cornerRadiusPx),
+                        ),
+                    ),
                 )
-
-                /*
-                 * 오른쪽 변을 따라 내려옵니다.
-                 * 여기서부터 원형 버튼을 위한 오목한 영역이 시작됩니다.
-                 */
-                lineTo(
-                    x = width,
-                    y = height - cutoutRadius * 1.65f,
-                )
-
-                /*
-                 * 오른쪽 아래를 안쪽으로 둥글게 파냅니다.
-                 *
-                 * 첫 번째 곡선:
-                 * 오른쪽 변에서 카드 안쪽 방향으로 진입
-                 */
-                cubicTo(
-                    x1 = width,
-                    y1 = height - cutoutRadius * 1.25f,
-                    x2 = width - cutoutRadius * 0.15f,
-                    y2 = height - cutoutRadius * 1.05f,
-                    x3 = width - cutoutRadius * 0.48f,
-                    y3 = height - cutoutRadius,
-                )
-
-                /*
-                 * 두 번째 곡선:
-                 * 원형 버튼 아래쪽을 감싸면서 카드 하단으로 연결
-                 */
-                cubicTo(
-                    x1 = width - cutoutRadius * 0.95f,
-                    y1 = height - cutoutRadius * 0.85f,
-                    x2 = width - cutoutRadius * 1.08f,
-                    y2 = height - cutoutRadius * 0.4f,
-                    x3 = width - cutoutRadius * 1.08f,
-                    y3 = height,
-                )
-
-                /*
-                 * 카드 하단
-                 */
-                lineTo(cornerRadius, height)
-
-                /*
-                 * 왼쪽 아래 모서리
-                 */
-                quadraticTo(
-                    x1 = 0f,
-                    y1 = height,
-                    x2 = 0f,
-                    y2 = height - cornerRadius,
-                )
-
-                /*
-                 * 왼쪽 변
-                 */
-                lineTo(0f, cornerRadius)
-
-                /*
-                 * 왼쪽 위 모서리
-                 */
-                quadraticTo(
-                    x1 = 0f,
-                    y1 = 0f,
-                    x2 = cornerRadius,
-                    y2 = 0f,
-                )
-
-                close()
             }
 
-        return Outline.Generic(path)
+        val cutout =
+            Path().apply {
+                addOval(Rect(center = cutoutCenter, radius = cutoutRadiusPx))
+            }
+
+        val bottomEndCorner =
+            Path().apply {
+                addRect(
+                    Rect(
+                        left = cutoutCenter.x,
+                        top = cutoutCenter.y,
+                        right = size.width,
+                        bottom = size.height,
+                    ),
+                )
+            }
+        val completeCutout = Path()
+        completeCutout.op(cutout, bottomEndCorner, PathOperation.Union)
+
+        val result = Path()
+        result.op(roundedRect, completeCutout, PathOperation.Difference)
+
+        return Outline.Generic(result)
     }
 }
 
@@ -176,19 +125,13 @@ fun PlaceCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(PlaceCardHeight)
                 .clickable(onClick = onClick),
     ) {
-        /*
-         * 우측에 버튼이 배치될 공간을 남깁니다.
-         * 카드 자체의 우측 하단은 PlaceCardCutoutShape에 의해
-         * 안쪽으로 오목하게 처리됩니다.
-         */
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(end = 34.dp)
                     .clip(cardShape),
         ) {
             Image(
@@ -198,10 +141,6 @@ fun PlaceCard(
                 contentScale = ContentScale.Crop,
             )
 
-            /*
-             * 글자가 위치하는 왼쪽과 아래쪽을 중심으로
-             * 어두운 그라데이션을 적용합니다.
-             */
             Box(
                 modifier =
                     Modifier
@@ -230,19 +169,20 @@ fun PlaceCard(
                                         listOf(
                                             Color.Transparent,
                                             Color.Transparent,
-                                            Color.Black.copy(alpha = 0.4f),
+                                            Color.Black.copy(alpha = 0.45f),
                                         ),
                                 ),
                         ),
             )
 
             Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier =
                     Modifier
                         .align(Alignment.BottomStart)
                         .padding(
                             start = 20.dp,
-                            end = 70.dp,
+                            end = 76.dp,
                             bottom = 18.dp,
                         ),
             ) {
@@ -256,9 +196,8 @@ fun PlaceCard(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Row(
+                    horizontalArrangement = Arrangement.spacedBy(7.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
@@ -270,11 +209,9 @@ fun PlaceCard(
                         modifier = Modifier.size(26.dp),
                         colorFilter =
                             ColorFilter.tint(
-                                PlaceCardAccent,
+                                Primary70,
                             ),
                     )
-
-                    Spacer(modifier = Modifier.width(7.dp))
 
                     Text(
                         text = "$places places",
@@ -288,20 +225,17 @@ fun PlaceCard(
             }
         }
 
-        /*
-         * 카드의 오목한 영역에 들어가는 원형 버튼입니다.
-         */
         Box(
             modifier =
                 Modifier
                     .align(Alignment.BottomEnd)
                     .offset(
-                        x = (-25).dp,
-                        y = (8).dp,
+                        x = -PlaceCardButtonEndInset,
+                        y = PlaceCardButtonVerticalOffset,
                     )
-                    .size(52.dp)
+                    .size(PlaceCardButtonSize)
                     .clip(androidx.compose.foundation.shape.CircleShape)
-                    .background(PlaceCardAccent)
+                    .background(Primary)
                     .clickable(onClick = onClick),
             contentAlignment = Alignment.Center,
         ) {
