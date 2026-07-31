@@ -34,7 +34,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -48,13 +47,9 @@ import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
-import com.hdb.tourfolio.ui.theme.Natural90
-import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.Natural100
-import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary70
-import com.hdb.tourfolio.ui.theme.Primary80
 import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
@@ -123,9 +118,9 @@ private fun ExploreDetailContent(
                         RoundedCornerShape(
                             topStart = 32.dp,
                             topEnd = 32.dp,
-                        )
+                        ),
                     )
-                    .background( Natural100)
+                    .background(Natural100)
                     .padding(
                         start = 22.dp,
                         top = 34.dp,

@@ -190,9 +190,7 @@ private fun PopularKeywordColumn(
 }
 
 @Composable
-private fun SearchSectionTitle(
-    title: String,
-) {
+private fun SearchSectionTitle(title: String) {
     Text(
         text = title,
         style =

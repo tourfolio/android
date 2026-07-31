@@ -20,16 +20,14 @@ sealed class Screen(val route: String) {
         Screen("city_travel_detail/{travelId}") {
         const val ARG_TRAVEL_ID = "travelId"
 
-        fun createRoute(travelId: Long): String =
-            "city_travel_detail/$travelId"
+        fun createRoute(travelId: Long): String = "city_travel_detail/$travelId"
     }
 
     data object ExploreDetail :
         Screen("explore_detail/{tourSpotId}") {
         const val ARG_TOUR_SPOT_ID = "tourSpotId"
 
-        fun createRoute(tourSpotId: Long): String =
-            "explore_detail/$tourSpotId"
+        fun createRoute(tourSpotId: Long): String = "explore_detail/$tourSpotId"
     }
 }
 

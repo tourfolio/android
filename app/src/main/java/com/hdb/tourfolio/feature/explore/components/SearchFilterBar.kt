@@ -147,9 +147,10 @@ private fun SearchFilterButton(
                         },
                 ),
             contentDescription = null,
-            modifier = Modifier
-                .size(14.dp)
-                .rotate(if (selected) 90f else 0f),
+            modifier =
+                Modifier
+                    .size(14.dp)
+                    .rotate(if (selected) 90f else 0f),
         )
     }
 }

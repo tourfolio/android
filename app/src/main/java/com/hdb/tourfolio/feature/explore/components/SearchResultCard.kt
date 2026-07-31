@@ -19,8 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,8 +27,8 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary70
 
 @Composable
@@ -115,9 +113,7 @@ fun SearchResultCard(
 }
 
 @Composable
-private fun SearchResultTag(
-    text: String,
-) {
+private fun SearchResultTag(text: String) {
     androidx.compose.foundation.layout.Box(
         modifier =
             Modifier

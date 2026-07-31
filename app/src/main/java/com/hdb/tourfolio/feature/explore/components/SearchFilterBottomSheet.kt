@@ -43,9 +43,9 @@ import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
+import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural70
 import com.hdb.tourfolio.ui.theme.Natural90
-import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
 
 private data class FilterOption(
@@ -370,7 +370,7 @@ private fun FilterOptionGrid(
 
     val areAllSelected =
         optionKeys.isNotEmpty() &&
-                selectedKeys.containsAll(optionKeys)
+            selectedKeys.containsAll(optionKeys)
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
@@ -468,9 +468,7 @@ private fun FilterCheckItem(
     }
 }
 
-private fun <T> Set<T>.toggle(
-    item: T,
-): Set<T> =
+private fun <T> Set<T>.toggle(item: T): Set<T> =
     if (item in this) {
         this - item
     } else {
@@ -486,21 +484,21 @@ fun filterTourSpots(
     items.filter { item ->
         val matchesTags =
             selectedTags.isEmpty() ||
-                    item.tags.any { tag ->
-                        tag in selectedTags
-                    }
+                item.tags.any { tag ->
+                    tag in selectedTags
+                }
 
         val matchesThemes =
             selectedThemes.isEmpty() ||
-                    item.themeType in selectedThemes
+                item.themeType in selectedThemes
 
         val matchesRegions =
             selectedRegions.isEmpty() ||
-                    item.regionType in selectedRegions
+                item.regionType in selectedRegions
 
         matchesTags &&
-                matchesThemes &&
-                matchesRegions
+            matchesThemes &&
+            matchesRegions
     }
 
 private const val FILTER_ALL_KEY = "__all__"

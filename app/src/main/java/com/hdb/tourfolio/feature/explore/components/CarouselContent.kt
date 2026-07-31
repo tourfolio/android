@@ -36,11 +36,9 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
-import com.hdb.tourfolio.ui.theme.Natural30
 import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.Primary
-import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private val OrangeAccent = Color(0xFFFF5C35)

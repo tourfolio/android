@@ -152,8 +152,8 @@ fun ExploreSearchScreen(
 
     val hasAppliedFilters =
         selectedTags.isNotEmpty() ||
-                selectedThemes.isNotEmpty() ||
-                selectedRegions.isNotEmpty()
+            selectedThemes.isNotEmpty() ||
+            selectedRegions.isNotEmpty()
 
     val searchResults =
         remember(
@@ -443,9 +443,7 @@ private fun SearchResultContent(
     }
 }
 
-private fun searchTourSpots(
-    query: String,
-): List<TourSpotListItemUiModel> {
+private fun searchTourSpots(query: String): List<TourSpotListItemUiModel> {
     val keyword =
         query
             .trim()

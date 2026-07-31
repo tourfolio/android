@@ -72,9 +72,7 @@ private val carouselItems =
 private const val SLIDE_DURATION_MS = 3000L
 
 @Composable
-fun ExploreCarouselScreen(
-    onFinished: () -> Unit,
-) {
+fun ExploreCarouselScreen(onFinished: () -> Unit) {
     val explorePageIndex = carouselItems.size
 
     val pagerState =
@@ -84,7 +82,6 @@ fun ExploreCarouselScreen(
                 carouselItems.size + 1
             },
         )
-
 
     /*
      * 마지막 Pager 페이지에 완전히 도착하면
@@ -117,7 +114,7 @@ fun ExploreCarouselScreen(
 
             val canAutoMove =
                 !pagerState.isScrollInProgress &&
-                        pagerState.settledPage == pageBeforeDelay
+                    pagerState.settledPage == pageBeforeDelay
 
             if (!canAutoMove) {
                 continue
@@ -136,15 +133,15 @@ fun ExploreCarouselScreen(
     ) { page ->
         val pageOffset =
             (
-                    (pagerState.currentPage - page) +
-                            pagerState.currentPageOffsetFraction
-                    ).absoluteValue
+                (pagerState.currentPage - page) +
+                    pagerState.currentPageOffsetFraction
+            ).absoluteValue
 
         val pageAlpha =
             1f -
-                    pageOffset
-                        .coerceIn(0f, 1f)
-                        .times(0.55f)
+                pageOffset
+                    .coerceIn(0f, 1f)
+                    .times(0.55f)
 
         Box(
             modifier =
@@ -219,9 +216,7 @@ private fun ExploreCarouselPage(
 }
 
 @Composable
-private fun ExploreCarouselHeader(
-    modifier: Modifier = Modifier,
-) {
+private fun ExploreCarouselHeader(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

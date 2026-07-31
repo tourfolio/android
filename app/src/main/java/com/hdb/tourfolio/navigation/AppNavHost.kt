@@ -25,9 +25,7 @@ import com.hdb.tourfolio.feature.trade.TradeScreen
 import com.hdb.tourfolio.navigation.Screen.ExploreDetail.ARG_TOUR_SPOT_ID
 
 @Composable
-fun AppNavHost(
-    navController: NavHostController = rememberNavController(),
-) {
+fun AppNavHost(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -79,8 +77,6 @@ fun AppNavHost(
                     },
                 )
             }
-
-
 
             /*
              * 탐색 검색 화면
@@ -143,8 +139,8 @@ fun AppNavHost(
             }
 
             /*
-            * 도시별 추천여행 상세 화면
-            */
+             * 도시별 추천여행 상세 화면
+             */
             composable(
                 route = Screen.CityTravelDetail.route,
                 arguments =

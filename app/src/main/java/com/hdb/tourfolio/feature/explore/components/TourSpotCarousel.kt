@@ -86,9 +86,9 @@ fun TourSpotCarousel(
         ) { page ->
             val offset =
                 (
-                        (pagerState.currentPage - page) +
-                                pagerState.currentPageOffsetFraction
-                        ).absoluteValue.coerceIn(0f, 1f)
+                    (pagerState.currentPage - page) +
+                        pagerState.currentPageOffsetFraction
+                ).absoluteValue.coerceIn(0f, 1f)
 
             val scale =
                 1f - (offset * 0.08f)

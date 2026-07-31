@@ -21,22 +21,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.components.TourSpotCarousel
 import com.hdb.tourfolio.feature.explore.components.PlaceCard
 import com.hdb.tourfolio.feature.explore.components.RegionCard
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.TourSpotCard
+import com.hdb.tourfolio.feature.explore.components.TourSpotCarousel
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -57,7 +55,6 @@ fun ExploreScreen(
     onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-
     val themeTravelItems =
         remember {
             listOf(
@@ -239,9 +236,7 @@ fun ExploreScreen(
 }
 
 @Composable
-private fun ExploreHeader(
-    modifier: Modifier = Modifier,
-) {
+private fun ExploreHeader(modifier: Modifier = Modifier) {
     Row(
         modifier =
             modifier
