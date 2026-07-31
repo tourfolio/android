@@ -12,13 +12,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,24 +28,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
 fun RegionCard(
+    id: Long,
     title: String,
-    content: String,
+    regionName: String,
     @DrawableRes imageRes: Int,
-    isLiked: Boolean,
-    onLikeClick: () -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
-                .width(156.dp)
-                .height(230.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF5F5F5F)),
+                .width(180.dp)
+                .height(245.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable {
+                    onClick(id)
+                },
     ) {
         Image(
             painter = painterResource(id = imageRes),
@@ -66,58 +66,40 @@ fun RegionCard(
                             Brush.verticalGradient(
                                 colors =
                                     listOf(
-                                        Color.Black.copy(alpha = 0.05f),
-                                        Color.Black.copy(alpha = 0.25f),
+                                        Color.Transparent,
                                         Color.Black.copy(alpha = 0.65f),
                                     ),
                             ),
                     ),
         )
 
-        Image(
-            painter =
-                painterResource(
-                    id =
-                        if (isLiked) {
-                            R.drawable.ic_like_full
-                        } else {
-                            R.drawable.ic_like_empty
-                        },
-                ),
-            contentDescription = "like",
-            modifier =
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp)
-                    .size(32.dp)
-                    .clickable {
-                        onLikeClick()
-                    },
-        )
-
         Column(
             modifier =
                 Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 22.dp, end = 18.dp, bottom = 26.dp),
+                    .padding(
+                        start = 18.dp,
+                        end = 18.dp,
+                        bottom = 20.dp,
+                    ),
         ) {
             Text(
                 text = title,
                 style =
-                    LocalAppTypography.current.titleLarge.copy(
-                        color = Color.White,
+                    LocalAppTypography.current.titleMedium.bold.copy(
+                        color = Natural100,
                     ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             Text(
-                text = content,
+                text = regionName,
                 style =
                     LocalAppTypography.current.bodyLarge.medium.copy(
-                        color = Color.White.copy(alpha = 0.85f),
+                        color = Natural100.copy(alpha = 0.85f),
                     ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -127,26 +109,20 @@ fun RegionCard(
 }
 
 @Preview(
-    name = "RegionCard Preview",
+    name = "Region Card Preview",
     showBackground = true,
-    backgroundColor = 0xFF2B2B2B,
+    widthDp = 220,
+    heightDp = 290,
 )
 @Composable
 private fun RegionCardPreview() {
-    val isLiked =
-        remember {
-            mutableStateOf(false)
-        }
-
     TourfolioTheme {
         RegionCard(
+            id = 6L,
             title = "흰여울길",
-            content = "부산",
+            regionName = "부산",
             imageRes = R.drawable.bg_huinnyeoul_demo,
-            isLiked = isLiked.value,
-            onLikeClick = {
-                isLiked.value = !isLiked.value
-            },
+            onClick = {},
             modifier = Modifier.padding(20.dp),
         )
     }

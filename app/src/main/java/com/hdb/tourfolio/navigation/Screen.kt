@@ -4,9 +4,9 @@ import androidx.annotation.DrawableRes
 import com.hdb.tourfolio.R
 
 sealed class Screen(val route: String) {
-    data object ExploreCarousel : Screen("explore_carousel")
-
     data object Explore : Screen("explore")
+
+    data object ExploreSearch : Screen("explore_search")
 
     data object Trade : Screen("trade")
 
@@ -15,6 +15,20 @@ sealed class Screen(val route: String) {
     data object Quest : Screen("quest")
 
     data object Card : Screen("card")
+
+    data object CityTravelDetail :
+        Screen("city_travel_detail/{travelId}") {
+        const val ARG_TRAVEL_ID = "travelId"
+
+        fun createRoute(travelId: Long): String = "city_travel_detail/$travelId"
+    }
+
+    data object ExploreDetail :
+        Screen("explore_detail/{tourSpotId}") {
+        const val ARG_TOUR_SPOT_ID = "tourSpotId"
+
+        fun createRoute(tourSpotId: Long): String = "explore_detail/$tourSpotId"
+    }
 }
 
 data class BottomNavItem(
@@ -26,7 +40,7 @@ data class BottomNavItem(
 
 val bottomNavItems =
     listOf(
-        BottomNavItem(Screen.ExploreCarousel, "탐색", R.drawable.ic_explore_filled, R.drawable.ic_explore_outlined),
+        BottomNavItem(Screen.Explore, "탐색", R.drawable.ic_explore_filled, R.drawable.ic_explore_outlined),
         BottomNavItem(Screen.Trade, "투자", R.drawable.ic_trade_filled, R.drawable.ic_trade_outlined),
         BottomNavItem(Screen.Home, "홈", R.drawable.ic_home_filled, R.drawable.ic_home_outlined),
         BottomNavItem(Screen.Quest, "업적", R.drawable.ic_quest_filled, R.drawable.ic_quest_outlined),
