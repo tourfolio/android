@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.explore
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,6 +66,9 @@ fun ExploreDetailScreen(
     onNearbySpotClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    BackHandler {
+        onBackClick()
+    }
     val detail =
         remember(tourSpotId) {
             TourSpotMockData.findDetailById(tourSpotId)

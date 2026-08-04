@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
@@ -47,6 +48,7 @@ fun SearchBar(
     readOnly: Boolean = false,
     onClick: (() -> Unit)? = null,
     onSearch: () -> Unit = {},
+    onFocusChanged: (Boolean) -> Unit = {},
 ) {
     val accentColor =
         when (style) {
@@ -133,7 +135,14 @@ fun SearchBar(
                             onSearch()
                         },
                     ),
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            onFocusChanged(
+                                focusState.isFocused,
+                            )
+                        },
             )
         }
 

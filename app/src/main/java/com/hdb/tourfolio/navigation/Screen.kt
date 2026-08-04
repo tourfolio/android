@@ -24,10 +24,17 @@ sealed class Screen(val route: String) {
     }
 
     data object ExploreDetail :
-        Screen("explore_detail/{tourSpotId}") {
+        Screen(
+            "explore_detail/{tourSpotId}?fromIntro={fromIntro}",
+        ) {
         const val ARG_TOUR_SPOT_ID = "tourSpotId"
+        const val ARG_FROM_INTRO = "fromIntro"
 
-        fun createRoute(tourSpotId: Long): String = "explore_detail/$tourSpotId"
+        fun createRoute(
+            tourSpotId: Long,
+            fromIntro: Boolean = false,
+        ): String =
+            "explore_detail/$tourSpotId?fromIntro=$fromIntro"
     }
 }
 

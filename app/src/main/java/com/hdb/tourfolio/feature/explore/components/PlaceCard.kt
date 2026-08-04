@@ -48,8 +48,8 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private val PlaceCardHeight = 150.dp
-private val PlaceCardButtonSize = 52.dp
+private val PlaceCardHeight = 124.dp
+private val PlaceCardButtonSize = 45.dp
 private val PlaceCardButtonEndInset = 2.dp
 private val PlaceCardButtonVerticalOffset = 6.dp
 
@@ -58,7 +58,7 @@ private class PlaceCardCutoutShape(
     private val buttonRadiusDp: Float = PlaceCardButtonSize.value / 2f,
     private val buttonEndInsetDp: Float = PlaceCardButtonEndInset.value,
     private val buttonVerticalOffsetDp: Float = PlaceCardButtonVerticalOffset.value,
-    private val cutoutGapDp: Float = 7f,
+    private val cutoutGapDp: Float = 6f,
 ) : Shape {
     override fun createOutline(
         size: Size,
@@ -176,14 +176,14 @@ fun PlaceCard(
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
                 modifier =
                     Modifier
                         .align(Alignment.BottomStart)
                         .padding(
-                            start = 20.dp,
+                            start = 16.dp,
                             end = 76.dp,
-                            bottom = 18.dp,
+                            bottom = 16.dp,
                         ),
             ) {
                 Text(
@@ -197,7 +197,7 @@ fun PlaceCard(
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(7.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
@@ -206,11 +206,7 @@ fun PlaceCard(
                                 id = R.drawable.ic_location,
                             ),
                         contentDescription = null,
-                        modifier = Modifier.size(26.dp),
-                        colorFilter =
-                            ColorFilter.tint(
-                                Primary70,
-                            ),
+                        modifier = Modifier.size(22.dp),
                     )
 
                     Text(
@@ -245,7 +241,7 @@ fun PlaceCard(
                         id = R.drawable.ic_chevron_right_white,
                     ),
                 contentDescription = "상세 보기",
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(16.dp),
             )
         }
     }

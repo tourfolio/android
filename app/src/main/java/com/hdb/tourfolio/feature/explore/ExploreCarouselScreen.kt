@@ -2,7 +2,9 @@
 
 package com.hdb.tourfolio.feature.explore
 
+import android.R.attr.onClick
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -15,6 +17,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +27,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
+import com.hdb.tourfolio.feature.explore.mock.TourSpotDetailUiModel
+import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
+import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -32,47 +38,27 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlin.math.absoluteValue
 
-private data class CarouselItem(
-    val imageRes: Int,
-    val title: String,
-    val content: String,
-    val place: String,
-    val tags: List<String>,
-    val themeType: ThemeType,
-)
-
-private val carouselItems =
+private val CAROUSEL_TOUR_SPOT_IDS =
     listOf(
-        CarouselItem(
-            imageRes = R.drawable.bg_explore_gyeongbokgung_demo,
-            title = "경복궁",
-            content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
-            place = "서울특별시 종로구",
-            tags = listOf("역사", "궁궐", "공원", "산책"),
-            themeType = ThemeType.HISTORY,
-        ),
-        CarouselItem(
-            imageRes = R.drawable.bg_explore_gyeongbokgung_demo,
-            title = "성산일출봉",
-            content = "유네스코 세계자연유산\n제주의 상징적인 화산 분화구",
-            place = "제주특별자치도 서귀포시",
-            tags = listOf("자연", "세계유산", "트레킹"),
-            themeType = ThemeType.NATURE,
-        ),
-        CarouselItem(
-            imageRes = R.drawable.bg_explore_gyeongbokgung_demo,
-            title = "흰여울길",
-            content = "영화 같은 골목길\n부산 영도의 숨겨진 보석",
-            place = "부산광역시 영도구",
-            tags = listOf("골목", "바다", "사진"),
-            themeType = ThemeType.CULTURE,
-        ),
+        1L,
+        3L,
+        6L,
     )
 
 private const val SLIDE_DURATION_MS = 3000L
 
 @Composable
-fun ExploreCarouselScreen(onFinished: () -> Unit) {
+fun ExploreCarouselScreen(
+    onFinished: () -> Unit,
+    onTourSpotClick: (Long) -> Unit,
+) {
+    val carouselItems =
+        remember {
+            CAROUSEL_TOUR_SPOT_IDS.mapNotNull { tourSpotId ->
+                TourSpotMockData.findDetailById(tourSpotId)
+            }
+        }
+
     val explorePageIndex = carouselItems.size
 
     val pagerState =
@@ -158,9 +144,13 @@ fun ExploreCarouselScreen(onFinished: () -> Unit) {
                     item = item,
                     currentIndex = page,
                     totalCount = carouselItems.size,
+                    onClick = {
+                        onTourSpotClick(item.id)
+                    }
                 )
 
                 ExploreCarouselHeader(
+                    onSearchClick = onFinished,
                     modifier =
                         Modifier
                             .align(Alignment.TopStart)
@@ -184,16 +174,23 @@ fun ExploreCarouselScreen(onFinished: () -> Unit) {
 
 @Composable
 private fun ExploreCarouselPage(
-    item: CarouselItem,
+    item: TourSpotDetailUiModel,
     currentIndex: Int,
     totalCount: Int,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .clickable(onClick = onClick),
     ) {
         Image(
-            painter = painterResource(id = item.imageRes),
+            painter =
+                painterResource(
+                    id = item.imageRes
+                ),
             contentDescription = item.title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
@@ -201,9 +198,12 @@ private fun ExploreCarouselPage(
 
         CarouselContent(
             title = item.title,
-            content = item.content,
-            place = item.place,
-            tags = item.tags,
+            content = item.description,
+            place = item.address,
+            tags =
+                item.tags.map { tag ->
+                    tag.displayName
+                },
             themeType = item.themeType,
             currentIndex = currentIndex,
             totalCount = totalCount,
@@ -216,7 +216,10 @@ private fun ExploreCarouselPage(
 }
 
 @Composable
-private fun ExploreCarouselHeader(modifier: Modifier = Modifier) {
+private fun ExploreCarouselHeader(
+    onSearchClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -230,10 +233,21 @@ private fun ExploreCarouselHeader(modifier: Modifier = Modifier) {
                 ),
         )
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_search),
-            contentDescription = "search",
-            modifier = Modifier.size(28.dp),
-        )
+        Box(
+            modifier =
+                Modifier
+                    .size(48.dp)
+                    .clickable(onClick = onSearchClick),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter =
+                    painterResource(
+                        id = R.drawable.ic_search,
+                    ),
+                contentDescription = "탐색 화면으로 이동",
+                modifier = Modifier.size(28.dp),
+            )
+        }
     }
 }

@@ -1,11 +1,18 @@
 package com.hdb.tourfolio.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +31,9 @@ import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.trade.TradeScreen
 import com.hdb.tourfolio.navigation.Screen.ExploreDetail.ARG_TOUR_SPOT_ID
 
+private const val EXPLORE_INTRO_FINISHED_KEY =
+    "explore_intro_finished"
+
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -39,9 +49,46 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
     Scaffold(
         bottomBar = {
-            if (showBottomBar) {
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter =
+                    slideInVertically(
+                        initialOffsetY = { fullHeight ->
+                            fullHeight
+                        },
+                        animationSpec = tween(
+                            durationMillis = 220,
+                        ),
+                    ) +
+                            fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 180,
+                                ),
+                            ),
+                exit =
+                    slideOutVertically(
+                        targetOffsetY = { fullHeight ->
+                            fullHeight
+                        },
+                        animationSpec = tween(
+                            durationMillis = 220,
+                        ),
+                    ) +
+                            fadeOut(
+                                animationSpec = tween(
+                                    durationMillis = 150,
+                                ),
+                            ),
+            ) {
                 BottomNavBar(
                     navController = navController,
+                    onDestinationSelected = { screen ->
+                        if (screen == Screen.Explore) {
+                            navController
+                                .getBackStackEntry(Screen.Explore.route)
+                                .savedStateHandle[EXPLORE_INTRO_FINISHED_KEY] = false
+                        }
+                    },
                 )
             }
         },
@@ -54,8 +101,50 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            composable(Screen.Explore.route) {
+            /*
+             * 탐색 진입 화면
+             */
+            composable(
+                route = Screen.Explore.route,
+            ) { exploreBackStackEntry ->
+                /*
+                 * Explore 라우트의 SavedStateHandle에서
+                 * 인트로 완료 여부를 관리합니다.
+                 */
+                val introFinished by
+                exploreBackStackEntry.savedStateHandle
+                    .getStateFlow(
+                        key = EXPLORE_INTRO_FINISHED_KEY,
+                        initialValue = false,
+                    )
+                    .collectAsState()
+
                 ExploreEntryScreen(
+                    introFinished = introFinished,
+                    /*
+                     * 돋보기 아이콘 클릭 또는
+                     * 인트로 마지막 페이지 도달
+                     */
+                    onIntroFinished = {
+                        exploreBackStackEntry.savedStateHandle[
+                            EXPLORE_INTRO_FINISHED_KEY
+                        ] = true
+                    },
+                    /*
+                     * 인트로 관광지 클릭
+                     *
+                     * 여기서는 인트로 완료 상태를 바꾸지 않습니다.
+                     * 그래야 상세 페이지로 이동하는 중간에
+                     * ExploreScreen이 보이지 않습니다.
+                     */
+                    onIntroTourSpotClick = { tourSpotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId = tourSpotId,
+                                fromIntro = true,
+                            ),
+                        )
+                    },
                     onCityTravelClick = { travelId ->
                         navController.navigate(
                             Screen.CityTravelDetail.createRoute(
@@ -63,10 +152,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             ),
                         )
                     },
+                    /*
+                     * 일반 ExploreScreen 관광지 클릭
+                     */
                     onTourSpotClick = { tourSpotId ->
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
                                 tourSpotId = tourSpotId,
+                                fromIntro = false,
                             ),
                         )
                     },
@@ -81,7 +174,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             /*
              * 탐색 검색 화면
              */
-            composable(Screen.ExploreSearch.route) {
+            composable(
+                route = Screen.ExploreSearch.route,
+            ) {
                 ExploreSearchScreen(
                     onBackClick = {
                         navController.popBackStack()
@@ -90,6 +185,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
                                 tourSpotId = tourSpotId,
+                                fromIntro = false,
                             ),
                         )
                     },
@@ -97,25 +193,69 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             /*
-             * 탐색 상세 화면
-             */
+           * 관광지 상세 화면
+           */
             composable(
                 route = Screen.ExploreDetail.route,
                 arguments =
                     listOf(
-                        navArgument(Screen.ExploreDetail.ARG_TOUR_SPOT_ID) {
+                        navArgument(
+                            Screen.ExploreDetail.ARG_TOUR_SPOT_ID,
+                        ) {
                             type = NavType.LongType
                         },
+                        navArgument(
+                            Screen.ExploreDetail.ARG_FROM_INTRO,
+                        ) {
+                            type = NavType.BoolType
+                            defaultValue = false
+                        },
                     ),
-            ) { backStackEntry ->
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(220),
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(180),
+                    )
+                },
+            ) { detailBackStackEntry ->
                 val tourSpotId =
-                    backStackEntry.arguments
-                        ?.getLong(Screen.ExploreDetail.ARG_TOUR_SPOT_ID)
+                    detailBackStackEntry.arguments
+                        ?.getLong(
+                            Screen.ExploreDetail.ARG_TOUR_SPOT_ID,
+                        )
                         ?: return@composable
+
+                val fromIntro =
+                    detailBackStackEntry.arguments
+                        ?.getBoolean(
+                            Screen.ExploreDetail.ARG_FROM_INTRO,
+                        )
+                        ?: false
 
                 ExploreDetailScreen(
                     tourSpotId = tourSpotId,
                     onBackClick = {
+                        /*
+                         * 인트로 캐러셀에서 들어온 상세 페이지라면
+                         * Explore 라우트의 인트로 상태를 완료로 변경합니다.
+                         *
+                         * 이 변경은 상세 화면에서 뒤로 나가는 시점에만
+                         * 발생하므로 앞으로 이동할 때 깜빡이지 않습니다.
+                         */
+                        if (fromIntro) {
+                            navController
+                                .getBackStackEntry(
+                                    Screen.Explore.route,
+                                )
+                                .savedStateHandle[
+                                EXPLORE_INTRO_FINISHED_KEY
+                            ] = true
+                        }
+
                         navController.popBackStack()
                     },
                     onShareClick = {
@@ -131,12 +271,19 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             navController.navigate(
                                 Screen.ExploreDetail.createRoute(
                                     tourSpotId = nearbyTourSpotId,
+                                    /*
+                                     * 인트로에서 들어온 상세 화면에서
+                                     * 주변 관광지로 이동한 경우에도
+                                     * 인트로 진입 상태를 유지합니다.
+                                     */
+                                    fromIntro = fromIntro,
                                 ),
                             )
                         }
                     },
                 )
             }
+
 
             /*
              * 도시별 추천여행 상세 화면
