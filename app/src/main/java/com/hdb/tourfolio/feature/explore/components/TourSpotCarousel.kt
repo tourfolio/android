@@ -42,8 +42,6 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
 import kotlin.math.absoluteValue
 
-private val CarouselAccent = Color(0xFFFF6248)
-
 @Composable
 fun TourSpotCarousel(
     items: List<TourSpotListItemUiModel>,

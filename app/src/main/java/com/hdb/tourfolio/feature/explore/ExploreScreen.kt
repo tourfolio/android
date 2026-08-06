@@ -147,7 +147,7 @@ fun ExploreScreen(
         Column(
             modifier =
                 Modifier.padding(horizontal = 22.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(17.dp),
         ) {
             themeTravelItems.forEach { item ->
                 PlaceCard(

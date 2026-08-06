@@ -89,6 +89,38 @@ fun SearchFilterBottomSheet(
         mutableStateOf(appliedRegions)
     }
 
+    val allTags =
+        remember {
+            TagType.entries.toSet()
+        }
+
+    val allThemes =
+        remember {
+            ThemeType.entries.toSet()
+        }
+
+    val allRegions =
+        remember {
+            RegionType.entries.toSet()
+        }
+
+    val hasAnySelection =
+        temporaryTags.isNotEmpty() ||
+            temporaryThemes.isNotEmpty() ||
+            temporaryRegions.isNotEmpty()
+
+    val allTagsSelected =
+        temporaryTags.isNotEmpty() &&
+            temporaryTags.containsAll(allTags)
+
+    val allThemesSelected =
+        temporaryThemes.isNotEmpty() &&
+            temporaryThemes.containsAll(allThemes)
+
+    val allRegionsSelected =
+        temporaryRegions.isNotEmpty() &&
+            temporaryRegions.containsAll(allRegions)
+
     val resultCount =
         remember(
             temporaryTags,
@@ -96,13 +128,35 @@ fun SearchFilterBottomSheet(
             temporaryRegions,
             allTourSpots,
         ) {
-            filterTourSpots(
-                items = allTourSpots,
-                selectedTags = temporaryTags,
-                selectedThemes = temporaryThemes,
-                selectedRegions = temporaryRegions,
-            ).size
+            if (!hasAnySelection) {
+                0
+            } else {
+                filterTourSpots(
+                    items = allTourSpots,
+                    selectedTags =
+                        if (allTagsSelected) {
+                            emptySet()
+                        } else {
+                            temporaryTags
+                        },
+                    selectedThemes =
+                        if (allThemesSelected) {
+                            emptySet()
+                        } else {
+                            temporaryThemes
+                        },
+                    selectedRegions =
+                        if (allRegionsSelected) {
+                            emptySet()
+                        } else {
+                            temporaryRegions
+                        },
+                ).size
+            }
         }
+
+    val isApplyEnabled =
+        hasAnySelection && resultCount > 0
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -158,11 +212,6 @@ fun SearchFilterBottomSheet(
 
             when (selectedTab) {
                 SearchFilterTab.TAG -> {
-                    val allTags =
-                        remember {
-                            TagType.entries.toSet()
-                        }
-
                     FilterOptionGrid(
                         options =
                             TagType.entries.map { type ->
@@ -197,11 +246,6 @@ fun SearchFilterBottomSheet(
                 }
 
                 SearchFilterTab.THEME -> {
-                    val allThemes =
-                        remember {
-                            ThemeType.entries.toSet()
-                        }
-
                     FilterOptionGrid(
                         options =
                             ThemeType.entries.map { type ->
@@ -236,11 +280,6 @@ fun SearchFilterBottomSheet(
                 }
 
                 SearchFilterTab.REGION -> {
-                    val allRegions =
-                        remember {
-                            RegionType.entries.toSet()
-                        }
-
                     FilterOptionGrid(
                         options =
                             RegionType.entries.map { type ->
@@ -317,23 +356,36 @@ fun SearchFilterBottomSheet(
                             .weight(2.7f)
                             .height(54.dp)
                             .background(
-                                color = Primary,
+                                color =
+                                    if (isApplyEnabled) {
+                                        Primary
+                                    } else {
+                                        Natural90
+                                    },
                                 shape = RoundedCornerShape(10.dp),
                             )
-                            .clickable {
-                                onApply(
-                                    temporaryTags,
-                                    temporaryThemes,
-                                    temporaryRegions,
-                                )
-                            },
+                            .clickable(
+                                enabled = isApplyEnabled,
+                                onClick = {
+                                    onApply(
+                                        temporaryTags,
+                                        temporaryThemes,
+                                        temporaryRegions,
+                                    )
+                                },
+                            ),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = "${resultCount}개의 관광지 보기",
                         style =
                             LocalAppTypography.current.bodyLarge.bold.copy(
-                                color = Natural100,
+                                color =
+                                    if (isApplyEnabled) {
+                                        Natural100
+                                    } else {
+                                        Natural70
+                                    },
                             ),
                     )
                 }

@@ -1,21 +1,16 @@
 package com.hdb.tourfolio.feature.explore
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 
 @Composable
 fun ExploreEntryScreen(
+    introFinished: Boolean,
+    onIntroFinished: () -> Unit,
+    onIntroTourSpotClick: (Long) -> Unit,
     onCityTravelClick: (Long) -> Unit,
     onTourSpotClick: (Long) -> Unit,
     onSearchClick: () -> Unit,
 ) {
-    var introFinished by rememberSaveable {
-        mutableStateOf(false)
-    }
-
     if (introFinished) {
         ExploreScreen(
             onCityTravelClick = onCityTravelClick,
@@ -24,9 +19,8 @@ fun ExploreEntryScreen(
         )
     } else {
         ExploreCarouselScreen(
-            onFinished = {
-                introFinished = true
-            },
+            onFinished = onIntroFinished,
+            onTourSpotClick = onIntroTourSpotClick,
         )
     }
 }

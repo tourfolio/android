@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,11 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.feature.explore.components.SearchAutocompleteContent
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.SearchBarStyle
 import com.hdb.tourfolio.feature.explore.components.SearchFilterBar
@@ -41,6 +43,7 @@ import com.hdb.tourfolio.feature.explore.components.SearchFilterBottomSheet
 import com.hdb.tourfolio.feature.explore.components.SearchFilterTab
 import com.hdb.tourfolio.feature.explore.components.SearchHomeSections
 import com.hdb.tourfolio.feature.explore.components.SearchResultCard
+import com.hdb.tourfolio.feature.explore.components.createAutocompleteKeywords
 import com.hdb.tourfolio.feature.explore.components.filterTourSpots
 import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
@@ -49,6 +52,7 @@ import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private enum class SearchPageMode {
@@ -70,6 +74,10 @@ fun ExploreSearchScreen(
         mutableStateOf(SearchPageMode.INITIAL)
     }
 
+    var isSearchFocused by remember {
+        mutableStateOf(false)
+    }
+
     var selectedTagNames by rememberSaveable {
         mutableStateOf(emptyList<String>())
     }
@@ -86,11 +94,16 @@ fun ExploreSearchScreen(
         mutableStateOf<SearchFilterTab?>(null)
     }
 
+    val focusManager =
+        LocalFocusManager.current
+
     val selectedTags =
         remember(selectedTagNames) {
             selectedTagNames
                 .mapNotNull { name ->
-                    TagType.entries.firstOrNull { it.name == name }
+                    TagType.entries.firstOrNull { type ->
+                        type.name == name
+                    }
                 }
                 .toSet()
         }
@@ -99,7 +112,9 @@ fun ExploreSearchScreen(
         remember(selectedThemeNames) {
             selectedThemeNames
                 .mapNotNull { name ->
-                    ThemeType.entries.firstOrNull { it.name == name }
+                    ThemeType.entries.firstOrNull { type ->
+                        type.name == name
+                    }
                 }
                 .toSet()
         }
@@ -108,7 +123,9 @@ fun ExploreSearchScreen(
         remember(selectedRegionNames) {
             selectedRegionNames
                 .mapNotNull { name ->
-                    RegionType.entries.firstOrNull { it.name == name }
+                    RegionType.entries.firstOrNull { type ->
+                        type.name == name
+                    }
                 }
                 .toSet()
         }
@@ -146,7 +163,12 @@ fun ExploreSearchScreen(
     val recommendedSpots =
         remember {
             TourSpotMockData.listItems.filter { item ->
-                item.id in listOf(2L, 1L, 4L)
+                item.id in
+                    listOf(
+                        2L,
+                        1L,
+                        4L,
+                    )
             }
         }
 
@@ -154,6 +176,19 @@ fun ExploreSearchScreen(
         selectedTags.isNotEmpty() ||
             selectedThemes.isNotEmpty() ||
             selectedRegions.isNotEmpty()
+
+    val autocompleteKeywords =
+        remember(query) {
+            createAutocompleteKeywords(
+                query = query,
+                tourSpots = TourSpotMockData.listItems,
+            )
+        }
+
+    val showAutocomplete =
+        isSearchFocused &&
+            query.isNotBlank() &&
+            autocompleteKeywords.isNotEmpty()
 
     val searchResults =
         remember(
@@ -166,9 +201,6 @@ fun ExploreSearchScreen(
             if (pageMode != SearchPageMode.RESULT) {
                 emptyList()
             } else if (hasAppliedFilters) {
-                /*
-                 * 필터가 적용된 경우 검색어를 사용하지 않고 전체 관광지 목 데이터에서 필터링
-                 */
                 filterTourSpots(
                     items = TourSpotMockData.listItems,
                     selectedTags = selectedTags,
@@ -176,7 +208,9 @@ fun ExploreSearchScreen(
                     selectedRegions = selectedRegions,
                 )
             } else {
-                searchTourSpots(query)
+                searchTourSpots(
+                    query = query,
+                )
             }
         }
 
@@ -186,21 +220,42 @@ fun ExploreSearchScreen(
         selectedRegionNames = emptyList()
     }
 
+    fun closeSearchInput() {
+        isSearchFocused = false
+        focusManager.clearFocus()
+    }
+
     fun submitSearch() {
-        val normalizedQuery = query.trim()
+        val normalizedQuery =
+            query.trim()
 
         if (normalizedQuery.isNotEmpty()) {
             query = normalizedQuery
 
-            /*
-             * 새로운 검색어를 입력해 검색하면 이전 필터 조건은 해제
-             */
             clearAppliedFilters()
+
             pageMode = SearchPageMode.RESULT
+
+            closeSearchInput()
         }
     }
 
+    fun selectAutocompleteKeyword(keyword: String) {
+        query = keyword
+
+        clearAppliedFilters()
+
+        pageMode = SearchPageMode.RESULT
+
+        closeSearchInput()
+    }
+
     fun handleBack() {
+        if (isSearchFocused) {
+            closeSearchInput()
+            return
+        }
+
         if (pageMode == SearchPageMode.RESULT) {
             query = ""
             clearAppliedFilters()
@@ -222,10 +277,14 @@ fun ExploreSearchScreen(
     ) {
         SearchHeader(
             query = query,
-            onQueryChange = {
-                query = it
+            onQueryChange = { newQuery ->
+                query = newQuery
             },
-            isResultMode = pageMode == SearchPageMode.RESULT,
+            isResultMode =
+                pageMode == SearchPageMode.RESULT,
+            onSearchFocusChanged = { focused ->
+                isSearchFocused = focused
+            },
             onBackClick = {
                 handleBack()
             },
@@ -234,54 +293,69 @@ fun ExploreSearchScreen(
             },
         )
 
-        when (pageMode) {
-            SearchPageMode.INITIAL -> {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(
-                                start = 22.dp,
-                                top = 34.dp,
-                                end = 22.dp,
-                                bottom = 32.dp,
-                            ),
-                ) {
-                    SearchHomeSections(
-                        recommendedTags = recommendedTags,
-                        popularKeywords = popularKeywords,
-                        recommendedSpots = recommendedSpots,
-                        onTagClick = { tag ->
-                            query = tag.displayName
-                            submitSearch()
+        if (showAutocomplete) {
+            SearchAutocompleteContent(
+                query = query,
+                keywords = autocompleteKeywords,
+                onKeywordClick = { keyword ->
+                    selectAutocompleteKeyword(keyword)
+                },
+            )
+        } else {
+            when (pageMode) {
+                SearchPageMode.INITIAL -> {
+                    Column(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .verticalScroll(
+                                    rememberScrollState(),
+                                )
+                                .padding(
+                                    start = 22.dp,
+                                    top = 16.dp,
+                                    end = 22.dp,
+                                    bottom = 32.dp,
+                                ),
+                    ) {
+                        SearchHomeSections(
+                            recommendedTags = recommendedTags,
+                            popularKeywords = popularKeywords,
+                            recommendedSpots = recommendedSpots,
+                            onTagClick = { tag ->
+                                query = tag.displayName
+                                submitSearch()
+                            },
+                            onKeywordClick = { keyword ->
+                                query = keyword
+                                submitSearch()
+                            },
+                            onSpotClick = onTourSpotClick,
+                        )
+                    }
+                }
+
+                SearchPageMode.RESULT -> {
+                    SearchResultContent(
+                        results = searchResults,
+                        selectedTags = selectedTags,
+                        selectedThemes = selectedThemes,
+                        selectedRegions = selectedRegions,
+                        onTagFilterClick = {
+                            openedFilterTab =
+                                SearchFilterTab.TAG
                         },
-                        onKeywordClick = { keyword ->
-                            query = keyword
-                            submitSearch()
+                        onThemeFilterClick = {
+                            openedFilterTab =
+                                SearchFilterTab.THEME
                         },
-                        onSpotClick = onTourSpotClick,
+                        onRegionFilterClick = {
+                            openedFilterTab =
+                                SearchFilterTab.REGION
+                        },
+                        onTourSpotClick = onTourSpotClick,
                     )
                 }
-            }
-
-            SearchPageMode.RESULT -> {
-                SearchResultContent(
-                    results = searchResults,
-                    selectedTags = selectedTags,
-                    selectedThemes = selectedThemes,
-                    selectedRegions = selectedRegions,
-                    onTagFilterClick = {
-                        openedFilterTab = SearchFilterTab.TAG
-                    },
-                    onThemeFilterClick = {
-                        openedFilterTab = SearchFilterTab.THEME
-                    },
-                    onRegionFilterClick = {
-                        openedFilterTab = SearchFilterTab.REGION
-                    },
-                    onTourSpotClick = onTourSpotClick,
-                )
             }
         }
     }
@@ -299,22 +373,31 @@ fun ExploreSearchScreen(
             onApply = { tags, themes, regions ->
                 selectedTagNames =
                     TagType.entries
-                        .filter { it in tags }
-                        .map { it.name }
+                        .filter { type ->
+                            type in tags
+                        }
+                        .map { type ->
+                            type.name
+                        }
 
                 selectedThemeNames =
                     ThemeType.entries
-                        .filter { it in themes }
-                        .map { it.name }
+                        .filter { type ->
+                            type in themes
+                        }
+                        .map { type ->
+                            type.name
+                        }
 
                 selectedRegionNames =
                     RegionType.entries
-                        .filter { it in regions }
-                        .map { it.name }
+                        .filter { type ->
+                            type in regions
+                        }
+                        .map { type ->
+                            type.name
+                        }
 
-                /*
-                 * 필터 적용 시 기존 검색어는 제거합니다.
-                 */
                 query = ""
                 pageMode = SearchPageMode.RESULT
                 openedFilterTab = null
@@ -328,6 +411,7 @@ private fun SearchHeader(
     query: String,
     onQueryChange: (String) -> Unit,
     isResultMode: Boolean,
+    onSearchFocusChanged: (Boolean) -> Unit,
     onBackClick: () -> Unit,
     onSearch: () -> Unit,
 ) {
@@ -351,13 +435,17 @@ private fun SearchHeader(
                 .fillMaxWidth()
                 .padding(
                     start = 14.dp,
-                    top = 22.dp,
+                    top = 18.dp,
+                    bottom = 18.dp,
                     end = 22.dp,
                 ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(id = backIconRes),
+            painter =
+                painterResource(
+                    id = backIconRes,
+                ),
             contentDescription = "뒤로 가기",
             modifier =
                 Modifier
@@ -366,7 +454,9 @@ private fun SearchHeader(
                     .clickable(onClick = onBackClick),
         )
 
-        Spacer(modifier = Modifier.size(16.dp))
+        Spacer(
+            modifier = Modifier.size(16.dp),
+        )
 
         SearchBar(
             value = query,
@@ -378,6 +468,7 @@ private fun SearchHeader(
                     SearchBarStyle.DEFAULT
                 },
             onSearch = onSearch,
+            onFocusChanged = onSearchFocusChanged,
             modifier = Modifier.weight(1f),
         )
     }
@@ -399,11 +490,12 @@ private fun SearchResultContent(
         contentPadding =
             PaddingValues(
                 start = 22.dp,
-                top = 20.dp,
+                top = 0.dp,
                 end = 22.dp,
-                bottom = 32.dp,
+                bottom = 12.dp,
             ),
-        verticalArrangement = Arrangement.spacedBy(38.dp),
+        verticalArrangement =
+            Arrangement.spacedBy(20.dp),
     ) {
         item {
             SearchFilterBar(
@@ -418,14 +510,21 @@ private fun SearchResultContent(
 
         if (results.isEmpty()) {
             item {
-                Text(
-                    text = "검색 결과가 없습니다.",
-                    style =
-                        LocalAppTypography.current.bodyLarge.medium.copy(
-                            color = Color(0xFF777777),
-                        ),
-                    modifier = Modifier.padding(top = 40.dp),
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 200.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "검색 결과가 없습니다.",
+                        style =
+                            LocalAppTypography.current.bodyLarge.medium.copy(
+                                color = Natural70,
+                            ),
+                    )
+                }
             }
         } else {
             items(

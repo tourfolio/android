@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.explore
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,9 +55,6 @@ import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private val DetailCardBackground = Color(0xFFFAFAFA)
-private val NoticeBackground = Color(0xFFFFF3F0)
-
 @Composable
 fun ExploreDetailScreen(
     tourSpotId: Long,
@@ -65,6 +63,9 @@ fun ExploreDetailScreen(
     onNearbySpotClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    BackHandler {
+        onBackClick()
+    }
     val detail =
         remember(tourSpotId) {
             TourSpotMockData.findDetailById(tourSpotId)

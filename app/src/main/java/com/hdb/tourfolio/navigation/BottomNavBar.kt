@@ -18,7 +18,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(
+    navController: NavController,
+    onDestinationSelected: (Screen) -> Unit = {},
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -42,6 +45,7 @@ fun BottomNavBar(navController: NavController) {
                             launchSingleTop = true
                             restoreState = true
                         }
+                        onDestinationSelected(item.screen)
                     }
                 },
                 icon = {
