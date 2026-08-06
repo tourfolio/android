@@ -28,7 +28,6 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
@@ -45,7 +44,6 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
-import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private val PlaceCardHeight = 124.dp

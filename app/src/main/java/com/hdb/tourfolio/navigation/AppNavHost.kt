@@ -29,7 +29,6 @@ import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.trade.TradeScreen
-import com.hdb.tourfolio.navigation.Screen.ExploreDetail.ARG_TOUR_SPOT_ID
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
     "explore_intro_finished"
@@ -56,29 +55,33 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         initialOffsetY = { fullHeight ->
                             fullHeight
                         },
-                        animationSpec = tween(
-                            durationMillis = 220,
-                        ),
+                        animationSpec =
+                            tween(
+                                durationMillis = 220,
+                            ),
                     ) +
-                            fadeIn(
-                                animationSpec = tween(
+                        fadeIn(
+                            animationSpec =
+                                tween(
                                     durationMillis = 180,
                                 ),
-                            ),
+                        ),
                 exit =
                     slideOutVertically(
                         targetOffsetY = { fullHeight ->
                             fullHeight
                         },
-                        animationSpec = tween(
-                            durationMillis = 220,
-                        ),
+                        animationSpec =
+                            tween(
+                                durationMillis = 220,
+                            ),
                     ) +
-                            fadeOut(
-                                animationSpec = tween(
+                        fadeOut(
+                            animationSpec =
+                                tween(
                                     durationMillis = 150,
                                 ),
-                            ),
+                        ),
             ) {
                 BottomNavBar(
                     navController = navController,
@@ -112,31 +115,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                  * 인트로 완료 여부를 관리합니다.
                  */
                 val introFinished by
-                exploreBackStackEntry.savedStateHandle
-                    .getStateFlow(
-                        key = EXPLORE_INTRO_FINISHED_KEY,
-                        initialValue = false,
-                    )
-                    .collectAsState()
+                    exploreBackStackEntry.savedStateHandle
+                        .getStateFlow(
+                            key = EXPLORE_INTRO_FINISHED_KEY,
+                            initialValue = false,
+                        )
+                        .collectAsState()
 
                 ExploreEntryScreen(
                     introFinished = introFinished,
-                    /*
-                     * 돋보기 아이콘 클릭 또는
-                     * 인트로 마지막 페이지 도달
-                     */
                     onIntroFinished = {
                         exploreBackStackEntry.savedStateHandle[
-                            EXPLORE_INTRO_FINISHED_KEY
+                            EXPLORE_INTRO_FINISHED_KEY,
                         ] = true
                     },
-                    /*
-                     * 인트로 관광지 클릭
-                     *
-                     * 여기서는 인트로 완료 상태를 바꾸지 않습니다.
-                     * 그래야 상세 페이지로 이동하는 중간에
-                     * ExploreScreen이 보이지 않습니다.
-                     */
                     onIntroTourSpotClick = { tourSpotId ->
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
@@ -152,9 +144,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             ),
                         )
                     },
-                    /*
-                     * 일반 ExploreScreen 관광지 클릭
-                     */
                     onTourSpotClick = { tourSpotId ->
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
@@ -193,8 +182,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             /*
-           * 관광지 상세 화면
-           */
+             * 관광지 상세 화면
+             */
             composable(
                 route = Screen.ExploreDetail.route,
                 arguments =
@@ -239,20 +228,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 ExploreDetailScreen(
                     tourSpotId = tourSpotId,
                     onBackClick = {
-                        /*
-                         * 인트로 캐러셀에서 들어온 상세 페이지라면
-                         * Explore 라우트의 인트로 상태를 완료로 변경합니다.
-                         *
-                         * 이 변경은 상세 화면에서 뒤로 나가는 시점에만
-                         * 발생하므로 앞으로 이동할 때 깜빡이지 않습니다.
-                         */
                         if (fromIntro) {
                             navController
                                 .getBackStackEntry(
                                     Screen.Explore.route,
                                 )
                                 .savedStateHandle[
-                                EXPLORE_INTRO_FINISHED_KEY
+                                EXPLORE_INTRO_FINISHED_KEY,
                             ] = true
                         }
 
@@ -271,11 +253,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             navController.navigate(
                                 Screen.ExploreDetail.createRoute(
                                     tourSpotId = nearbyTourSpotId,
-                                    /*
-                                     * 인트로에서 들어온 상세 화면에서
-                                     * 주변 관광지로 이동한 경우에도
-                                     * 인트로 진입 상태를 유지합니다.
-                                     */
                                     fromIntro = fromIntro,
                                 ),
                             )
@@ -283,7 +260,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     },
                 )
             }
-
 
             /*
              * 도시별 추천여행 상세 화면

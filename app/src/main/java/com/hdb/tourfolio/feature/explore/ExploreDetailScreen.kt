@@ -55,9 +55,6 @@ import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private val DetailCardBackground = Color(0xFFFAFAFA)
-private val NoticeBackground = Color(0xFFFFF3F0)
-
 @Composable
 fun ExploreDetailScreen(
     tourSpotId: Long,

@@ -89,11 +89,6 @@ fun SearchFilterBottomSheet(
         mutableStateOf(appliedRegions)
     }
 
-    /*
-     * 세 필터 유형 중 하나라도 선택되어 있는지 확인합니다.
-     * 아무것도 선택되지 않았다면 필터 결과를 전체 데이터로 처리하지 않고
-     * 0개로 표시합니다.
-     */
     val allTags =
         remember {
             TagType.entries.toSet()
@@ -109,23 +104,22 @@ fun SearchFilterBottomSheet(
             RegionType.entries.toSet()
         }
 
-
     val hasAnySelection =
         temporaryTags.isNotEmpty() ||
-                temporaryThemes.isNotEmpty() ||
-                temporaryRegions.isNotEmpty()
+            temporaryThemes.isNotEmpty() ||
+            temporaryRegions.isNotEmpty()
 
     val allTagsSelected =
         temporaryTags.isNotEmpty() &&
-                temporaryTags.containsAll(allTags)
+            temporaryTags.containsAll(allTags)
 
     val allThemesSelected =
         temporaryThemes.isNotEmpty() &&
-                temporaryThemes.containsAll(allThemes)
+            temporaryThemes.containsAll(allThemes)
 
     val allRegionsSelected =
         temporaryRegions.isNotEmpty() &&
-                temporaryRegions.containsAll(allRegions)
+            temporaryRegions.containsAll(allRegions)
 
     val resultCount =
         remember(

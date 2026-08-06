@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,8 +39,6 @@ import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
-
-private val OrangeAccent = Color(0xFFFF5C35)
 
 @Composable
 fun CarouselContent(
@@ -122,7 +119,6 @@ fun CarouselContent(
                     painter = painterResource(id = R.drawable.ic_location),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(OrangeAccent),
                 )
 
                 Spacer(modifier = Modifier.width(6.dp))
@@ -166,7 +162,7 @@ private fun CarouselThemeMark(
             modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(18.dp))
-                .background(OrangeAccent),
+                .background(Primary),
         contentAlignment = Alignment.Center,
     ) {
         Image(

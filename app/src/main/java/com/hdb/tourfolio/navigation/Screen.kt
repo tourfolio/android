@@ -33,8 +33,7 @@ sealed class Screen(val route: String) {
         fun createRoute(
             tourSpotId: Long,
             fromIntro: Boolean = false,
-        ): String =
-            "explore_detail/$tourSpotId?fromIntro=$fromIntro"
+        ): String = "explore_detail/$tourSpotId?fromIntro=$fromIntro"
     }
 }
 

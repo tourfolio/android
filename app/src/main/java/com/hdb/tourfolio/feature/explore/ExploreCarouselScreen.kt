@@ -28,9 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
 import com.hdb.tourfolio.feature.explore.mock.TourSpotDetailUiModel
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
-import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import kotlinx.coroutines.delay
@@ -70,8 +68,7 @@ fun ExploreCarouselScreen(
         )
 
     /*
-     * 마지막 Pager 페이지에 완전히 도착하면
-     * Navigation이 아니라 부모 상태만 변경합니다.
+     * 마지막 Pager 페이지에 완전히 도착하면 Navigation이 아니라 부모 상태만 변경
      */
     LaunchedEffect(pagerState.settledPage) {
         if (pagerState.settledPage == explorePageIndex) {
@@ -146,7 +143,7 @@ fun ExploreCarouselScreen(
                     totalCount = carouselItems.size,
                     onClick = {
                         onTourSpotClick(item.id)
-                    }
+                    },
                 )
 
                 ExploreCarouselHeader(
@@ -161,9 +158,6 @@ fun ExploreCarouselScreen(
                             ),
                 )
             } else {
-                /*
-                 * 스와이프하는 동안 실제 ExploreScreen이 보입니다.
-                 */
                 ExploreScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -189,7 +183,7 @@ private fun ExploreCarouselPage(
         Image(
             painter =
                 painterResource(
-                    id = item.imageRes
+                    id = item.imageRes,
                 ),
             contentDescription = item.title,
             modifier = Modifier.fillMaxSize(),
