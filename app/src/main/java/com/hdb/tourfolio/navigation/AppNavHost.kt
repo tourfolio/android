@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.hdb.tourfolio.feature.card.CardScreen
 import com.hdb.tourfolio.feature.explore.CityTravelDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
@@ -304,8 +305,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 QuestScreen()
             }
 
-            composable(Screen.Card.route) {
-                CardScreen()
+            /*
+             * 수집
+             */
+            composable(
+                route = Screen.Card.route,
+            ) {
+                CardScreen(
+                    onProfileClick = {
+                        // 추후 프로필 연결
+                    },
+                    onNotificationClick = {
+                        // 추후 알림 연결
+                    },
+                )
             }
         }
     }
@@ -330,15 +343,5 @@ fun QuestScreen() {
         contentAlignment = Alignment.Center,
     ) {
         Text(text = "업적")
-    }
-}
-
-@Composable
-fun CardScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "수집")
     }
 }
