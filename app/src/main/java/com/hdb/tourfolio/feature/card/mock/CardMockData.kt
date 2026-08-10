@@ -157,9 +157,7 @@ object CardMockData {
             )
         }
 
-    fun findDetailById(
-        id: Long,
-    ): CardDetailUiModel? =
+    fun findDetailById(id: Long): CardDetailUiModel? =
         detailItems.find { item ->
             item.id == id
         }

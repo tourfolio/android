@@ -35,9 +35,9 @@ import com.hdb.tourfolio.feature.card.mock.CardDetailUiModel
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
+import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural90
-import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural99
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary99
@@ -59,7 +59,6 @@ fun CardDetailBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         containerColor = Natural100,
-
         /*
          * 바텀시트가 나타날 때
          * CardScreen 뒤쪽을 어둡게 처리합니다.
@@ -446,9 +445,7 @@ private fun CardThemeInformationRow(
 }
 
 @Composable
-private fun AcquireGuide(
-    modifier: Modifier = Modifier,
-) {
+private fun AcquireGuide(modifier: Modifier = Modifier) {
     Row(
         modifier =
             modifier
@@ -514,5 +511,3 @@ private fun AcquireCardButton(
         )
     }
 }
-
-

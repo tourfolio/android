@@ -31,8 +31,8 @@ import com.hdb.tourfolio.feature.card.components.TourCard
 import com.hdb.tourfolio.feature.card.mock.CardListItemUiModel
 import com.hdb.tourfolio.feature.card.mock.CardMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
@@ -223,19 +223,19 @@ private fun filterCards(
     items.filter { item ->
         val matchesRegion =
             filterState.region == null ||
-                    item.regionType == filterState.region
+                item.regionType == filterState.region
 
         val matchesTheme =
             filterState.theme == null ||
-                    item.themeType == filterState.theme
+                item.themeType == filterState.theme
 
         val matchesRarity =
             filterState.rarity == null ||
-                    item.rarity == filterState.rarity
+                item.rarity == filterState.rarity
 
         matchesRegion &&
-                matchesTheme &&
-                matchesRarity
+            matchesTheme &&
+            matchesRarity
     }
 
 @Preview(

@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -40,10 +39,8 @@ import com.hdb.tourfolio.feature.card.mock.CardRarity
 import com.hdb.tourfolio.feature.explore.model.RegionType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
-import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
-import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural70
 import com.hdb.tourfolio.ui.theme.Primary
 
@@ -55,8 +52,8 @@ data class CardFilterState(
     val isAllSelected: Boolean
         get() =
             region == null &&
-                    theme == null &&
-                    rarity == null
+                theme == null &&
+                rarity == null
 }
 
 @Composable
@@ -256,11 +253,11 @@ private fun <T> FilterDropdownButton(
                         .rotate(
                             if (isSelected) {
                                 90f +
-                                        if (expanded) {
-                                            180f
-                                        } else {
-                                            0f
-                                        }
+                                    if (expanded) {
+                                        180f
+                                    } else {
+                                        0f
+                                    }
                             } else {
                                 if (expanded) {
                                     180f
@@ -335,4 +332,3 @@ private fun <T> FilterDropdownButton(
         }
     }
 }
-

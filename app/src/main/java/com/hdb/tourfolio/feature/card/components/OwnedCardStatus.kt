@@ -18,14 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural60
+import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary99
 
 @Composable
 fun OwnedCardStatus(
@@ -53,7 +54,7 @@ fun OwnedCardStatus(
             modifier
                 .fillMaxWidth()
                 .background(
-                    color = CardStatusBackground,
+                    color = Primary99,
                     shape = RoundedCornerShape(12.dp),
                 )
                 .padding(
@@ -114,7 +115,7 @@ private fun CardProgressIndicator(
             val inset = strokeWidth / 2
 
             drawArc(
-                color = ProgressTrackColor,
+                color = Natural90,
                 startAngle = -90f,
                 sweepAngle = 360f,
                 useCenter = false,
@@ -168,8 +169,3 @@ private fun CardProgressIndicator(
     }
 }
 
-private val CardStatusBackground =
-    Color(0xFFFFF5F2)
-
-private val ProgressTrackColor =
-    Color(0xFFE1E3E4)
