@@ -3,6 +3,8 @@ package com.hdb.tourfolio.di
 import com.google.gson.Gson
 import com.hdb.tourfolio.core.network.AuthApiService
 import com.hdb.tourfolio.core.network.AuthInterceptor
+import com.hdb.tourfolio.core.network.PortfolioApiService
+import com.hdb.tourfolio.core.network.StockApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,5 +54,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthApiService(retrofit: Retrofit): AuthApiService = retrofit.create(AuthApiService::class.java)
 
+    @Provides
+    @Singleton
+    fun provideStockApiService(retrofit: Retrofit): StockApiService = retrofit.create(StockApiService::class.java)
 
+    @Provides
+    @Singleton
+    fun providePortfolioApiService(retrofit: Retrofit): PortfolioApiService = retrofit.create(PortfolioApiService::class.java)
 }
