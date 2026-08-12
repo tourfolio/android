@@ -29,6 +29,7 @@ import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
+import com.hdb.tourfolio.feature.home.HomeScreen
 import com.hdb.tourfolio.feature.trade.TradeScreen
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
@@ -61,12 +62,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                                 durationMillis = 220,
                             ),
                     ) +
-                        fadeIn(
-                            animationSpec =
-                                tween(
-                                    durationMillis = 180,
-                                ),
-                        ),
+                            fadeIn(
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 180,
+                                    ),
+                            ),
                 exit =
                     slideOutVertically(
                         targetOffsetY = { fullHeight ->
@@ -77,12 +78,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                                 durationMillis = 220,
                             ),
                     ) +
-                        fadeOut(
-                            animationSpec =
-                                tween(
-                                    durationMillis = 150,
-                                ),
-                        ),
+                            fadeOut(
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 150,
+                                    ),
+                            ),
             ) {
                 BottomNavBar(
                     navController = navController,
@@ -116,12 +117,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                  * 인트로 완료 여부를 관리합니다.
                  */
                 val introFinished by
-                    exploreBackStackEntry.savedStateHandle
-                        .getStateFlow(
-                            key = EXPLORE_INTRO_FINISHED_KEY,
-                            initialValue = false,
-                        )
-                        .collectAsState()
+                exploreBackStackEntry.savedStateHandle
+                    .getStateFlow(
+                        key = EXPLORE_INTRO_FINISHED_KEY,
+                        initialValue = false,
+                    )
+                    .collectAsState()
 
                 ExploreEntryScreen(
                     introFinished = introFinished,
@@ -321,18 +322,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
         }
-    }
-}
-
-// TODO: 실제 화면 구성 후 제거
-
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "홈")
     }
 }
 
