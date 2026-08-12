@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.components
+package com.hdb.tourfolio.feature.trade.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,14 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.feature.trade.TradeTab
+import com.hdb.tourfolio.feature.trade.presentation.TradeTab
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
-import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural70
 import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary10
 
 @Composable
 fun TradeTabBar(
@@ -63,13 +61,6 @@ private fun TradeTabItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val textColor: Color =
-        if (selected) {
-            Natural10
-        } else {
-            Natural70
-        }
-
     Box(
         modifier =
             modifier
@@ -81,13 +72,8 @@ private fun TradeTabItem(
     ) {
         Text(
             text = tab.label,
-            style =
-                if (selected) {
-                    LocalAppTypography.current.bodySmall.bold
-                } else {
-                    LocalAppTypography.current.bodySmall.medium
-                },
-            color = textColor,
+            style = LocalAppTypography.current.bodySmall.bold,
+            color = Primary10,
         )
 
         if (selected) {

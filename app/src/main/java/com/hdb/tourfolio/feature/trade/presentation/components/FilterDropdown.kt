@@ -1,30 +1,30 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.components
+package com.hdb.tourfolio.feature.trade.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
@@ -32,6 +32,8 @@ import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural70
+
+private val DROPDOWN_MIN_WIDTH = 88.dp
 
 @Composable
 fun FilterDropdown(
@@ -44,40 +46,28 @@ fun FilterDropdown(
         mutableStateOf(false)
     }
 
-    var anchorWidthPx by remember {
-        mutableIntStateOf(0)
-    }
-
-    val density = LocalDensity.current
-
-    val menuWidth =
-        with(density) {
-            anchorWidthPx.toDp()
-        }
-
     Box(
         modifier = modifier,
     ) {
         Row(
             modifier =
                 Modifier
-                    .onGloballyPositioned { coordinates ->
-                        anchorWidthPx = coordinates.size.width
-                    }
                     .clickable {
                         expanded = true
                     }
                     .padding(
-                        horizontal = 5.dp,
-                        vertical = 0.dp,
+                        start = 5.dp,
                     ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
                 text = selectedOption,
-                style = LocalAppTypography.current.bodyLarge.bold,
+                style = LocalAppTypography.current.bodySmall.bold,
                 color = Natural70,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis,
             )
 
             Image(
@@ -109,15 +99,7 @@ fun FilterDropdown(
             onDismissRequest = {
                 expanded = false
             },
-            modifier =
-                if (anchorWidthPx > 0) {
-                    Modifier.size(
-                        width = menuWidth,
-                        height = androidx.compose.ui.unit.Dp.Unspecified,
-                    )
-                } else {
-                    Modifier
-                },
+            modifier = Modifier.widthIn(min = DROPDOWN_MIN_WIDTH),
             offset =
                 DpOffset(
                     x = 0.dp,
@@ -143,6 +125,9 @@ fun FilterDropdown(
                                     } else {
                                         Natural70
                                     },
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                     },
@@ -151,7 +136,7 @@ fun FilterDropdown(
                         expanded = false
                     },
                     contentPadding =
-                        androidx.compose.foundation.layout.PaddingValues(
+                        PaddingValues(
                             horizontal = 8.dp,
                             vertical = 0.dp,
                         ),

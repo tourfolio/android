@@ -1,5 +1,6 @@
 package com.hdb.tourfolio.navigation
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -28,7 +29,9 @@ import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
-import com.hdb.tourfolio.feature.trade.TradeScreen
+import com.hdb.tourfolio.feature.home.HomeScreen
+import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
+import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
     "explore_intro_finished"
@@ -293,7 +296,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             composable(Screen.Trade.route) {
-                TradeScreen()
+                TradeScreen(
+                    onStockClick = { stockId, stockName, currentPrice, prevPrice ->
+                        navController.navigate(
+                            Screen.StockDetail.createRoute(stockId, stockName, currentPrice, prevPrice),
+                        )
+                    },
+                )
             }
 
             composable(Screen.Home.route) {
@@ -307,21 +316,51 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             composable(Screen.Card.route) {
                 CardScreen()
             }
+
+            composable(
+                route = Screen.StockDetail.route,
+                arguments =
+                    listOf(
+                        navArgument("stockId") { type = NavType.LongType },
+                        navArgument("stockName") { type = NavType.StringType },
+                        navArgument("currentPrice") {
+                            type = NavType.LongType
+                            defaultValue = Screen.StockDetail.NO_VALUE
+                        },
+                        navArgument("prevPrice") {
+                            type = NavType.LongType
+                            defaultValue = Screen.StockDetail.NO_VALUE
+                        },
+                    ),
+            ) { backStackEntry ->
+                val stockId = backStackEntry.arguments?.getLong("stockId") ?: 0L
+                val stockName =
+                    backStackEntry.arguments
+                        ?.getString("stockName")
+                        ?.let { Uri.decode(it) }
+                        ?: ""
+                val currentPrice =
+                    backStackEntry.arguments
+                        ?.getLong("currentPrice")
+                        ?.takeIf { it != Screen.StockDetail.NO_VALUE }
+                val prevPrice =
+                    backStackEntry.arguments
+                        ?.getLong("prevPrice")
+                        ?.takeIf { it != Screen.StockDetail.NO_VALUE }
+
+                StockDetailScreen(
+                    stockId = stockId,
+                    stockName = stockName,
+                    initialCurrentPrice = currentPrice,
+                    initialPrevPrice = prevPrice,
+                    onBackClick = { navController.popBackStack() },
+                )
+            }
         }
     }
 }
 
 // TODO: 실제 화면 구성 후 제거
-
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "홈")
-    }
-}
 
 @Composable
 fun QuestScreen() {

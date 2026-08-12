@@ -1,5 +1,6 @@
 package com.hdb.tourfolio.navigation
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import com.hdb.tourfolio.R
 
@@ -34,6 +35,23 @@ sealed class Screen(val route: String) {
             tourSpotId: Long,
             fromIntro: Boolean = false,
         ): String = "explore_detail/$tourSpotId?fromIntro=$fromIntro"
+    }
+
+    data object StockDetail :
+        Screen("stock_detail/{stockId}/{stockName}?currentPrice={currentPrice}&prevPrice={prevPrice}") {
+        const val NO_VALUE = -1L
+
+        fun createRoute(
+            stockId: Long,
+            stockName: String,
+            currentPrice: Long? = null,
+            prevPrice: Long? = null,
+        ): String {
+            val base = "stock_detail/$stockId/${Uri.encode(stockName)}"
+            val currentPriceParam = currentPrice ?: NO_VALUE
+            val prevPriceParam = prevPrice ?: NO_VALUE
+            return "$base?currentPrice=$currentPriceParam&prevPrice=$prevPriceParam"
+        }
     }
 }
 

@@ -39,7 +39,7 @@ val Natural99 = Color(0xFFFAFAFA)
 val Natural100 = Color(0xFFFFFFFF)
 
 val Red = Color(0xFFED2626)
-val Blue = Color(0xFF264E2D)
+val Blue = Color(0xFF2642ED)
 
 val Primary = Primary70
 val PrimaryContainer = Natural99

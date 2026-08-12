@@ -1,4 +1,4 @@
-package com.hdb.tourfolio.feature.trade
+package com.hdb.tourfolio.feature.trade.presentation
 
 enum class TradeTab(
     val label: String,
