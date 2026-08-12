@@ -26,6 +26,7 @@ import com.hdb.tourfolio.feature.card.components.CardDetailBottomSheet
 import com.hdb.tourfolio.feature.card.components.CardFilterBar
 import com.hdb.tourfolio.feature.card.components.CardFilterState
 import com.hdb.tourfolio.feature.card.components.CardHeader
+import com.hdb.tourfolio.feature.card.components.LocationPermissionDialog
 import com.hdb.tourfolio.feature.card.components.OwnedCardStatus
 import com.hdb.tourfolio.feature.card.components.TourCard
 import com.hdb.tourfolio.feature.card.mock.CardListItemUiModel
@@ -50,6 +51,10 @@ fun CardScreen(
 
     var selectedCardId by remember {
         mutableStateOf<Long?>(null)
+    }
+
+    var showLocationPermissionDialog by remember {
+        mutableStateOf(false)
     }
 
     val selectedCardDetail =
@@ -209,8 +214,32 @@ fun CardScreen(
             },
             onAcquireClick = {
                 /*
-                 * 미획득 카드 방문 인증 / 카드 획득 기능
+                 * 위치 권한 안내 연결
                  */
+                showLocationPermissionDialog = true
+            },
+        )
+    }
+
+    /*
+    * 위치 권한 안내
+    * ↓
+    * Android 시스템 위치 권한창
+    */
+    if (showLocationPermissionDialog) {
+        LocationPermissionDialog(
+            onDismissRequest = {
+                showLocationPermissionDialog = false
+            },
+            onPreciseLocationGranted = {
+                showLocationPermissionDialog = false
+
+                /*
+                 * 다음 단계의 GPS 방문 검증 시작
+                 */
+            },
+            onPreciseLocationDenied = {
+                showLocationPermissionDialog = false
             },
         )
     }
