@@ -35,18 +35,15 @@ data class CardDetailUiModel(
     val rarity: CardRarity,
     val acquiredDate: String?,
     val isAcquired: Boolean,
-
     /*
      * 실제 API 이미지
      */
     val imageUrl: String? = null,
-
     /*
      * Preview / MockData 이미지
      */
     @DrawableRes
     val imageRes: Int? = null,
-
     /*
      * 상세 API 추가 정보
      */

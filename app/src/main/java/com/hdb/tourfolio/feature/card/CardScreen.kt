@@ -51,8 +51,8 @@ import com.hdb.tourfolio.feature.card.components.isPreciseLocationGranted
 import com.hdb.tourfolio.feature.card.components.shouldShowLocationPermissionFlow
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import kotlinx.coroutines.Job
@@ -77,19 +77,19 @@ fun CardScreen(
      * 수집 메인 조회 상태
      */
     val collectionUiState by
-    viewModel.uiState.collectAsStateWithLifecycle()
+        viewModel.uiState.collectAsStateWithLifecycle()
 
     /*
      * 카드 상세 조회 상태
      */
     val detailUiState by
-    viewModel.detailUiState.collectAsStateWithLifecycle()
+        viewModel.detailUiState.collectAsStateWithLifecycle()
 
     /*
      * 위치 검증 / 카드 획득 상태
      */
     val acquireUiState by
-    viewModel.acquireUiState.collectAsStateWithLifecycle()
+        viewModel.acquireUiState.collectAsStateWithLifecycle()
 
     var filterState by remember {
         mutableStateOf(
@@ -207,9 +207,9 @@ fun CardScreen(
     if (showExpandedCardImage) {
         val cardDetail =
             (
-                    detailUiState as?
-                            CardDetailUiState.Success
-                    )?.detail
+                detailUiState as?
+                    CardDetailUiState.Success
+            )?.detail
 
         if (cardDetail != null) {
             ExpandedImageScreen(
@@ -241,7 +241,6 @@ fun CardScreen(
                 success.acquiredAt,
             cardId =
                 success.cardId,
-
             onCollectionClick = {
                 selectedCardId =
                     null
@@ -264,7 +263,6 @@ fun CardScreen(
                             ?.name,
                 )
             },
-
             onCloseClick = {
                 selectedCardId =
                     null
@@ -288,7 +286,7 @@ fun CardScreen(
                 )
             },
             modifier =
-                modifier,
+            modifier,
         )
 
         return
@@ -370,9 +368,9 @@ fun CardScreen(
 
                 else ->
                     (
-                            detailUiState as?
-                                    CardDetailUiState.Success
-                            )?.detail?.title
+                        detailUiState as?
+                            CardDetailUiState.Success
+                    )?.detail?.title
                         ?: "관광지"
             }
 
@@ -383,10 +381,9 @@ fun CardScreen(
 
         LocationVerificationAnimationScreen(
             state =
-                verificationState,
+            verificationState,
             spotName =
-                spotName,
-
+            spotName,
             onCancelClick = {
                 currentLocationJob?.cancel()
 
@@ -398,11 +395,9 @@ fun CardScreen(
 
                 viewModel.clearAcquireState()
             },
-
             onCheckAgainClick = {
                 startLocationVerification()
             },
-
             onBackClick = {
                 currentLocationJob?.cancel()
 
@@ -419,7 +414,7 @@ fun CardScreen(
                 viewModel.clearCardDetail()
             },
             modifier =
-                modifier,
+            modifier,
         )
 
         return
@@ -455,7 +450,7 @@ fun CardScreen(
                     )
                 },
                 modifier =
-                    modifier,
+                modifier,
             )
         }
 
@@ -484,9 +479,9 @@ fun CardScreen(
                 ) {
                     CardHeader(
                         onProfileClick =
-                            onProfileClick,
+                        onProfileClick,
                         onNotificationClick =
-                            onNotificationClick,
+                        onNotificationClick,
                     )
 
                     Spacer(
@@ -515,15 +510,13 @@ fun CardScreen(
                      */
                     CardFilterBar(
                         filterState =
-                            filterState,
-
+                        filterState,
                         onAllClick = {
                             filterState =
                                 CardFilterState()
 
                             viewModel.fetchCollection()
                         },
-
                         onRegionSelected = { region ->
                             val newFilterState =
                                 filterState.copy(
@@ -548,7 +541,6 @@ fun CardScreen(
                                         ?.name,
                             )
                         },
-
                         onThemeSelected = { theme ->
                             val newFilterState =
                                 filterState.copy(
@@ -573,7 +565,6 @@ fun CardScreen(
                                         ?.name,
                             )
                         },
-
                         onRaritySelected = { rarity ->
                             val newFilterState =
                                 filterState.copy(
@@ -617,7 +608,7 @@ fun CardScreen(
                                 .medium
                                 .copy(
                                     color =
-                                        Natural60,
+                                    Natural60,
                                 ),
                     )
 
@@ -653,21 +644,21 @@ fun CardScreen(
                 ) {
                     items(
                         items =
-                            cards,
+                        cards,
                         key = { item ->
                             item.id
                         },
                     ) { item ->
                         TourCard(
                             item =
-                                item,
+                            item,
                             onClick = { cardId ->
                                 selectedCardId =
                                     cardId
 
                                 viewModel.fetchCardDetail(
                                     cardId =
-                                        cardId,
+                                    cardId,
                                 )
 
                                 onCardClick(
@@ -704,7 +695,7 @@ fun CardScreen(
                     selectedCardId?.let { cardId ->
                         viewModel.fetchCardDetail(
                             cardId =
-                                cardId,
+                            cardId,
                         )
                     }
                 },
@@ -722,7 +713,6 @@ fun CardScreen(
             CardDetailBottomSheet(
                 card =
                     detailState.detail,
-
                 onDismissRequest = {
                     selectedCardId =
                         null
@@ -730,11 +720,9 @@ fun CardScreen(
                     viewModel.clearCardDetail()
                     viewModel.clearAcquireState()
                 },
-
                 onExpandImageClick = {
                     showExpandedCardImage = true
                 },
-
                 /*
                  * 카드 획득하기
                  */
@@ -773,14 +761,12 @@ fun CardScreen(
                     locationDialogType =
                         null
                 },
-
                 onPreciseLocationGranted = {
                     locationDialogType =
                         null
 
                     startLocationVerification()
                 },
-
                 onPreciseLocationDenied = {
                     locationDialogType =
                         null
@@ -805,9 +791,7 @@ fun CardScreen(
 /*
  * spotName 정보 버그 처리 (추후 서버측에 수정 요청 예정)
  */
-private fun normalizeSpotName(
-    spotName: String,
-): String {
+private fun normalizeSpotName(spotName: String): String {
     val parts =
         spotName
             .split("/")
@@ -851,7 +835,7 @@ private fun CardLoading(
     ) {
         CircularProgressIndicator(
             color =
-                Primary,
+            Primary,
         )
     }
 }
@@ -894,7 +878,7 @@ private fun CardError(
                         )
                         .background(
                             color =
-                                Natural100,
+                            Natural100,
                             shape =
                                 androidx.compose.foundation.shape
                                     .RoundedCornerShape(
@@ -915,7 +899,7 @@ private fun CardError(
         ) {
             Text(
                 text =
-                    title,
+                title,
                 style =
                     LocalAppTypography
                         .current
@@ -923,7 +907,7 @@ private fun CardError(
                         .bold
                         .copy(
                             color =
-                                Natural10,
+                            Natural10,
                         ),
             )
 
@@ -936,7 +920,7 @@ private fun CardError(
 
             Text(
                 text =
-                    message,
+                message,
                 style =
                     LocalAppTypography
                         .current
@@ -944,7 +928,7 @@ private fun CardError(
                         .medium
                         .copy(
                             color =
-                                Natural60,
+                            Natural60,
                         ),
             )
 
@@ -957,7 +941,7 @@ private fun CardError(
 
             TextButton(
                 onClick =
-                    onRetryClick,
+                onRetryClick,
             ) {
                 Text(
                     text =
@@ -969,7 +953,7 @@ private fun CardError(
                             .bold
                             .copy(
                                 color =
-                                    Primary,
+                                Primary,
                             ),
                 )
             }
@@ -977,7 +961,7 @@ private fun CardError(
             if (onDismissClick != null) {
                 TextButton(
                     onClick =
-                        onDismissClick,
+                    onDismissClick,
                 ) {
                     Text(
                         text =
@@ -989,7 +973,7 @@ private fun CardError(
                                 .medium
                                 .copy(
                                     color =
-                                        Natural60,
+                                    Natural60,
                                 ),
                     )
                 }

@@ -10,10 +10,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CardApiService {
-
     /*
-    * 수집 메인 조회
-    */
+     * 수집 메인 조회
+     */
     @Authenticated
     @GET("api/v1/collection")
     suspend fun getCollection(

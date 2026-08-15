@@ -78,242 +78,239 @@ sealed interface CardAcquireUiState {
 
 @HiltViewModel
 class CardViewModel
-@Inject
-constructor(
-    private val cardRepository: CardRepository,
-) : ViewModel() {
-
+    @Inject
+    constructor(
+        private val cardRepository: CardRepository,
+    ) : ViewModel() {
     /*
      * 수집 메인 조회
      */
-    private val _uiState =
-        MutableStateFlow<CardCollectionUiState>(
-            CardCollectionUiState.Loading,
-        )
+        private val _uiState =
+            MutableStateFlow<CardCollectionUiState>(
+                CardCollectionUiState.Loading,
+            )
 
-    val uiState: StateFlow<CardCollectionUiState> =
-        _uiState.asStateFlow()
+        val uiState: StateFlow<CardCollectionUiState> =
+            _uiState.asStateFlow()
 
     /*
      * 카드 상세 조회
      */
-    private val _detailUiState =
-        MutableStateFlow<CardDetailUiState>(
-            CardDetailUiState.Idle,
-        )
+        private val _detailUiState =
+            MutableStateFlow<CardDetailUiState>(
+                CardDetailUiState.Idle,
+            )
 
-    val detailUiState: StateFlow<CardDetailUiState> =
-        _detailUiState.asStateFlow()
+        val detailUiState: StateFlow<CardDetailUiState> =
+            _detailUiState.asStateFlow()
 
     /*
      * 위치 검증 / 카드 획득
      */
-    private val _acquireUiState =
-        MutableStateFlow<CardAcquireUiState>(
-            CardAcquireUiState.Idle,
-        )
+        private val _acquireUiState =
+            MutableStateFlow<CardAcquireUiState>(
+                CardAcquireUiState.Idle,
+            )
 
-    val acquireUiState: StateFlow<CardAcquireUiState> =
-        _acquireUiState.asStateFlow()
+        val acquireUiState: StateFlow<CardAcquireUiState> =
+            _acquireUiState.asStateFlow()
 
     /*
      * 재시도하거나 취소할 때 이전 요청의 결과가 뒤늦게 들어오는 것을 방지
      */
-    private var acquireJob: Job? = null
+        private var acquireJob: Job? = null
 
-    init {
-        fetchCollection()
-    }
+        init {
+            fetchCollection()
+        }
 
     /*
      * 수집 메인 조회
      */
-    fun fetchCollection(
-        region: String? = null,
-        theme: String? = null,
-        rarity: String? = null,
-    ) {
-        viewModelScope.launch {
-            _uiState.value =
-                CardCollectionUiState.Loading
+        fun fetchCollection(
+            region: String? = null,
+            theme: String? = null,
+            rarity: String? = null,
+        ) {
+            viewModelScope.launch {
+                _uiState.value =
+                    CardCollectionUiState.Loading
 
-            _uiState.value =
-                try {
-                    val response =
-                        cardRepository.getCollection(
-                            region = region,
-                            theme = theme,
-                            rarity = rarity,
+                _uiState.value =
+                    try {
+                        val response =
+                            cardRepository.getCollection(
+                                region = region,
+                                theme = theme,
+                                rarity = rarity,
+                            )
+
+                        CardCollectionUiState.Success(
+                            summary =
+                                CardCollectionSummary(
+                                    collectionRate =
+                                        response.collectionRate,
+                                    ownedCount =
+                                        response.ownedCount,
+                                    totalCount =
+                                        response.totalCount,
+                                ),
+                            cards =
+                                response.cards.map { card ->
+                                    card.toUiModel()
+                                },
                         )
-
-                    CardCollectionUiState.Success(
-                        summary =
-                            CardCollectionSummary(
-                                collectionRate =
-                                    response.collectionRate,
-                                ownedCount =
-                                    response.ownedCount,
-                                totalCount =
-                                    response.totalCount,
-                            ),
-                        cards =
-                            response.cards.map { card ->
-                                card.toUiModel()
-                            },
-                    )
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    CardCollectionUiState.Error(
-                        message =
-                            e.message
-                                ?: "카드 목록을 불러오지 못했습니다.",
-                    )
-                }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        CardCollectionUiState.Error(
+                            message =
+                                e.message
+                                    ?: "카드 목록을 불러오지 못했습니다.",
+                        )
+                    }
+            }
         }
-    }
 
     /*
      * 카드 상세 조회
      */
-    fun fetchCardDetail(
-        cardId: Long,
-    ) {
-        viewModelScope.launch {
-            _detailUiState.value =
-                CardDetailUiState.Loading
+        fun fetchCardDetail(cardId: Long) {
+            viewModelScope.launch {
+                _detailUiState.value =
+                    CardDetailUiState.Loading
 
-            _detailUiState.value =
-                try {
-                    val response =
-                        cardRepository.getCardDetail(
-                            cardId = cardId,
+                _detailUiState.value =
+                    try {
+                        val response =
+                            cardRepository.getCardDetail(
+                                cardId = cardId,
+                            )
+
+                        CardDetailUiState.Success(
+                            detail =
+                                response.toUiModel(),
                         )
-
-                    CardDetailUiState.Success(
-                        detail =
-                            response.toUiModel(),
-                    )
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    CardDetailUiState.Error(
-                        message =
-                            e.message
-                                ?: "카드 상세 정보를 불러오지 못했습니다.",
-                    )
-                }
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        CardDetailUiState.Error(
+                            message =
+                                e.message
+                                    ?: "카드 상세 정보를 불러오지 못했습니다.",
+                        )
+                    }
+            }
         }
-    }
 
-    fun clearCardDetail() {
-        _detailUiState.value =
-            CardDetailUiState.Idle
-    }
+        fun clearCardDetail() {
+            _detailUiState.value =
+                CardDetailUiState.Idle
+        }
 
     /*
      * 현재 위치 ↔ 관광지 좌표 검증 후 카드 획득
      */
-    fun verifyLocationAndAcquire(
-        cardId: Long,
-        userLatitude: Double,
-        userLongitude: Double,
-    ) {
+        fun verifyLocationAndAcquire(
+            cardId: Long,
+            userLatitude: Double,
+            userLongitude: Double,
+        ) {
         /*
          * 위치 확인을 연속으로 누른 경우 기존 작업을 먼저 취소합니다.
          */
-        acquireJob?.cancel()
+            acquireJob?.cancel()
 
-        acquireJob =
-            viewModelScope.launch {
-                _acquireUiState.value =
-                    CardAcquireUiState.Checking
+            acquireJob =
+                viewModelScope.launch {
+                    _acquireUiState.value =
+                        CardAcquireUiState.Checking
 
-                try {
+                    try {
                     /*
                      * 1. 관광지 좌표 조회
                      */
-                    val location =
-                        cardRepository.getCardLocation(
-                            cardId = cardId,
-                        )
+                        val location =
+                            cardRepository.getCardLocation(
+                                cardId = cardId,
+                            )
 
                     /*
                      * 2. 앱 내부 거리 계산
                      */
-                    val distanceMeters =
-                        calculateDistanceMeters(
-                            startLatitude =
+                        val distanceMeters =
+                            calculateDistanceMeters(
+                                startLatitude =
                                 userLatitude,
-                            startLongitude =
+                                startLongitude =
                                 userLongitude,
-                            endLatitude =
-                                location.latitude,
-                            endLongitude =
-                                location.longitude,
-                        )
+                                endLatitude =
+                                    location.latitude,
+                                endLongitude =
+                                    location.longitude,
+                            )
 
                     /*
                      * 3. 200m 초과
                      */
-                    if (
-                        distanceMeters >
-                        CARD_ACQUIRE_DISTANCE_METERS
-                    ) {
-                        _acquireUiState.value =
-                            CardAcquireUiState.TooFar(
-                                spotName =
-                                    location.spotName,
-                                distanceMeters =
+                        if (
+                            distanceMeters >
+                            CARD_ACQUIRE_DISTANCE_METERS
+                        ) {
+                            _acquireUiState.value =
+                                CardAcquireUiState.TooFar(
+                                    spotName =
+                                        location.spotName,
+                                    distanceMeters =
                                     distanceMeters,
-                            )
+                                )
 
-                        return@launch
-                    }
+                            return@launch
+                        }
 
                     /*
                      * 4. 200m 이하
                      */
-                    val acquired =
-                        cardRepository.acquireCard(
-                            cardId = cardId,
-                        )
+                        val acquired =
+                            cardRepository.acquireCard(
+                                cardId = cardId,
+                            )
 
-                    _acquireUiState.value =
-                        CardAcquireUiState.Success(
-                            cardId =
-                                acquired.cardId,
-                            cardName =
-                                acquired.cardName,
-                            rarity =
-                                acquired.rarity,
-                            acquiredAt =
-                                acquired.acquiredAt,
-                        )
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (e: Exception) {
-                    _acquireUiState.value =
-                        CardAcquireUiState.Error(
-                            message =
-                                e.message
-                                    ?: "카드 획득 중 오류가 발생했습니다.",
-                        )
+                        _acquireUiState.value =
+                            CardAcquireUiState.Success(
+                                cardId =
+                                    acquired.cardId,
+                                cardName =
+                                    acquired.cardName,
+                                rarity =
+                                    acquired.rarity,
+                                acquiredAt =
+                                    acquired.acquiredAt,
+                            )
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        _acquireUiState.value =
+                            CardAcquireUiState.Error(
+                                message =
+                                    e.message
+                                        ?: "카드 획득 중 오류가 발생했습니다.",
+                            )
+                    }
                 }
-            }
-    }
+        }
 
     /*
      * 위치 확인 / 카드 획득 흐름 종료 : 진행 중인 API 요청까지 취소합니다.
      */
-    fun clearAcquireState() {
-        acquireJob?.cancel()
-        acquireJob = null
+        fun clearAcquireState() {
+            acquireJob?.cancel()
+            acquireJob = null
 
-        _acquireUiState.value =
-            CardAcquireUiState.Idle
+            _acquireUiState.value =
+                CardAcquireUiState.Idle
+        }
     }
-}
 
 /*
  * 목록 DTO → UI Model

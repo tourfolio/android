@@ -57,7 +57,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         !hideBottomBar &&
             bottomNavItems.any { bottomNavItem ->
                 bottomNavItem.screen.route == currentRoute
-        }
+            }
 
     Scaffold(
         bottomBar = {
@@ -73,12 +73,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                                 durationMillis = 220,
                             ),
                     ) +
-                            fadeIn(
-                                animationSpec =
-                                    tween(
-                                        durationMillis = 180,
-                                    ),
-                            ),
+                        fadeIn(
+                            animationSpec =
+                                tween(
+                                    durationMillis = 180,
+                                ),
+                        ),
                 exit =
                     slideOutVertically(
                         targetOffsetY = { fullHeight ->
@@ -89,12 +89,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                                 durationMillis = 220,
                             ),
                     ) +
-                            fadeOut(
-                                animationSpec =
-                                    tween(
-                                        durationMillis = 150,
-                                    ),
-                            ),
+                        fadeOut(
+                            animationSpec =
+                                tween(
+                                    durationMillis = 150,
+                                ),
+                        ),
             ) {
                 BottomNavBar(
                     navController = navController,
@@ -127,12 +127,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 route = Screen.Explore.route,
             ) { exploreBackStackEntry ->
                 val introFinished by
-                exploreBackStackEntry.savedStateHandle
-                    .getStateFlow(
-                        key = EXPLORE_INTRO_FINISHED_KEY,
-                        initialValue = false,
-                    )
-                    .collectAsState()
+                    exploreBackStackEntry.savedStateHandle
+                        .getStateFlow(
+                            key = EXPLORE_INTRO_FINISHED_KEY,
+                            initialValue = false,
+                        )
+                        .collectAsState()
 
                 ExploreEntryScreen(
                     introFinished = introFinished,

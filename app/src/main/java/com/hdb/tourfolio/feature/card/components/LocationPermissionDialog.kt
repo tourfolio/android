@@ -35,8 +35,8 @@ import androidx.core.content.ContextCompat
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary99
 
@@ -51,9 +51,7 @@ enum class LocationDialogType {
     PERMISSION_REQUIRED,
 }
 
-fun shouldShowLocationPermissionFlow(
-    context: Context,
-): Boolean {
+fun shouldShowLocationPermissionFlow(context: Context): Boolean {
     if (
         isPreciseLocationGranted(
             context = context,
@@ -85,9 +83,7 @@ fun shouldShowLocationPermissionFlow(
 /*
  * 현재 정확한 위치 권한이 이미 허용되어 있는지
  */
-fun isPreciseLocationGranted(
-    context: Context,
-): Boolean =
+fun isPreciseLocationGranted(context: Context): Boolean =
     ContextCompat.checkSelfPermission(
         context,
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -109,7 +105,7 @@ fun LocationPermissionDialog(
         ) { permissions ->
             val fineLocationGranted =
                 permissions[
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    Manifest.permission.ACCESS_FINE_LOCATION,
                 ] == true
 
             if (fineLocationGranted) {
@@ -145,10 +141,10 @@ fun LocationPermissionDialog(
         iconRes = R.drawable.ic_location,
         title =
             "Tourfolio가 내 위치에 접근하도록\n" +
-                    "허용하시겠어요?",
+                "허용하시겠어요?",
         description =
             "관광지 방문을 인증해 카드를 획득하려면\n" +
-                    "위치 정보가 필요해요",
+                "위치 정보가 필요해요",
         primaryButtonText = "위치 확인하기",
         onPrimaryClick = {
             requestLocationPermission()
@@ -163,15 +159,13 @@ fun LocationPermissionDialog(
  * 반복 거부 등으로 Android 시스템 권한창을 더 이상 요청할 수 없는 경우
  */
 @Composable
-fun LocationPermissionRequiredDialog(
-    onDismissRequest: () -> Unit,
-) {
+fun LocationPermissionRequiredDialog(onDismissRequest: () -> Unit) {
     LocationGuideDialog(
         iconRes = R.drawable.ic_info,
         title = "위치 권한이 필요해요",
         description =
             "관광지 카드를 획득하려면\n" +
-                    "위치 권한을 허용해야 해요",
+                "위치 권한을 허용해야 해요",
         primaryButtonText = "닫기",
         onPrimaryClick = onDismissRequest,
         onDismissRequest = onDismissRequest,
@@ -323,9 +317,7 @@ private fun LocationGuideDialog(
 /*
  * 위치 권한을 한 번이라도 요청했는지 저장
  */
-private fun hasRequestedLocationPermission(
-    context: Context,
-): Boolean =
+private fun hasRequestedLocationPermission(context: Context): Boolean =
     context
         .getSharedPreferences(
             LOCATION_PERMISSION_PREFS,
@@ -336,9 +328,7 @@ private fun hasRequestedLocationPermission(
             false,
         )
 
-private fun markLocationPermissionRequested(
-    context: Context,
-) {
+private fun markLocationPermissionRequested(context: Context) {
     context
         .getSharedPreferences(
             LOCATION_PERMISSION_PREFS,

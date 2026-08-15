@@ -8,12 +8,10 @@ import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
 import androidx.core.os.CancellationSignal
-import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
-suspend fun getCurrentPreciseLocation(
-    context: Context,
-): Location? =
+suspend fun getCurrentPreciseLocation(context: Context): Location? =
     suspendCancellableCoroutine { continuation ->
         val hasPermission =
             ContextCompat.checkSelfPermission(

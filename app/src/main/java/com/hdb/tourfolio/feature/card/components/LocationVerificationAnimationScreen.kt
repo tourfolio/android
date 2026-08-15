@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural30
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import kotlinx.coroutines.delay
 
@@ -109,11 +109,11 @@ fun LocationVerificationAnimationScreen(
                 when (state) {
                     LocationVerificationAnimationState.CHECKING ->
                         "내 위치와 $spotName 획득 시점을 대조하는 중 입니다\n" +
-                                "잠시만 기다려 주세요"
+                            "잠시만 기다려 주세요"
 
                     LocationVerificationAnimationState.TOO_FAR ->
                         "$spotName 200m 반경 안으로 이동하신 후\n" +
-                                "위치 확인을 다시 눌러주세요"
+                            "위치 확인을 다시 눌러주세요"
                 },
             style =
                 LocalAppTypography.current.bodyLarge.medium.copy(
@@ -161,9 +161,7 @@ fun LocationVerificationAnimationScreen(
  * 위치 확인 중 애니메이션
  */
 @Composable
-private fun CheckingLocationAnimation(
-    modifier: Modifier = Modifier,
-) {
+private fun CheckingLocationAnimation(modifier: Modifier = Modifier) {
     val frames =
         remember {
             listOf(
@@ -212,9 +210,7 @@ private fun CheckingLocationAnimation(
  * 거리가 먼 경우 애니메이션
  */
 @Composable
-private fun TooFarLocationAnimation(
-    modifier: Modifier = Modifier,
-) {
+private fun TooFarLocationAnimation(modifier: Modifier = Modifier) {
     val infiniteTransition =
         rememberInfiniteTransition(
             label = "tooFarAnimation",
@@ -223,57 +219,57 @@ private fun TooFarLocationAnimation(
     val cycleDuration = 2500
 
     val rotation by
-    infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 0f,
-        animationSpec =
-            infiniteRepeatable(
-                animation =
-                    keyframes {
-                        durationMillis = cycleDuration
+        infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 0f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        keyframes {
+                            durationMillis = cycleDuration
 
-                        0f at 0
-                        -90f at 180
-                        -180f at 400
-                        -270f at 630
-                        -360f at 900
+                            0f at 0
+                            -90f at 180
+                            -180f at 400
+                            -270f at 630
+                            -360f at 900
 
-                        -360f at cycleDuration
-                    },
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "groundRotation",
-    )
+                            -360f at cycleDuration
+                        },
+                    repeatMode = RepeatMode.Restart,
+                ),
+            label = "groundRotation",
+        )
 
     val logoAlpha by
-    infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 0f,
-        animationSpec =
-            infiniteRepeatable(
-                animation =
-                    keyframes {
-                        durationMillis = cycleDuration
+        infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 0f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        keyframes {
+                            durationMillis = cycleDuration
 
-                        0f at 0
-                        0f at 1050
+                            0f at 0
+                            0f at 1050
 
-                        0.3f at 1150
-                        0.7f at 1250
-                        1f at 1350
+                            0.3f at 1150
+                            0.7f at 1250
+                            1f at 1350
 
-                        1f at 1800
+                            1f at 1800
 
-                        0.7f at 1950
-                        0.3f at 2120
-                        0f at 2300
+                            0.7f at 1950
+                            0.3f at 2120
+                            0f at 2300
 
-                        0f at cycleDuration
-                    },
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "logoAlpha",
-    )
+                            0f at cycleDuration
+                        },
+                    repeatMode = RepeatMode.Restart,
+                ),
+            label = "logoAlpha",
+        )
 
     Box(
         modifier =

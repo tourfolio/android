@@ -65,8 +65,5 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCardApiService(
-        retrofit: Retrofit,
-    ): CardApiService =
-        retrofit.create(CardApiService::class.java)
+    fun provideCardApiService(retrofit: Retrofit): CardApiService = retrofit.create(CardApiService::class.java)
 }

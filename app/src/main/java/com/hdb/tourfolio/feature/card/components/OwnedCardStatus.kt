@@ -168,4 +168,3 @@ private fun CardProgressIndicator(
         )
     }
 }
-
