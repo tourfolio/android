@@ -14,6 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -23,11 +26,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.hdb.tourfolio.feature.card.CardScreen
 import com.hdb.tourfolio.feature.explore.CityTravelDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
 import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
+import com.hdb.tourfolio.feature.home.HomeScreen
 import com.hdb.tourfolio.feature.trade.TradeScreen
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
@@ -39,12 +44,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     /*
+     * 같은 Route 이지만 BottomNavBar를 숨겨야 하는 경우 사용
+     */
+    var hideBottomBar by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    /*
      * 하단 내비게이션의 메인 화면 라우트에서만 BottomNavBar를 표시(?)
      */
     val showBottomBar =
-        bottomNavItems.any { bottomNavItem ->
-            bottomNavItem.screen.route == currentRoute
-        }
+        !hideBottomBar &&
+            bottomNavItems.any { bottomNavItem ->
+                bottomNavItem.screen.route == currentRoute
+            }
 
     Scaffold(
         bottomBar = {
@@ -86,6 +99,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 BottomNavBar(
                     navController = navController,
                     onDestinationSelected = { screen ->
+
+                        hideBottomBar = false
+
                         if (screen == Screen.Explore) {
                             navController
                                 .getBackStackEntry(Screen.Explore.route)
@@ -110,10 +126,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             composable(
                 route = Screen.Explore.route,
             ) { exploreBackStackEntry ->
-                /*
-                 * Explore 라우트의 SavedStateHandle에서
-                 * 인트로 완료 여부를 관리합니다.
-                 */
                 val introFinished by
                     exploreBackStackEntry.savedStateHandle
                         .getStateFlow(
@@ -304,22 +316,26 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 QuestScreen()
             }
 
-            composable(Screen.Card.route) {
-                CardScreen()
+            /*
+             * 수집
+             */
+            composable(
+                route = Screen.Card.route,
+            ) {
+                CardScreen(
+                    onProfileClick = {
+                        // 추후 프로필 연결
+                    },
+                    onNotificationClick = {
+                        // 추후 알림 연결
+                    },
+                    onExpandedImageVisibilityChange = { isExpanded ->
+                        hideBottomBar =
+                            isExpanded
+                    },
+                )
             }
         }
-    }
-}
-
-// TODO: 실제 화면 구성 후 제거
-
-@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "홈")
     }
 }
 
@@ -330,15 +346,5 @@ fun QuestScreen() {
         contentAlignment = Alignment.Center,
     ) {
         Text(text = "업적")
-    }
-}
-
-@Composable
-fun CardScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "수집")
     }
 }
