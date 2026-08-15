@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.card.mock.CardListItemUiModel
 import com.hdb.tourfolio.feature.card.mock.CardRarity
@@ -51,16 +52,50 @@ fun TourCard(
                     onClick(item.id)
                 },
     ) {
-        Image(
-            painter =
-                painterResource(
-                    id = item.imageRes,
-                ),
-            contentDescription = item.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
+        /*
+         * 실제 API 데이터
+         *
+         * imageUrl이 존재하면
+         * 서버에서 받은 네트워크 이미지를 사용합니다.
+         */
+        if (!item.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = item.imageUrl,
+                contentDescription = item.title,
+                modifier =
+                    Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        } else if (item.imageRes != null) {
+            /*
+             * Preview / MockData
+             *
+             * imageUrl이 없고 imageRes가 있다면
+             * 기존 drawable 이미지를 사용합니다.
+             */
+            Image(
+                painter =
+                    painterResource(
+                        id = item.imageRes,
+                    ),
+                contentDescription = item.title,
+                modifier =
+                    Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+        }
 
+        /*
+         * 미획득 카드
+         *
+         * API:
+         * isOwned = false
+         *
+         * ↓ mapper
+         *
+         * UI:
+         * isAcquired = false
+         */
         if (!item.isAcquired) {
             Box(
                 modifier =
@@ -86,11 +121,16 @@ fun TourCard(
             )
         }
 
+        /*
+         * 카드 이름
+         */
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                    .align(
+                        Alignment.BottomCenter,
+                    )
                     .padding(
                         horizontal = 10.dp,
                         vertical = 8.dp,
@@ -126,12 +166,12 @@ private fun AcquiredTourCardPreview() {
                     rarity = CardRarity.RARE,
                     acquiredDate = "2026.05.18",
                     isAcquired = true,
+                    imageUrl = null,
                     imageRes = R.drawable.bg_namsan_demo,
                 ),
             onClick = {},
             modifier =
-                Modifier
-                    .padding(16.dp),
+                Modifier.padding(16.dp),
         )
     }
 }
@@ -153,12 +193,12 @@ private fun LockedTourCardPreview() {
                     rarity = CardRarity.EPIC,
                     acquiredDate = null,
                     isAcquired = false,
+                    imageUrl = null,
                     imageRes = R.drawable.bg_cheomseongdae_demo,
                 ),
             onClick = {},
             modifier =
-                Modifier
-                    .padding(16.dp),
+                Modifier.padding(16.dp),
         )
     }
 }

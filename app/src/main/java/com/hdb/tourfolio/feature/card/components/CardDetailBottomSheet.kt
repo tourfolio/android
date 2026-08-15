@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.card.components
 
+import android.R.id.message
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.card.mock.CardDetailUiModel
 import com.hdb.tourfolio.feature.explore.model.ThemeType
@@ -157,6 +159,10 @@ fun CardDetailBottomSheet(
                 )
 
                 AcquireGuide(
+                    message =
+                        card.message.ifBlank {
+                            "관광지를 직접 방문하여 카드를 획득하세요"
+                        },
                     modifier =
                         Modifier.padding(
                             horizontal = 22.dp,
@@ -212,16 +218,32 @@ private fun CardDetailImage(
                     RoundedCornerShape(10.dp),
                 ),
     ) {
-        Image(
-            painter =
-                painterResource(
-                    id = card.imageRes,
-                ),
-            contentDescription = card.title,
-            modifier =
-                Modifier.matchParentSize(),
-            contentScale = ContentScale.Crop,
-        )
+        if (!card.imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = card.imageUrl,
+                contentDescription = card.title,
+                modifier =
+                    Modifier.matchParentSize(),
+                contentScale =
+                    ContentScale.Crop,
+            )
+        } else if (card.imageRes != null) {
+            /*
+             * Preview / 기존 MockData
+             */
+            Image(
+                painter =
+                    painterResource(
+                        id = card.imageRes,
+                    ),
+                contentDescription =
+                    card.title,
+                modifier =
+                    Modifier.matchParentSize(),
+                contentScale =
+                    ContentScale.Crop,
+            )
+        }
 
         /*
          * 미획득 카드
@@ -254,8 +276,6 @@ private fun CardDetailImage(
         /*
          * 획득한 카드에서만
          * 사진 확대 버튼을 표시합니다.
-         *
-         * 기능은 다음 단계에서 연결합니다.
          */
         if (card.isAcquired) {
             Box(
@@ -445,7 +465,10 @@ private fun CardThemeInformationRow(
 }
 
 @Composable
-private fun AcquireGuide(modifier: Modifier = Modifier) {
+private fun AcquireGuide(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier =
             modifier
@@ -474,7 +497,7 @@ private fun AcquireGuide(modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = "관광지를 직접 방문하여 카드를 획득하세요",
+            text = message,
             style =
                 LocalAppTypography.current.bodySmall.bold.copy(
                     color = Natural10,
