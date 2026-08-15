@@ -73,7 +73,7 @@ fun CardFilterBar(
                     rememberScrollState(),
                 ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         AllFilterButton(
             selected = filterState.isAllSelected,
@@ -149,7 +149,7 @@ private fun AllFilterButton(
                 )
                 .clickable(onClick = onClick)
                 .padding(
-                    horizontal = 15.dp,
+                    horizontal = 13.dp,
                 ),
         contentAlignment = Alignment.Center,
     ) {
@@ -220,7 +220,7 @@ private fun <T> FilterDropdownButton(
                         expanded = true
                     }
                     .padding(
-                        horizontal = 15.dp,
+                        horizontal = 13.dp,
                     ),
             verticalAlignment = Alignment.CenterVertically,
         ) {

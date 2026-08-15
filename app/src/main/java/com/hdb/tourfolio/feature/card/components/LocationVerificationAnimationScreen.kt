@@ -2,14 +2,11 @@
 
 package com.hdb.tourfolio.feature.card.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +40,7 @@ import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural30
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import kotlinx.coroutines.delay
 
@@ -160,9 +159,6 @@ fun LocationVerificationAnimationScreen(
 
 /*
  * 위치 확인 중 애니메이션
- *
- * Figma에서 만든 위치 아이콘 3개를
- * 순차적으로 교체하여 통통 튀는 효과를 만듭니다.
  */
 @Composable
 private fun CheckingLocationAnimation(
@@ -214,10 +210,6 @@ private fun CheckingLocationAnimation(
 
 /*
  * 거리가 먼 경우 애니메이션
- *
- * 1. 바깥 땅 모양은 계속 360도 회전
- * 2. 중앙 Tourfolio 로고는
- *    회전 주기에 맞춰 Fade In / Fade Out
  */
 @Composable
 private fun TooFarLocationAnimation(
@@ -228,35 +220,31 @@ private fun TooFarLocationAnimation(
             label = "tooFarAnimation",
         )
 
-    /*
-     * 땅 모양 한 바퀴 회전
-     */
+    val cycleDuration = 2500
+
     val rotation by
     infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = 360f,
+        targetValue = 0f,
         animationSpec =
             infiniteRepeatable(
                 animation =
-                    tween(
-                        durationMillis = 2400,
-                        easing = LinearEasing,
-                    ),
+                    keyframes {
+                        durationMillis = cycleDuration
+
+                        0f at 0
+                        -90f at 180
+                        -180f at 400
+                        -270f at 630
+                        -360f at 900
+
+                        -360f at cycleDuration
+                    },
                 repeatMode = RepeatMode.Restart,
             ),
         label = "groundRotation",
     )
 
-    /*
-     * 중앙 Tourfolio 로고
-     *
-     * 한 회전 안에서:
-     * 안 보임
-     * → Fade In
-     * → 유지
-     * → Fade Out
-     * → 안 보임
-     */
     val logoAlpha by
     infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -265,14 +253,22 @@ private fun TooFarLocationAnimation(
             infiniteRepeatable(
                 animation =
                     keyframes {
-                        durationMillis = 2400
+                        durationMillis = cycleDuration
 
                         0f at 0
-                        0f at 350
-                        1f at 750
-                        1f at 1500
-                        0f at 1950
-                        0f at 2400
+                        0f at 1050
+
+                        0.3f at 1150
+                        0.7f at 1250
+                        1f at 1350
+
+                        1f at 1800
+
+                        0.7f at 1950
+                        0.3f at 2120
+                        0f at 2300
+
+                        0f at cycleDuration
                     },
                 repeatMode = RepeatMode.Restart,
             ),
@@ -282,11 +278,9 @@ private fun TooFarLocationAnimation(
     Box(
         modifier =
             modifier.size(240.dp),
-        contentAlignment = Alignment.Center,
+        contentAlignment =
+            Alignment.Center,
     ) {
-        /*
-         * 회전하는 땅 모양
-         */
         Image(
             painter =
                 painterResource(
@@ -299,21 +293,21 @@ private fun TooFarLocationAnimation(
                     .rotate(rotation),
         )
 
-        /*
-         * 가운데 Tourfolio 흰색 로고
-         *
-         * 이 로고 자체는 회전하지 않고
-         * Fade In / Fade Out만 합니다.
-         */
         Image(
             painter =
                 painterResource(
-                    id = R.drawable.ic_tourfolio_location_white,
+                    id =
+                        R.drawable
+                            .ic_tourfolio_location_white,
                 ),
             contentDescription = null,
             modifier =
                 Modifier
-                    .size(105.dp)
+                    .size(80.dp)
+                    .offset(
+                        x = (-10).dp,
+                        y = (-8).dp,
+                    )
                     .alpha(logoAlpha),
         )
     }
@@ -331,10 +325,7 @@ private fun LocationPrimaryButton(
                 .fillMaxWidth()
                 .height(58.dp)
                 .background(
-                    color =
-                        androidx.compose.ui.graphics.Color(
-                            0xFF4A4A4A,
-                        ),
+                    color = Natural30,
                     shape = RoundedCornerShape(10.dp),
                 )
                 .clickable(

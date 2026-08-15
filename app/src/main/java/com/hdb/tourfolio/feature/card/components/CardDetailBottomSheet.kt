@@ -2,7 +2,6 @@
 
 package com.hdb.tourfolio.feature.card.components
 
-import android.R.id.message
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,10 +60,6 @@ fun CardDetailBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         containerColor = Natural100,
-        /*
-         * 바텀시트가 나타날 때
-         * CardScreen 뒤쪽을 어둡게 처리합니다.
-         */
         scrimColor =
             Color.Black.copy(
                 alpha = 0.8f,
@@ -128,9 +123,6 @@ fun CardDetailBottomSheet(
                         ),
                 horizontalArrangement = Arrangement.spacedBy(18.dp),
             ) {
-                /*
-                 * 좌측 카드 이미지
-                 */
                 CardDetailImage(
                     card = card,
                     onExpandImageClick = onExpandImageClick,
@@ -140,19 +132,12 @@ fun CardDetailBottomSheet(
                             .height(263.dp),
                 )
 
-                /*
-                 * 우측 상세 정보
-                 */
                 CardDetailInformation(
                     card = card,
                     modifier = Modifier.weight(1f),
                 )
             }
 
-            /*
-             * 미획득 카드에서만 안내 문구와
-             * 카드 획득하기 버튼을 표시합니다.
-             */
             if (!card.isAcquired) {
                 Spacer(
                     modifier = Modifier.height(24.dp),
@@ -193,10 +178,6 @@ fun CardDetailBottomSheet(
                     modifier = Modifier.height(18.dp),
                 )
             } else {
-                /*
-                 * 획득 카드의 경우 별도 획득 버튼이 없으므로
-                 * 하단 여백만 확보합니다.
-                 */
                 Spacer(
                     modifier = Modifier.height(28.dp),
                 )
@@ -228,9 +209,6 @@ private fun CardDetailImage(
                     ContentScale.Crop,
             )
         } else if (card.imageRes != null) {
-            /*
-             * Preview / 기존 MockData
-             */
             Image(
                 painter =
                     painterResource(
@@ -245,9 +223,6 @@ private fun CardDetailImage(
             )
         }
 
-        /*
-         * 미획득 카드
-         */
         if (!card.isAcquired) {
             Box(
                 modifier =
@@ -273,10 +248,6 @@ private fun CardDetailImage(
             )
         }
 
-        /*
-         * 획득한 카드에서만
-         * 사진 확대 버튼을 표시합니다.
-         */
         if (card.isAcquired) {
             Box(
                 modifier =
@@ -316,9 +287,6 @@ private fun CardDetailInformation(
     Column(
         modifier = modifier,
     ) {
-        /*
-         * 관광지명
-         */
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {

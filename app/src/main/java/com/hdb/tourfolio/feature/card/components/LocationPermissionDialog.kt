@@ -46,17 +46,11 @@ private const val LOCATION_PERMISSION_PREFS =
 private const val KEY_LOCATION_PERMISSION_REQUESTED =
     "location_permission_requested"
 
-/**
- * 카드 획득 버튼 클릭 시 어떤 위치 관련 Dialog를 보여줄지 관리합니다.
- */
 enum class LocationDialogType {
     PERMISSION_REQUEST,
     PERMISSION_REQUIRED,
 }
 
-/**
- * 시스템 위치 권한 요청 흐름을 다시 보여줄 수 있는지 판단합니다.
- */
 fun shouldShowLocationPermissionFlow(
     context: Context,
 ): Boolean {
@@ -73,9 +67,6 @@ fun shouldShowLocationPermissionFlow(
             context = context,
         )
 
-    /*
-     * 한 번도 요청하지 않은 최초 상태
-     */
     if (!hasRequestedBefore) {
         return true
     }
@@ -84,9 +75,6 @@ fun shouldShowLocationPermissionFlow(
         context.findActivity()
             ?: return false
 
-    /*
-     * 한 번 거부했지만 다시 요청할 수 있는 상태
-     */
     return ActivityCompat
         .shouldShowRequestPermissionRationale(
             activity,
@@ -94,8 +82,8 @@ fun shouldShowLocationPermissionFlow(
         )
 }
 
-/**
- * 현재 정확한 위치 권한이 이미 허용되어 있는지 확인합니다.
+/*
+ * 현재 정확한 위치 권한이 이미 허용되어 있는지
  */
 fun isPreciseLocationGranted(
     context: Context,
@@ -141,10 +129,6 @@ fun LocationPermissionDialog(
             return
         }
 
-        /*
-         * 실제 시스템 권한 요청을 하기 직전에
-         * '한 번 이상 요청했다'는 사실을 저장합니다.
-         */
         markLocationPermissionRequested(
             context = context,
         )
@@ -175,12 +159,8 @@ fun LocationPermissionDialog(
     )
 }
 
-/**
- * 반복 거부 등으로 Android 시스템 권한창을
- * 더 이상 요청할 수 없는 경우 표시합니다.
- *
- * 이 Dialog에서는 카드 획득을 진행하지 않고
- * 안내 후 닫기만 가능합니다.
+/*
+ * 반복 거부 등으로 Android 시스템 권한창을 더 이상 요청할 수 없는 경우
  */
 @Composable
 fun LocationPermissionRequiredDialog(
@@ -198,12 +178,6 @@ fun LocationPermissionRequiredDialog(
     )
 }
 
-/**
- * 위치 권한과 관련된 안내창에서 공통으로 사용하는 UI입니다.
- *
- * icon / title / description / button만 변경하여
- * 여러 위치 권한 안내 상황에서 재사용합니다.
- */
 @Composable
 private fun LocationGuideDialog(
     iconRes: Int,
@@ -239,9 +213,6 @@ private fun LocationGuideDialog(
                     ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            /*
-             * 공통 아이콘 영역
-             */
             Box(
                 modifier =
                     Modifier
@@ -282,9 +253,6 @@ private fun LocationGuideDialog(
                 modifier = Modifier.height(24.dp),
             )
 
-            /*
-             * 설명
-             */
             Text(
                 text = description,
                 style =
@@ -298,9 +266,6 @@ private fun LocationGuideDialog(
                 modifier = Modifier.height(52.dp),
             )
 
-            /*
-             * 메인 버튼
-             */
             Box(
                 modifier =
                     Modifier
@@ -324,16 +289,6 @@ private fun LocationGuideDialog(
                 )
             }
 
-            /*
-             * secondaryButtonText가 있을 경우에만
-             * 두 번째 버튼을 표시합니다.
-             *
-             * 위치 권한 최초 안내:
-             * 위치 확인하기 + 취소
-             *
-             * 위치 권한 필수 안내:
-             * 닫기 버튼만
-             */
             if (
                 secondaryButtonText != null &&
                 onSecondaryClick != null
@@ -365,8 +320,8 @@ private fun LocationGuideDialog(
     }
 }
 
-/**
- * 위치 권한을 한 번이라도 요청했는지 저장합니다.
+/*
+ * 위치 권한을 한 번이라도 요청했는지 저장
  */
 private fun hasRequestedLocationPermission(
     context: Context,

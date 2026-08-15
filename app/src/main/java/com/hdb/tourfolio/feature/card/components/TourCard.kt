@@ -52,12 +52,6 @@ fun TourCard(
                     onClick(item.id)
                 },
     ) {
-        /*
-         * 실제 API 데이터
-         *
-         * imageUrl이 존재하면
-         * 서버에서 받은 네트워크 이미지를 사용합니다.
-         */
         if (!item.imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = item.imageUrl,
@@ -67,12 +61,6 @@ fun TourCard(
                 contentScale = ContentScale.Crop,
             )
         } else if (item.imageRes != null) {
-            /*
-             * Preview / MockData
-             *
-             * imageUrl이 없고 imageRes가 있다면
-             * 기존 drawable 이미지를 사용합니다.
-             */
             Image(
                 painter =
                     painterResource(
@@ -85,17 +73,6 @@ fun TourCard(
             )
         }
 
-        /*
-         * 미획득 카드
-         *
-         * API:
-         * isOwned = false
-         *
-         * ↓ mapper
-         *
-         * UI:
-         * isAcquired = false
-         */
         if (!item.isAcquired) {
             Box(
                 modifier =
@@ -121,9 +98,6 @@ fun TourCard(
             )
         }
 
-        /*
-         * 카드 이름
-         */
         Box(
             modifier =
                 Modifier

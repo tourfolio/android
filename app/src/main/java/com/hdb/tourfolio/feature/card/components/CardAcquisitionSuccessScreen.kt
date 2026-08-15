@@ -25,8 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural20
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary80
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
@@ -39,15 +41,12 @@ fun CardAcquisitionSuccessScreen(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundColor =
-        Color(0xFF303030)
-
     Column(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(
-                    backgroundColor,
+                    Natural20,
                 )
                 .padding(
                     horizontal = 22.dp,
@@ -63,9 +62,7 @@ fun CardAcquisitionSuccessScreen(
         )
 
         /*
-         * TODO
-         *
-         * 다음 작업에서 실제 카드 이미지 UI로 교체합니다.
+         * TODO : 실제 카드 이미지 교체
          */
         Box(
             modifier =
@@ -74,7 +71,7 @@ fun CardAcquisitionSuccessScreen(
                     .height(400.dp)
                     .background(
                         color =
-                            Color(0xFF555555),
+                            Primary80,
                         shape =
                             RoundedCornerShape(
                                 22.dp,
