@@ -2,22 +2,27 @@
 
 package com.hdb.tourfolio.feature.explore
 
-import android.R.attr.onClick
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,23 +30,20 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
-import com.hdb.tourfolio.feature.explore.mock.TourSpotDetailUiModel
-import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural10
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Primary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlin.math.absoluteValue
-
-private val CAROUSEL_TOUR_SPOT_IDS =
-    listOf(
-        1L,
-        3L,
-        6L,
-    )
 
 private const val SLIDE_DURATION_MS = 3000L
 
@@ -49,15 +51,57 @@ private const val SLIDE_DURATION_MS = 3000L
 fun ExploreCarouselScreen(
     onFinished: () -> Unit,
     onTourSpotClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    val carouselItems =
-        remember {
-            CAROUSEL_TOUR_SPOT_IDS.mapNotNull { tourSpotId ->
-                TourSpotMockData.findDetailById(tourSpotId)
-            }
+    val mainCardsUiState by
+    viewModel.mainCardsUiState.collectAsStateWithLifecycle()
+
+    when (val state = mainCardsUiState) {
+        ExploreMainCardsUiState.Loading -> {
+            ExploreCarouselLoading(
+                modifier = modifier,
+            )
         }
 
-    val explorePageIndex = carouselItems.size
+        is ExploreMainCardsUiState.Error -> {
+            ExploreCarouselError(
+                message = state.message,
+                onRetryClick = {
+                    viewModel.fetchMainCards()
+                },
+                modifier = modifier,
+            )
+        }
+
+        is ExploreMainCardsUiState.Success -> {
+            ExploreCarouselContent(
+                carouselItems = state.cards,
+                onFinished = onFinished,
+                onTourSpotClick = onTourSpotClick,
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExploreCarouselContent(
+    carouselItems: List<ExploreMainCardUiModel>,
+    onFinished: () -> Unit,
+    onTourSpotClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (carouselItems.isEmpty()) {
+        LaunchedEffect(Unit) {
+            onFinished()
+        }
+
+        return
+    }
+
+    val explorePageIndex =
+        carouselItems.size
 
     val pagerState =
         rememberPagerState(
@@ -67,99 +111,131 @@ fun ExploreCarouselScreen(
             },
         )
 
-    /*
-     * 마지막 Pager 페이지에 완전히 도착하면 Navigation이 아니라 부모 상태만 변경
-     */
-    LaunchedEffect(pagerState.settledPage) {
-        if (pagerState.settledPage == explorePageIndex) {
+    LaunchedEffect(
+        pagerState.settledPage,
+    ) {
+        if (
+            pagerState.settledPage ==
+            explorePageIndex
+        ) {
             onFinished()
         }
     }
 
-    /*
-     * 자동 전환
-     */
-    LaunchedEffect(Unit) {
-        while (pagerState.settledPage < explorePageIndex) {
+    LaunchedEffect(
+        carouselItems,
+    ) {
+        while (
+            pagerState.settledPage <
+            explorePageIndex
+        ) {
             snapshotFlow {
                 pagerState.isScrollInProgress
             }.filter { isScrolling ->
                 !isScrolling
             }.first()
 
-            val pageBeforeDelay = pagerState.settledPage
+            val pageBeforeDelay =
+                pagerState.settledPage
 
-            if (pageBeforeDelay >= explorePageIndex) {
+            if (
+                pageBeforeDelay >=
+                explorePageIndex
+            ) {
                 break
             }
 
-            delay(SLIDE_DURATION_MS)
+            delay(
+                SLIDE_DURATION_MS,
+            )
 
             val canAutoMove =
                 !pagerState.isScrollInProgress &&
-                    pagerState.settledPage == pageBeforeDelay
+                        pagerState.settledPage ==
+                        pageBeforeDelay
 
             if (!canAutoMove) {
                 continue
             }
 
             pagerState.animateScrollToPage(
-                page = pageBeforeDelay + 1,
+                page =
+                    pageBeforeDelay + 1,
             )
         }
     }
 
     HorizontalPager(
         state = pagerState,
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            modifier.fillMaxSize(),
         beyondViewportPageCount = 1,
     ) { page ->
         val pageOffset =
             (
-                (pagerState.currentPage - page) +
-                    pagerState.currentPageOffsetFraction
-            ).absoluteValue
+                    (pagerState.currentPage - page) +
+                            pagerState.currentPageOffsetFraction
+                    ).absoluteValue
 
         val pageAlpha =
             1f -
-                pageOffset
-                    .coerceIn(0f, 1f)
-                    .times(0.55f)
+                    pageOffset
+                        .coerceIn(
+                            minimumValue = 0f,
+                            maximumValue = 1f,
+                        )
+                        .times(
+                            0.55f,
+                        )
 
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
                     .graphicsLayer {
-                        alpha = pageAlpha
+                        alpha =
+                            pageAlpha
                     },
         ) {
-            if (page < carouselItems.size) {
-                val item = carouselItems[page]
+            if (
+                page <
+                carouselItems.size
+            ) {
+                val item =
+                    carouselItems[page]
 
                 ExploreCarouselPage(
                     item = item,
                     currentIndex = page,
-                    totalCount = carouselItems.size,
+                    totalCount =
+                        carouselItems.size,
                     onClick = {
-                        onTourSpotClick(item.id)
+                        onTourSpotClick(
+                            item.id,
+                        )
                     },
                 )
 
                 ExploreCarouselHeader(
-                    onSearchClick = onFinished,
+                    onSearchClick =
+                        onFinished,
                     modifier =
                         Modifier
-                            .align(Alignment.TopStart)
+                            .align(
+                                Alignment.TopStart,
+                            )
                             .fillMaxWidth()
                             .padding(
-                                horizontal = 20.dp,
-                                vertical = 16.dp,
+                                horizontal =
+                                    20.dp,
+                                vertical =
+                                    16.dp,
                             ),
                 )
             } else {
                 ExploreScreen(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier =
+                        Modifier.fillMaxSize(),
                 )
             }
         }
@@ -168,7 +244,7 @@ fun ExploreCarouselScreen(
 
 @Composable
 private fun ExploreCarouselPage(
-    item: TourSpotDetailUiModel,
+    item: ExploreMainCardUiModel,
     currentIndex: Int,
     totalCount: Int,
     onClick: () -> Unit,
@@ -178,32 +254,47 @@ private fun ExploreCarouselPage(
         modifier =
             modifier
                 .fillMaxSize()
-                .clickable(onClick = onClick),
-    ) {
-        Image(
-            painter =
-                painterResource(
-                    id = item.imageRes,
+                .clickable(
+                    onClick = onClick,
                 ),
-            contentDescription = item.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+    ) {
+        AsyncImage(
+            model =
+                item.imageUrl,
+            contentDescription =
+                item.title,
+            modifier =
+                Modifier.fillMaxSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         CarouselContent(
-            title = item.title,
-            content = item.description,
-            place = item.address,
+            title =
+                item.title,
+
+            content =
+                item.subTitle,
+
+            place =
+                item.location,
+
             tags =
-                item.tags.map { tag ->
-                    tag.displayName
-                },
-            themeType = item.themeType,
-            currentIndex = currentIndex,
-            totalCount = totalCount,
+                item.tags,
+
+            themeType =
+                item.themeType,
+
+            currentIndex =
+                currentIndex,
+            totalCount =
+                totalCount,
+
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
+                    .align(
+                        Alignment.BottomStart,
+                    )
                     .fillMaxWidth(),
         )
     }
@@ -215,33 +306,158 @@ private fun ExploreCarouselHeader(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier =
+            modifier,
+        verticalAlignment =
+            Alignment.CenterVertically,
+        horizontalArrangement =
+            Arrangement.SpaceBetween,
     ) {
         Text(
-            text = "Tourfolio",
+            text =
+                "Tourfolio",
             style =
-                LocalAppTypography.current.headlineLarge.bold.copy(
-                    color = Natural100,
-                ),
+                LocalAppTypography
+                    .current
+                    .headlineLarge
+                    .bold
+                    .copy(
+                        color =
+                            Natural100,
+                    ),
         )
 
         Box(
             modifier =
                 Modifier
-                    .size(48.dp)
-                    .clickable(onClick = onSearchClick),
-            contentAlignment = Alignment.Center,
+                    .size(
+                        48.dp,
+                    )
+                    .clickable(
+                        onClick =
+                            onSearchClick,
+                    ),
+            contentAlignment =
+                Alignment.Center,
         ) {
             Image(
                 painter =
                     painterResource(
-                        id = R.drawable.ic_search,
+                        id =
+                            R.drawable.ic_search,
                     ),
-                contentDescription = "탐색 화면으로 이동",
-                modifier = Modifier.size(28.dp),
+                contentDescription =
+                    "탐색 화면으로 이동",
+                modifier =
+                    Modifier.size(
+                        28.dp,
+                    ),
             )
+        }
+    }
+}
+
+@Composable
+private fun ExploreCarouselLoading(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    Natural100,
+                ),
+        contentAlignment =
+            Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            color =
+                Primary,
+        )
+    }
+}
+
+@Composable
+private fun ExploreCarouselError(
+    message: String,
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(
+                    Natural100,
+                ),
+        contentAlignment =
+            Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment =
+                Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text =
+                    "탐색 정보를 불러오지 못했습니다.",
+                style =
+                    LocalAppTypography
+                        .current
+                        .bodyLarge
+                        .bold
+                        .copy(
+                            color =
+                                Natural10,
+                        ),
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        8.dp,
+                    ),
+            )
+
+            Text(
+                text =
+                    message,
+                style =
+                    LocalAppTypography
+                        .current
+                        .bodySmall
+                        .medium
+                        .copy(
+                            color =
+                                Natural60,
+                        ),
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        8.dp,
+                    ),
+            )
+
+            TextButton(
+                onClick =
+                    onRetryClick,
+            ) {
+                Text(
+                    text =
+                        "다시 시도",
+                    style =
+                        LocalAppTypography
+                            .current
+                            .bodySmall
+                            .bold
+                            .copy(
+                                color =
+                                    Primary,
+                            ),
+                )
+            }
         }
     }
 }

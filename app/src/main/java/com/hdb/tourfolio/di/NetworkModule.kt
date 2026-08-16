@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.hdb.tourfolio.core.network.AuthApiService
 import com.hdb.tourfolio.core.network.AuthInterceptor
 import com.hdb.tourfolio.core.network.CardApiService
+import com.hdb.tourfolio.core.network.ExploreApiService
 import com.hdb.tourfolio.core.network.PortfolioApiService
 import com.hdb.tourfolio.core.network.StockApiService
 import dagger.Module
@@ -66,4 +67,8 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideCardApiService(retrofit: Retrofit): CardApiService = retrofit.create(CardApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideExploreApiService(retrofit: Retrofit): ExploreApiService = retrofit.create(ExploreApiService::class.java)
 }

@@ -5,7 +5,9 @@ package com.hdb.tourfolio.feature.explore
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +20,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,6 +33,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.PlaceCard
 import com.hdb.tourfolio.feature.explore.components.RegionCard
@@ -39,6 +45,8 @@ import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
+import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
@@ -54,7 +62,16 @@ fun ExploreScreen(
     onTourSpotClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
+    val exploreCardsUiState by
+    viewModel.exploreCardsUiState
+        .collectAsStateWithLifecycle()
+
+    val trendingUiState by
+    viewModel.trendingUiState
+        .collectAsStateWithLifecycle()
+
     val themeTravelItems =
         remember {
             listOf(
@@ -77,27 +94,6 @@ fun ExploreScreen(
                     imageRes = R.drawable.bg_busan_demo,
                 ),
             )
-        }
-
-    val featuredItems =
-        remember {
-            TourSpotMockData.listItems.take(4)
-        }
-
-    val recommendedItems =
-        remember {
-            TourSpotMockData.detailItems
-                .filter { item ->
-                    item.id in listOf(1L, 3L, 7L)
-                }
-        }
-
-    val trendingItems =
-        remember {
-            TourSpotMockData.listItems
-                .filter { item ->
-                    item.id in listOf(6L, 3L, 5L, 2L)
-                }
         }
 
     Column(
@@ -130,10 +126,35 @@ fun ExploreScreen(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        TourSpotCarousel(
-            items = featuredItems,
-            onItemClick = onTourSpotClick,
-        )
+        when (
+            val state =
+                exploreCardsUiState
+        ) {
+            ExploreCardsUiState.Loading -> {
+                ExploreSectionLoading(
+                    height = 370.dp,
+                )
+            }
+
+            is ExploreCardsUiState.Error -> {
+                ExploreSectionError(
+                    message =
+                        state.message,
+                    onRetryClick = {
+                        viewModel.fetchExploreCards()
+                    },
+                )
+            }
+
+            is ExploreCardsUiState.Success -> {
+                TourSpotCarousel(
+                    items =
+                        state.featuredCards,
+                    onItemClick =
+                        onTourSpotClick,
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
 
@@ -155,10 +176,6 @@ fun ExploreScreen(
                     places = item.places,
                     imageRes = item.imageRes,
                     onClick = {
-                        /*
-                         * 현재 CityTravelDetail 임시 데이터는
-                         * 부산 id 2만 연결된 상태입니다.
-                         */
                         if (item.id == 2L) {
                             onCityTravelClick(item.id)
                         }
@@ -176,28 +193,64 @@ fun ExploreScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding =
-                androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 22.dp,
-                ),
+        when (
+            val state =
+                exploreCardsUiState
         ) {
-            items(
-                items = recommendedItems,
-                key = { item ->
-                    item.id
-                },
-            ) { item ->
-                TourSpotCard(
-                    id = item.id,
-                    title = item.title,
-                    content = item.description,
-                    tags = item.tags,
-                    imageRes = item.imageRes,
-                    onClick = onTourSpotClick,
-                    modifier = Modifier.width(360.dp),
+            ExploreCardsUiState.Loading -> {
+                ExploreSectionLoading(
+                    height = 220.dp,
                 )
+            }
+
+            is ExploreCardsUiState.Error -> {
+                ExploreSectionError(
+                    message =
+                        state.message,
+                    onRetryClick = {
+                        viewModel.fetchExploreCards()
+                    },
+                )
+            }
+
+            is ExploreCardsUiState.Success -> {
+                LazyRow(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(
+                            12.dp,
+                        ),
+                    contentPadding =
+                        PaddingValues(
+                            horizontal = 22.dp,
+                        ),
+                ) {
+                    items(
+                        items =
+                            state.recommendedCards,
+                        key = { item ->
+                            item.id
+                        },
+                    ) { item ->
+                        TourSpotCard(
+                            id =
+                                item.id,
+                            title =
+                                item.title,
+                            content =
+                                item.description,
+                            tags =
+                                item.tags,
+                            imageUrl =
+                                item.imageUrl,
+                            onClick =
+                                onTourSpotClick,
+                            modifier =
+                                Modifier.width(
+                                    360.dp,
+                                ),
+                        )
+                    }
+                }
             }
         }
 
@@ -210,26 +263,58 @@ fun ExploreScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding =
-                androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 22.dp,
-                ),
+        when (
+            val state =
+                trendingUiState
         ) {
-            items(
-                items = trendingItems,
-                key = { item ->
-                    item.id
-                },
-            ) { item ->
-                RegionCard(
-                    id = item.id,
-                    title = item.title,
-                    regionName = item.regionType.displayName,
-                    imageRes = item.imageRes,
-                    onClick = onTourSpotClick,
+            ExploreTrendingUiState.Loading -> {
+                ExploreSectionLoading(
+                    height = 245.dp,
                 )
+            }
+
+            is ExploreTrendingUiState.Error -> {
+                ExploreSectionError(
+                    message =
+                        state.message,
+                    onRetryClick = {
+                        viewModel.fetchTrendingCards()
+                    },
+                )
+            }
+
+            is ExploreTrendingUiState.Success -> {
+                LazyRow(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(
+                            10.dp,
+                        ),
+                    contentPadding =
+                        PaddingValues(
+                            horizontal = 22.dp,
+                        ),
+                ) {
+                    items(
+                        items =
+                            state.cards,
+                        key = { item ->
+                            item.id
+                        },
+                    ) { item ->
+                        RegionCard(
+                            id =
+                                item.id,
+                            title =
+                                item.title,
+                            regionName =
+                                item.areaName,
+                            imageUrl =
+                                item.imageUrl,
+                            onClick =
+                                onTourSpotClick,
+                        )
+                    }
+                }
             }
         }
     }
@@ -297,15 +382,75 @@ private fun ExploreSectionTitle(
     }
 }
 
-@Preview(
-    name = "Explore Screen Preview",
-    showBackground = true,
-    widthDp = 412,
-    heightDp = 915,
-)
 @Composable
-private fun ExploreScreenPreview() {
-    TourfolioTheme {
-        ExploreScreen()
+private fun ExploreSectionLoading(
+    height: androidx.compose.ui.unit.Dp,
+) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(
+                    height,
+                ),
+        contentAlignment =
+            Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            color =
+                Primary,
+        )
     }
 }
+
+@Composable
+private fun ExploreSectionError(
+    message: String,
+    onRetryClick: () -> Unit,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 22.dp,
+                    vertical = 20.dp,
+                ),
+        horizontalAlignment =
+            Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text =
+                message,
+            style =
+                LocalAppTypography
+                    .current
+                    .bodySmall
+                    .medium
+                    .copy(
+                        color =
+                            Natural60,
+                    ),
+        )
+
+        TextButton(
+            onClick =
+                onRetryClick,
+        ) {
+            Text(
+                text =
+                    "다시 시도",
+                style =
+                    LocalAppTypography
+                        .current
+                        .bodySmall
+                        .bold
+                        .copy(
+                            color =
+                                Primary,
+                        ),
+            )
+        }
+    }
+}
+
