@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,9 +25,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,20 +40,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.mock.NearbyTourSpotUiModel
-import com.hdb.tourfolio.feature.explore.mock.TourSpotDetailUiModel
-import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
-import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary70
-import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
@@ -60,40 +58,78 @@ fun ExploreDetailScreen(
     tourSpotId: Long,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
-    onNearbySpotClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     BackHandler {
         onBackClick()
     }
-    val detail =
-        remember(tourSpotId) {
-            TourSpotMockData.findDetailById(tourSpotId)
-        }
 
-    if (detail == null) {
-        TourSpotNotFoundScreen(
-            onBackClick = onBackClick,
-            modifier = modifier,
+    val detailUiState by
+        viewModel.spotDetailUiState
+            .collectAsStateWithLifecycle()
+
+    /*
+     * 해당 관광지 ID로 상세 API 호출
+     */
+    LaunchedEffect(
+        tourSpotId,
+    ) {
+        viewModel.fetchSpotDetail(
+            spotId = tourSpotId,
         )
-        return
     }
 
-    ExploreDetailContent(
-        detail = detail,
-        onBackClick = onBackClick,
-        onShareClick = onShareClick,
-        onNearbySpotClick = onNearbySpotClick,
-        modifier = modifier,
-    )
+    /*
+     * 상세 화면을 완전히 나갈 때 상태 정리
+     */
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.clearSpotDetail()
+        }
+    }
+
+    when (
+        val state =
+            detailUiState
+    ) {
+        ExploreSpotDetailUiState.Idle,
+        ExploreSpotDetailUiState.Loading,
+        -> {
+            ExploreDetailLoading(
+                modifier = modifier,
+            )
+        }
+
+        is ExploreSpotDetailUiState.Success -> {
+            ExploreDetailContent(
+                detail = state.detail,
+                onBackClick = onBackClick,
+                onShareClick = onShareClick,
+                modifier = modifier,
+            )
+        }
+
+        is ExploreSpotDetailUiState.Error -> {
+            ExploreDetailError(
+                message = state.message,
+                onBackClick = onBackClick,
+                onRetryClick = {
+                    viewModel.fetchSpotDetail(
+                        spotId = tourSpotId,
+                    )
+                },
+                modifier = modifier,
+            )
+        }
+    }
 }
 
 @Composable
 private fun ExploreDetailContent(
-    detail: TourSpotDetailUiModel,
+    detail: ExploreSpotDetailUiModel,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
-    onNearbySpotClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -101,11 +137,13 @@ private fun ExploreDetailContent(
             modifier
                 .fillMaxSize()
                 .background(Natural100)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(
+                    rememberScrollState(),
+                )
                 .navigationBarsPadding(),
     ) {
         TourSpotHero(
-            detail = detail,
+            title = detail.title,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
         )
@@ -114,14 +152,18 @@ private fun ExploreDetailContent(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .offset(y = (-28).dp)
+                    .offset(
+                        y = (-28).dp,
+                    )
                     .clip(
                         RoundedCornerShape(
                             topStart = 32.dp,
                             topEnd = 32.dp,
                         ),
                     )
-                    .background(Natural100)
+                    .background(
+                        Natural100,
+                    )
                     .padding(
                         start = 22.dp,
                         top = 34.dp,
@@ -137,7 +179,12 @@ private fun ExploreDetailContent(
                     ),
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        14.dp,
+                    ),
+            )
 
             Text(
                 text = detail.description,
@@ -147,13 +194,59 @@ private fun ExploreDetailContent(
                     ),
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        28.dp,
+                    ),
+            )
 
             DetailTagRow(
                 tags = detail.tags,
             )
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        36.dp,
+                    ),
+            )
+
+            /*
+             * 매력 포인트
+             *
+             * 서버에 attractionPoints가 있을 때만 표시
+             */
+            if (
+                detail.attractionPoints.isNotEmpty()
+            ) {
+                Text(
+                    text = "매력 포인트",
+                    style =
+                        LocalAppTypography.current.titleMedium.bold.copy(
+                            color = Natural10,
+                        ),
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(
+                            18.dp,
+                        ),
+                )
+
+                AttractionPointSection(
+                    items =
+                        detail.attractionPoints,
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.height(
+                            36.dp,
+                        ),
+                )
+            }
 
             Text(
                 text = "상세 정보",
@@ -163,23 +256,42 @@ private fun ExploreDetailContent(
                     ),
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        18.dp,
+                    ),
+            )
 
             TourSpotInformationCard(
                 iconRes = R.drawable.ic_link,
                 title = "홈페이지 주소",
             ) {
                 Text(
-                    text = detail.homepageUrl,
+                    text = detail.website,
                     style =
                         LocalAppTypography.current.bodyLarge.medium.copy(
                             color = Natural60,
-                            textDecoration = TextDecoration.Underline,
+                            textDecoration =
+                                if (
+                                    detail.website.startsWith(
+                                        prefix = "http",
+                                    )
+                                ) {
+                                    TextDecoration.Underline
+                                } else {
+                                    TextDecoration.None
+                                },
                         ),
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             TourSpotInformationCard(
                 iconRes = R.drawable.ic_phone,
@@ -194,7 +306,12 @@ private fun ExploreDetailContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             TourSpotInformationCard(
                 iconRes = R.drawable.ic_location,
@@ -209,7 +326,12 @@ private fun ExploreDetailContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             TourSpotInformationCard(
                 iconRes = R.drawable.ic_clock,
@@ -222,21 +344,14 @@ private fun ExploreDetailContent(
                             color = Natural60,
                         ),
                 )
-
-                if (
-                    detail.operatingNoticeTitle != null &&
-                    detail.operatingNoticeContent != null
-                ) {
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    OperatingNotice(
-                        title = detail.operatingNoticeTitle,
-                        content = detail.operatingNoticeContent,
-                    )
-                }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             TourSpotInformationCard(
                 iconRes = R.drawable.ic_closed,
@@ -251,21 +366,37 @@ private fun ExploreDetailContent(
                 )
             }
 
-            Spacer(modifier = Modifier.height(36.dp))
-
-            Text(
-                text = "주변 관광지",
-                style =
-                    LocalAppTypography.current.titleMedium.bold.copy(
-                        color = Natural10,
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
                     ),
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            /*
+             * API에 입장료 정보가 있기 때문에 표시
+             */
+            TourSpotInformationCard(
+                iconRes = R.drawable.ic_info,
+                title = "입장료",
+            ) {
+                Text(
+                    text = detail.admissionFee,
+                    style =
+                        LocalAppTypography.current.bodyLarge.medium.copy(
+                            color = Natural60,
+                        ),
+                )
+            }
 
-            NearbyTourSpotSection(
-                items = detail.nearbySpots,
-                onItemClick = onNearbySpotClick,
+            /*
+             * 주변 관광지 영역은 완전히 제거
+             */
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        12.dp,
+                    ),
             )
         }
     }
@@ -273,7 +404,7 @@ private fun ExploreDetailContent(
 
 @Composable
 private fun TourSpotHero(
-    detail: TourSpotDetailUiModel,
+    title: String,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -282,26 +413,38 @@ private fun TourSpotHero(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(430.dp),
+                .height(
+                    430.dp,
+                ),
     ) {
         Image(
-            painter = painterResource(id = detail.imageRes),
-            contentDescription = detail.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+            painter =
+                painterResource(
+                    id = R.drawable.bg_gyeongju_demo,
+                ),
+            contentDescription =
+            title,
+            modifier =
+                Modifier.fillMaxSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(130.dp)
+                    .height(
+                        130.dp,
+                    )
                     .background(
                         brush =
                             Brush.verticalGradient(
                                 colors =
                                     listOf(
-                                        Color.Black.copy(alpha = 0.28f),
+                                        Color.Black.copy(
+                                            alpha = 0.28f,
+                                        ),
                                         Color.Transparent,
                                     ),
                             ),
@@ -313,22 +456,35 @@ private fun TourSpotHero(
                 Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .offset(y = (-4).dp)
-                    .padding(horizontal = 18.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+                    .offset(
+                        y = (-4).dp,
+                    )
+                    .padding(
+                        horizontal = 18.dp,
+                    ),
+            horizontalArrangement =
+                Arrangement.SpaceBetween,
+            verticalAlignment =
+                Alignment.CenterVertically,
         ) {
             DetailHeaderButton(
-                iconRes = R.drawable.ic_chevron_right_white,
-                contentDescription = "뒤로 가기",
-                onClick = onBackClick,
-                rotationDegrees = 180f,
+                iconRes =
+                    R.drawable.ic_chevron_right_white,
+                contentDescription =
+                    "뒤로 가기",
+                onClick =
+                onBackClick,
+                rotationDegrees =
+                180f,
             )
 
             DetailHeaderButton(
-                iconRes = R.drawable.ic_share1,
-                contentDescription = "공유하기",
-                onClick = onShareClick,
+                iconRes =
+                    R.drawable.ic_share1,
+                contentDescription =
+                    "공유하기",
+                onClick =
+                onShareClick,
             )
         }
     }
@@ -345,37 +501,65 @@ private fun DetailHeaderButton(
     Box(
         modifier =
             modifier
-                .size(44.dp)
-                .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
+                .size(
+                    44.dp,
+                )
+                .clickable(
+                    onClick = onClick,
+                ),
+        contentAlignment =
+            Alignment.Center,
     ) {
         Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = contentDescription,
+            painter =
+                painterResource(
+                    id = iconRes,
+                ),
+            contentDescription =
+            contentDescription,
             modifier =
                 Modifier
-                    .size(26.dp)
-                    .rotate(rotationDegrees),
+                    .size(
+                        26.dp,
+                    )
+                    .rotate(
+                        rotationDegrees,
+                    ),
         )
     }
 }
 
+/*
+ * API에서는 tags가 List<String>이므로
+ * 기존 TagType 의존성을 제거합니다.
+ */
 @Composable
 private fun DetailTagRow(
-    tags: List<TagType>,
+    tags: List<String>,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                8.dp,
+            ),
     ) {
-        items(tags) { tag ->
+        items(
+            items = tags,
+            key = { tag ->
+                tag
+            },
+        ) { tag ->
             Box(
                 modifier =
                     Modifier
                         .background(
                             color = Primary70,
-                            shape = RoundedCornerShape(8.dp),
+                            shape =
+                                RoundedCornerShape(
+                                    8.dp,
+                                ),
                         )
                         .padding(
                             horizontal = 12.dp,
@@ -383,10 +567,56 @@ private fun DetailTagRow(
                         ),
             ) {
                 Text(
-                    text = "#${tag.displayName}",
+                    text = "#$tag",
                     style =
                         LocalAppTypography.current.bodySmall.bold.copy(
                             color = Natural100,
+                        ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AttractionPointSection(
+    items: List<ExploreAttractionPointUiModel>,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier.fillMaxWidth(),
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                10.dp,
+            ),
+    ) {
+        items.forEach { item ->
+            Box(
+                modifier =
+                    Modifier
+                        .weight(
+                            1f,
+                        )
+                        .background(
+                            color = Primary99,
+                            shape =
+                                RoundedCornerShape(
+                                    12.dp,
+                                ),
+                        )
+                        .padding(
+                            horizontal = 12.dp,
+                            vertical = 20.dp,
+                        ),
+                contentAlignment =
+                    Alignment.Center,
+            ) {
+                Text(
+                    text = item.title,
+                    style =
+                        LocalAppTypography.current.bodySmall.bold.copy(
+                            color = Natural10,
                         ),
                 )
             }
@@ -407,24 +637,43 @@ private fun TourSpotInformationCard(
                 .fillMaxWidth()
                 .background(
                     color = Primary99,
-                    shape = RoundedCornerShape(12.dp),
+                    shape =
+                        RoundedCornerShape(
+                            12.dp,
+                        ),
                 )
                 .padding(
                     horizontal = 18.dp,
                     vertical = 18.dp,
                 ),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment =
+            Alignment.Top,
     ) {
         Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            painter =
+                painterResource(
+                    id = iconRes,
+                ),
+            contentDescription =
+            null,
+            modifier =
+                Modifier.size(
+                    24.dp,
+                ),
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(
+            modifier =
+                Modifier.width(
+                    12.dp,
+                ),
+        )
 
         Column(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier.weight(
+                    1f,
+                ),
         ) {
             Text(
                 text = title,
@@ -434,173 +683,131 @@ private fun TourSpotInformationCard(
                     ),
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             content()
         }
     }
 }
 
+/*
+ * ---------------------------------------------------------
+ * Loading
+ * ---------------------------------------------------------
+ */
 @Composable
-private fun OperatingNotice(
-    title: String,
-    content: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .background(
-                    color = Primary95,
-                    shape = RoundedCornerShape(10.dp),
-                )
-                .padding(16.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_info),
-                contentDescription = null,
-                modifier = Modifier.size(22.dp),
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = title,
-                style =
-                    LocalAppTypography.current.bodySmall.bold.copy(
-                        color = Natural10,
-                    ),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = content,
-            style =
-                LocalAppTypography.current.bodySmall.medium.copy(
-                    color = Natural60,
-                ),
-        )
-    }
-}
-
-@Composable
-private fun NearbyTourSpotSection(
-    items: List<NearbyTourSpotUiModel>,
-    onItemClick: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(end = 12.dp),
-    ) {
-        items(
-            items = items,
-            key = { item ->
-                item.id
-            },
-        ) { item ->
-            NearbyTourSpotCard(
-                item = item,
-                onClick = {
-                    onItemClick(item.id)
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun NearbyTourSpotCard(
-    item: NearbyTourSpotUiModel,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun ExploreDetailLoading(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
-                .size(
-                    width = 190.dp,
-                    height = 210.dp,
-                )
-                .clip(RoundedCornerShape(10.dp))
-                .clickable(onClick = onClick),
-    ) {
-        Image(
-            painter = painterResource(id = item.imageRes),
-            contentDescription = item.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors =
-                                    listOf(
-                                        Color.Transparent,
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = 0.65f),
-                                    ),
-                            ),
-                    ),
-        )
-
-        Text(
-            text = item.title,
-            style =
-                LocalAppTypography.current.titleMedium.bold.copy(
-                    color = Natural100,
+                .fillMaxSize()
+                .background(
+                    Natural100,
                 ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier =
-                Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(16.dp),
+        contentAlignment =
+            Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            color = Primary70,
         )
     }
 }
 
+/*
+ * ---------------------------------------------------------
+ * Error
+ * ---------------------------------------------------------
+ */
 @Composable
-private fun TourSpotNotFoundScreen(
+private fun ExploreDetailError(
+    message: String,
     onBackClick: () -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
                 .fillMaxSize()
-                .background(Natural100),
-    ) {
-        Text(
-            text = "관광지 정보를 찾을 수 없습니다.",
-            style =
-                LocalAppTypography.current.bodyLarge.medium.copy(
-                    color = Natural60,
+                .background(
+                    Natural100,
                 ),
-            modifier = Modifier.align(Alignment.Center),
-        )
-
+    ) {
         DetailHeaderButton(
-            iconRes = R.drawable.ic_arrow_left_black,
-            contentDescription = "뒤로 가기",
-            onClick = onBackClick,
+            iconRes =
+                R.drawable.ic_arrow_left_black,
+            contentDescription =
+                "뒤로 가기",
+            onClick =
+            onBackClick,
             modifier =
                 Modifier
                     .statusBarsPadding()
-                    .padding(16.dp),
+                    .padding(
+                        16.dp,
+                    ),
         )
+
+        Column(
+            modifier =
+                Modifier
+                    .align(
+                        Alignment.Center,
+                    )
+                    .padding(
+                        horizontal = 30.dp,
+                    ),
+            horizontalAlignment =
+                Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text =
+                    "관광지 정보를 불러오지 못했습니다.",
+                style =
+                    LocalAppTypography.current.titleMedium.bold.copy(
+                        color = Natural10,
+                    ),
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
+
+            Text(
+                text = message,
+                style =
+                    LocalAppTypography.current.bodyLarge.medium.copy(
+                        color = Natural60,
+                    ),
+            )
+
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        24.dp,
+                    ),
+            )
+
+            Text(
+                text = "다시 시도",
+                style =
+                    LocalAppTypography.current.bodyLarge.bold.copy(
+                        color = Primary70,
+                    ),
+                modifier =
+                    Modifier.clickable(
+                        onClick = onRetryClick,
+                    ),
+            )
+        }
     }
 }
 
@@ -613,11 +820,17 @@ private fun TourSpotNotFoundScreen(
 @Composable
 private fun TourSpotDetailScreenPreview() {
     TourfolioTheme {
-        ExploreDetailScreen(
-            tourSpotId = 1L,
-            onBackClick = {},
-            onShareClick = {},
-            onNearbySpotClick = {},
+        /*
+         * 실제 Screen은 Hilt + API에 의존하므로
+         * 간단한 빈 Preview 유지
+         */
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        Natural100,
+                    ),
         )
     }
 }

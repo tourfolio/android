@@ -31,7 +31,6 @@ import com.hdb.tourfolio.feature.explore.CityTravelDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
-import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.feature.home.HomeScreen
 import com.hdb.tourfolio.feature.trade.TradeScreen
 
@@ -254,21 +253,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     },
                     onShareClick = {
                         // 추후 공유 기능 연결
-                    },
-                    // 주변 관광지 상세 클릭 - 추후 의논 후 제거
-                    onNearbySpotClick = { nearbyTourSpotId ->
-                        if (
-                            TourSpotMockData.findDetailById(
-                                nearbyTourSpotId,
-                            ) != null
-                        ) {
-                            navController.navigate(
-                                Screen.ExploreDetail.createRoute(
-                                    tourSpotId = nearbyTourSpotId,
-                                    fromIntro = fromIntro,
-                                ),
-                            )
-                        }
                     },
                 )
             }

@@ -2,8 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,12 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.model.TagType
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -41,8 +37,8 @@ fun TourSpotCard(
     id: Long,
     title: String,
     content: String,
-    tags: List<TagType>,
-    @DrawableRes imageRes: Int,
+    tags: List<String>,
+    imageUrl: String,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -50,17 +46,29 @@ fun TourSpotCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(220.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .height(
+                    220.dp,
+                )
+                .clip(
+                    RoundedCornerShape(
+                        10.dp,
+                    ),
+                )
                 .clickable {
-                    onClick(id)
+                    onClick(
+                        id,
+                    )
                 },
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+        AsyncImage(
+            model =
+            imageUrl,
+            contentDescription =
+            title,
+            modifier =
+                Modifier.fillMaxSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         Box(
@@ -73,8 +81,12 @@ fun TourSpotCard(
                                 colors =
                                     listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.12f),
-                                        Color.Black.copy(alpha = 0.72f),
+                                        Color.Black.copy(
+                                            alpha = 0.12f,
+                                        ),
+                                        Color.Black.copy(
+                                            alpha = 0.72f,
+                                        ),
                                     ),
                             ),
                     ),
@@ -83,42 +95,82 @@ fun TourSpotCard(
         Column(
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
+                    .align(
+                        Alignment.BottomStart,
+                    )
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(
+                        20.dp,
+                    ),
         ) {
             Text(
-                text = title,
+                text =
+                title,
                 style =
-                    LocalAppTypography.current.titleMedium.bold.copy(
-                        color = Natural100,
-                    ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                    LocalAppTypography
+                        .current
+                        .titleMedium
+                        .bold
+                        .copy(
+                            color =
+                            Natural100,
+                        ),
+                maxLines =
+                1,
+                overflow =
+                    TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        4.dp,
+                    ),
+            )
 
             Text(
-                text = content,
+                text =
+                content,
                 style =
-                    LocalAppTypography.current.bodySmall.medium.copy(
-                        color = Natural100.copy(alpha = 0.88f),
-                    ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                    LocalAppTypography
+                        .current
+                        .bodySmall
+                        .medium
+                        .copy(
+                            color =
+                                Natural100.copy(
+                                    alpha = 0.88f,
+                                ),
+                        ),
+                maxLines =
+                1,
+                overflow =
+                    TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        14.dp,
+                    ),
+            )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement =
+                    Arrangement.spacedBy(
+                        8.dp,
+                    ),
             ) {
-                tags.take(3).forEach { tag ->
-                    TourSpotTag(
-                        text = tag.displayName,
+                tags
+                    .take(
+                        3,
                     )
-                }
+                    .forEach { tag ->
+                        TourSpotTag(
+                            text =
+                            tag,
+                        )
+                    }
             }
         }
     }
@@ -133,24 +185,43 @@ private fun TourSpotTag(
         modifier =
             modifier
                 .background(
-                    color = Primary,
-                    shape = RoundedCornerShape(7.dp),
+                    color =
+                    Primary,
+                    shape =
+                        RoundedCornerShape(
+                            7.dp,
+                        ),
                 )
                 .padding(
-                    horizontal = 12.dp,
-                    vertical = 8.dp,
+                    horizontal =
+                        12.dp,
+                    vertical =
+                        8.dp,
                 ),
-        contentAlignment = Alignment.Center,
+        contentAlignment =
+            Alignment.Center,
     ) {
         Text(
-            text = "#$text",
+            text =
+                "#$text",
             style =
-                LocalAppTypography.current.bodySmall.bold.copy(
-                    color = Natural100,
+                LocalAppTypography
+                    .current
+                    .bodySmall
+                    .bold
+                    .copy(
+                        color =
+                        Natural100,
+                    ),
+            maxLines =
+            1,
+            overflow =
+                TextOverflow.Ellipsis,
+            modifier =
+                Modifier.widthIn(
+                    max =
+                        72.dp,
                 ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.widthIn(max = 72.dp),
         )
     }
 }
@@ -164,18 +235,21 @@ private fun TourSpotTag(
 private fun TourSpotCardPreview() {
     TourfolioTheme {
         TourSpotCard(
-            id = 7L,
-            title = "첨성대",
-            content = "동양에서 현존하는 가장 오래된 천문대",
+            id = 1L,
+            title = "경복궁",
+            content = "조선 왕조의 법궁이자 대한민국을 대표하는 궁궐입니다.",
             tags =
                 listOf(
-                    TagType.HISTORY,
-                    TagType.PALACE,
-                    TagType.POPULAR_PLACE,
+                    "역사",
+                    "궁궐",
+                    "조선왕조",
                 ),
-            imageRes = R.drawable.bg_cheomseongdae_demo,
+            imageUrl = "",
             onClick = {},
-            modifier = Modifier.padding(20.dp),
+            modifier =
+                Modifier.padding(
+                    20.dp,
+                ),
         )
     }
 }

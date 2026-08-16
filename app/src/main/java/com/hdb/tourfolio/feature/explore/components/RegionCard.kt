@@ -2,8 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,11 +20,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.R
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
@@ -36,25 +33,39 @@ fun RegionCard(
     id: Long,
     title: String,
     regionName: String,
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier =
             modifier
-                .width(180.dp)
-                .height(245.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .width(
+                    180.dp,
+                )
+                .height(
+                    245.dp,
+                )
+                .clip(
+                    RoundedCornerShape(
+                        10.dp,
+                    ),
+                )
                 .clickable {
-                    onClick(id)
+                    onClick(
+                        id,
+                    )
                 },
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+        AsyncImage(
+            model =
+            imageUrl,
+            contentDescription =
+            title,
+            modifier =
+                Modifier.fillMaxSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         Box(
@@ -67,7 +78,9 @@ fun RegionCard(
                                 colors =
                                     listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.65f),
+                                        Color.Black.copy(
+                                            alpha = 0.65f,
+                                        ),
                                     ),
                             ),
                     ),
@@ -76,7 +89,9 @@ fun RegionCard(
         Column(
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
+                    .align(
+                        Alignment.BottomStart,
+                    )
                     .padding(
                         start = 18.dp,
                         end = 18.dp,
@@ -84,25 +99,48 @@ fun RegionCard(
                     ),
         ) {
             Text(
-                text = title,
+                text =
+                title,
                 style =
-                    LocalAppTypography.current.titleMedium.bold.copy(
-                        color = Natural100,
-                    ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                    LocalAppTypography
+                        .current
+                        .titleMedium
+                        .bold
+                        .copy(
+                            color =
+                            Natural100,
+                        ),
+                maxLines =
+                1,
+                overflow =
+                    TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        5.dp,
+                    ),
+            )
 
             Text(
-                text = regionName,
+                text =
+                regionName,
                 style =
-                    LocalAppTypography.current.bodyLarge.medium.copy(
-                        color = Natural100.copy(alpha = 0.85f),
-                    ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                    LocalAppTypography
+                        .current
+                        .bodyLarge
+                        .medium
+                        .copy(
+                            color =
+                                Natural100.copy(
+                                    alpha = 0.85f,
+                                ),
+                        ),
+                maxLines =
+                1,
+                overflow =
+                    TextOverflow.Ellipsis,
             )
         }
     }
@@ -118,12 +156,15 @@ fun RegionCard(
 private fun RegionCardPreview() {
     TourfolioTheme {
         RegionCard(
-            id = 6L,
-            title = "흰여울길",
-            regionName = "부산",
-            imageRes = R.drawable.bg_huinnyeoul_demo,
+            id = 1L,
+            title = "경복궁",
+            regionName = "서울",
+            imageUrl = "",
             onClick = {},
-            modifier = Modifier.padding(20.dp),
+            modifier =
+                Modifier.padding(
+                    20.dp,
+                ),
         )
     }
 }

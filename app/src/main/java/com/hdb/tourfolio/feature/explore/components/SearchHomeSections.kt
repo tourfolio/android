@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
+import com.hdb.tourfolio.feature.explore.ExploreHubTrendingSpotUiModel
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -31,7 +31,7 @@ import com.hdb.tourfolio.ui.theme.Natural60
 fun SearchHomeSections(
     recommendedTags: List<TagType>,
     popularKeywords: List<String>,
-    recommendedSpots: List<TourSpotListItemUiModel>,
+    recommendedSpots: List<ExploreHubTrendingSpotUiModel>,
     onTagClick: (TagType) -> Unit,
     onKeywordClick: (String) -> Unit,
     onSpotClick: (Long) -> Unit,

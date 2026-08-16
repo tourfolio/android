@@ -1,8 +1,5 @@
 package com.hdb.tourfolio.feature.explore.model
 
-/**
- * 테마 유형
- */
 enum class ThemeType(
     val displayName: String,
 ) {
@@ -11,9 +8,6 @@ enum class ThemeType(
     CULTURE("문화"),
 }
 
-/**
- * 관광지 지역
- */
 enum class RegionType(
     val displayName: String,
 ) {
@@ -35,34 +29,39 @@ enum class RegionType(
     JEJU("제주"),
 }
 
-/**
- * 관광지 태그 (임시)
- */
 enum class TagType(
     val displayName: String,
 ) {
     HISTORY("역사"),
     PALACE("궁궐"),
-    CULTURAL_HERITAGE("문화유산"),
-    TEMPLE("사찰"),
+    JOSEON_DYNASTY("조선왕조"),
+    NATIONAL_TREASURE("국보"),
 
-    NATURE("자연"),
-    SEA("바다"),
-    MOUNTAIN("산"),
-    BEACH("해변"),
-    SUNRISE("일출"),
+    CULTURE("문화"),
+    OBSERVATORY("전망대"),
     NIGHT_VIEW("야경"),
 
-    HEALING("힐링"),
-    WALK("산책"),
+    NATURE("자연"),
+    VOLCANO("화산"),
+    UNESCO_NATURAL_HERITAGE("유네스코 세계자연유산"),
+    SUNRISE("일출"),
+    MOUNTAIN("산"),
+    TOP_100_MOUNTAIN("대한민국 100대 명산"),
     HIKING("등산"),
-    PHOTO_SPOT("사진명소"),
 
-    FAMILY_TRAVEL("가족여행"),
-    COUPLE_TRAVEL("커플여행"),
-    SOLO_TRAVEL("혼자여행"),
+    BEACH("해수욕장"),
+    SEA("바다"),
+    SUMMER("여름"),
 
-    POPULAR_PLACE("인기명소"),
-    CITY_TRAVEL("도시여행"),
-    VILLAGE("마을"),
+    TEMPLE("사찰"),
+    HANOK("한옥"),
+    TRADITIONAL_CULTURE("전통문화"),
+    UNESCO_CULTURAL_HERITAGE("유네스코 세계문화유산"),
+
+    GARDEN("정원"),
+    FLOWER("꽃"),
+    HEALING("힐링"),
+
+    CABLE_CAR("케이블카"),
+    HALLYEO_WATERWAY("한려수도"),
 }

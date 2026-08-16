@@ -27,6 +27,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.feature.explore.model.RegionType
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
@@ -60,7 +60,13 @@ fun SearchFilterBottomSheet(
     appliedTags: Set<TagType>,
     appliedThemes: Set<ThemeType>,
     appliedRegions: Set<RegionType>,
-    allTourSpots: List<TourSpotListItemUiModel>,
+    resultCount: Int,
+    isResultCountLoading: Boolean,
+    onSelectionChanged: (
+        selectedTags: Set<TagType>,
+        selectedThemes: Set<ThemeType>,
+        selectedRegions: Set<RegionType>,
+    ) -> Unit,
     onDismissRequest: () -> Unit,
     onApply: (
         selectedTags: Set<TagType>,
@@ -87,6 +93,18 @@ fun SearchFilterBottomSheet(
 
     var temporaryRegions by remember(appliedRegions) {
         mutableStateOf(appliedRegions)
+    }
+
+    LaunchedEffect(
+        temporaryTags,
+        temporaryThemes,
+        temporaryRegions,
+    ) {
+        onSelectionChanged(
+            temporaryTags,
+            temporaryThemes,
+            temporaryRegions,
+        )
     }
 
     val allTags =
@@ -121,42 +139,10 @@ fun SearchFilterBottomSheet(
         temporaryRegions.isNotEmpty() &&
             temporaryRegions.containsAll(allRegions)
 
-    val resultCount =
-        remember(
-            temporaryTags,
-            temporaryThemes,
-            temporaryRegions,
-            allTourSpots,
-        ) {
-            if (!hasAnySelection) {
-                0
-            } else {
-                filterTourSpots(
-                    items = allTourSpots,
-                    selectedTags =
-                        if (allTagsSelected) {
-                            emptySet()
-                        } else {
-                            temporaryTags
-                        },
-                    selectedThemes =
-                        if (allThemesSelected) {
-                            emptySet()
-                        } else {
-                            temporaryThemes
-                        },
-                    selectedRegions =
-                        if (allRegionsSelected) {
-                            emptySet()
-                        } else {
-                            temporaryRegions
-                        },
-                ).size
-            }
-        }
-
     val isApplyEnabled =
-        hasAnySelection && resultCount > 0
+        hasAnySelection &&
+            !isResultCountLoading &&
+            resultCount > 0
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -377,7 +363,12 @@ fun SearchFilterBottomSheet(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "${resultCount}개의 관광지 보기",
+                        text =
+                            if (isResultCountLoading) {
+                                "관광지를 찾는 중..."
+                            } else {
+                                "${resultCount}개의 관광지 보기"
+                            },
                         style =
                             LocalAppTypography.current.bodyLarge.bold.copy(
                                 color =
@@ -525,32 +516,6 @@ private fun <T> Set<T>.toggle(item: T): Set<T> =
         this - item
     } else {
         this + item
-    }
-
-fun filterTourSpots(
-    items: List<TourSpotListItemUiModel>,
-    selectedTags: Set<TagType>,
-    selectedThemes: Set<ThemeType>,
-    selectedRegions: Set<RegionType>,
-): List<TourSpotListItemUiModel> =
-    items.filter { item ->
-        val matchesTags =
-            selectedTags.isEmpty() ||
-                item.tags.any { tag ->
-                    tag in selectedTags
-                }
-
-        val matchesThemes =
-            selectedThemes.isEmpty() ||
-                item.themeType in selectedThemes
-
-        val matchesRegions =
-            selectedRegions.isEmpty() ||
-                item.regionType in selectedRegions
-
-        matchesTags &&
-            matchesThemes &&
-            matchesRegions
     }
 
 private const val FILTER_ALL_KEY = "__all__"

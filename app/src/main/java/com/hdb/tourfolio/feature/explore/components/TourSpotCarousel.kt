@@ -2,7 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
@@ -33,10 +31,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
+import coil.compose.AsyncImage
+import com.hdb.tourfolio.feature.explore.ExploreCardUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -44,7 +42,7 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun TourSpotCarousel(
-    items: List<TourSpotListItemUiModel>,
+    items: List<ExploreCardUiModel>,
     onItemClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -61,53 +59,80 @@ fun TourSpotCarousel(
         )
 
     BoxWithConstraints(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier.fillMaxWidth(),
     ) {
-        val cardWidth = 367.dp
+        val cardWidth =
+            367.dp
 
         val horizontalPadding =
-            ((maxWidth - cardWidth) / 2)
-                .coerceAtLeast(0.dp)
+            (
+                (maxWidth - cardWidth) /
+                    2
+            ).coerceAtLeast(
+                0.dp,
+            )
 
         HorizontalPager(
-            state = pagerState,
-            pageSize = PageSize.Fixed(cardWidth),
+            state =
+            pagerState,
+            pageSize =
+                PageSize.Fixed(
+                    cardWidth,
+                ),
             contentPadding =
                 PaddingValues(
-                    horizontal = horizontalPadding,
+                    horizontal =
+                    horizontalPadding,
                 ),
-            pageSpacing = 0.dp,
+            pageSpacing =
+                0.dp,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(370.dp),
+                    .height(
+                        370.dp,
+                    ),
         ) { page ->
             val offset =
                 (
                     (pagerState.currentPage - page) +
                         pagerState.currentPageOffsetFraction
-                ).absoluteValue.coerceIn(0f, 1f)
+                ).absoluteValue.coerceIn(
+                    0f,
+                    1f,
+                )
 
             val scale =
-                1f - (offset * 0.08f)
+                1f -
+                    (offset * 0.08f)
 
             val alpha =
-                1f - (offset * 0.25f)
+                1f -
+                    (offset * 0.25f)
 
-            TourSpotCard(
-                item = items[page],
-                currentPage = pagerState.settledPage,
-                pageCount = items.size,
+            TourSpotCarouselCard(
+                item =
+                    items[page],
+                currentPage =
+                    pagerState.settledPage,
+                pageCount =
+                    items.size,
                 onClick = {
-                    onItemClick(items[page].id)
+                    onItemClick(
+                        items[page].id,
+                    )
                 },
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .graphicsLayer {
-                            scaleX = scale
-                            scaleY = scale
-                            this.alpha = alpha
+                            scaleX =
+                                scale
+                            scaleY =
+                                scale
+                            this.alpha =
+                                alpha
                         },
             )
         }
@@ -115,8 +140,8 @@ fun TourSpotCarousel(
 }
 
 @Composable
-private fun TourSpotCard(
-    item: TourSpotListItemUiModel,
+private fun TourSpotCarouselCard(
+    item: ExploreCardUiModel,
     currentPage: Int,
     pageCount: Int,
     onClick: () -> Unit,
@@ -125,14 +150,25 @@ private fun TourSpotCard(
     Box(
         modifier =
             modifier
-                .clip(RoundedCornerShape(20.dp))
-                .clickable(onClick = onClick),
+                .clip(
+                    RoundedCornerShape(
+                        20.dp,
+                    ),
+                )
+                .clickable(
+                    onClick =
+                    onClick,
+                ),
     ) {
-        Image(
-            painter = painterResource(id = item.imageRes),
-            contentDescription = item.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+        AsyncImage(
+            model =
+                item.imageUrl,
+            contentDescription =
+                item.title,
+            modifier =
+                Modifier.fillMaxSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         Box(
@@ -146,7 +182,9 @@ private fun TourSpotCard(
                                     listOf(
                                         Color.Transparent,
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.72f),
+                                        Color.Black.copy(
+                                            alpha = 0.72f,
+                                        ),
                                     ),
                             ),
                     ),
@@ -155,7 +193,9 @@ private fun TourSpotCard(
         Column(
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
+                    .align(
+                        Alignment.BottomStart,
+                    )
                     .fillMaxWidth()
                     .padding(
                         start = 20.dp,
@@ -163,45 +203,81 @@ private fun TourSpotCard(
                         bottom = 50.dp,
                     ),
         ) {
+            /*
+             * 서버 areaName
+             */
             Box(
                 modifier =
                     Modifier
-                        .clip(RoundedCornerShape(50))
-                        .background(Primary)
+                        .clip(
+                            RoundedCornerShape(
+                                50,
+                            ),
+                        )
+                        .background(
+                            Primary,
+                        )
                         .padding(
-                            horizontal = 10.dp,
-                            vertical = 6.dp,
+                            horizontal =
+                                10.dp,
+                            vertical =
+                                6.dp,
                         ),
             ) {
                 Text(
-                    text = item.regionType.displayName,
+                    text =
+                        item.areaName,
                     style =
-                        LocalAppTypography.current.bodySmall.bold.copy(
-                            color = Natural100,
-                        ),
+                        LocalAppTypography
+                            .current
+                            .bodySmall
+                            .bold
+                            .copy(
+                                color =
+                                Natural100,
+                            ),
                 )
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
 
             Text(
-                text = item.title,
+                text =
+                    item.title,
                 style =
-                    LocalAppTypography.current.titleMedium.bold.copy(
-                        color = Natural100,
-                    ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                    LocalAppTypography
+                        .current
+                        .titleMedium
+                        .bold
+                        .copy(
+                            color =
+                            Natural100,
+                        ),
+                maxLines =
+                1,
+                overflow =
+                    TextOverflow.Ellipsis,
             )
         }
 
         CarouselPageIndicator(
-            currentPage = currentPage,
-            pageCount = pageCount,
+            currentPage =
+            currentPage,
+            pageCount =
+            pageCount,
             modifier =
                 Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 22.dp),
+                    .align(
+                        Alignment.BottomCenter,
+                    )
+                    .padding(
+                        bottom = 22.dp,
+                    ),
         )
     }
 }
@@ -213,33 +289,54 @@ private fun CarouselPageIndicator(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        modifier =
+        modifier,
+        horizontalArrangement =
+            Arrangement.spacedBy(
+                6.dp,
+            ),
+        verticalAlignment =
+            Alignment.CenterVertically,
     ) {
-        repeat(pageCount) { index ->
-            val isSelected = index == currentPage
+        repeat(
+            pageCount,
+        ) { index ->
+            val isSelected =
+                index == currentPage
 
             Box(
                 modifier =
                     Modifier
-                        .height(10.dp)
+                        .height(
+                            10.dp,
+                        )
                         .then(
                             if (isSelected) {
-                                Modifier.width(30.dp)
+                                Modifier.width(
+                                    30.dp,
+                                )
                             } else {
-                                Modifier.width(10.dp)
+                                Modifier.width(
+                                    10.dp,
+                                )
                             },
                         )
-                        .clip(CircleShape)
+                        .clip(
+                            CircleShape,
+                        )
                         .then(
                             if (isSelected) {
-                                Modifier.background(Natural100)
+                                Modifier.background(
+                                    Natural100,
+                                )
                             } else {
                                 Modifier.border(
-                                    width = 1.5.dp,
-                                    color = Natural100,
-                                    shape = CircleShape,
+                                    width =
+                                        1.5.dp,
+                                    color =
+                                    Natural100,
+                                    shape =
+                                    CircleShape,
                                 )
                             },
                         ),
