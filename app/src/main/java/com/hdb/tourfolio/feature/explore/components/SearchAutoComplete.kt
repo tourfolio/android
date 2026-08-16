@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural90
@@ -179,62 +178,3 @@ private fun buildHighlightedKeyword(
         }
     }
 }
-
-fun createAutocompleteKeywords(
-    query: String,
-    tourSpots: List<TourSpotListItemUiModel>,
-    limit: Int = DEFAULT_AUTOCOMPLETE_LIMIT,
-): List<String> {
-    val keyword =
-        query
-            .trim()
-            .removePrefix("#")
-
-    if (keyword.isBlank()) {
-        return emptyList()
-    }
-
-    val tourSpotTitles =
-        tourSpots.map { item ->
-            item.title
-        }
-
-    val tagNames =
-        tourSpots
-            .flatMap { item ->
-                item.tags
-            }
-            .map { tag ->
-                tag.displayName
-            }
-
-    return (tourSpotTitles + tagNames)
-        .distinct()
-        .filter { candidate ->
-            candidate.contains(
-                other = keyword,
-                ignoreCase = true,
-            )
-        }
-        .sortedWith(
-            compareBy<String> { candidate ->
-                if (
-                    candidate.startsWith(
-                        prefix = keyword,
-                        ignoreCase = true,
-                    )
-                ) {
-                    0
-                } else {
-                    1
-                }
-            }.thenBy { candidate ->
-                candidate.length
-            }.thenBy { candidate ->
-                candidate
-            },
-        )
-        .take(limit)
-}
-
-private const val DEFAULT_AUTOCOMPLETE_LIMIT = 10

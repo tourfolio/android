@@ -23,8 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.mock.TourSpotListItemUiModel
+import com.hdb.tourfolio.feature.explore.ExploreSearchSpotUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -33,20 +34,20 @@ import com.hdb.tourfolio.ui.theme.Primary70
 
 @Composable
 fun SearchResultCard(
-    item: TourSpotListItemUiModel,
+    item: ExploreSearchSpotUiModel,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
-            modifier
-                .clickable {
-                    onClick(item.id)
-                },
-        verticalAlignment = Alignment.Top,
+            modifier.clickable {
+                onClick(item.id)
+            },
+        verticalAlignment =
+            Alignment.Top,
     ) {
-        Image(
-            painter = painterResource(id = item.imageRes),
+        AsyncImage(
+            model = item.imageUrl,
             contentDescription = item.title,
             modifier =
                 Modifier
@@ -54,11 +55,15 @@ fun SearchResultCard(
                         width = 142.dp,
                         height = 142.dp,
                     )
-                    .clip(RoundedCornerShape(10.dp)),
+                    .clip(
+                        RoundedCornerShape(10.dp),
+                    ),
             contentScale = ContentScale.Crop,
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(
+            modifier = Modifier.width(12.dp),
+        )
 
         Column(
             modifier = Modifier.weight(1f),
@@ -73,18 +78,25 @@ fun SearchResultCard(
                 overflow = TextOverflow.Ellipsis,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(
+                modifier = Modifier.height(8.dp),
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_location),
+                    painter =
+                        painterResource(
+                            id = R.drawable.ic_location,
+                        ),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                 )
 
-                Spacer(modifier = Modifier.width(5.dp))
+                Spacer(
+                    modifier = Modifier.width(5.dp),
+                )
 
                 Text(
                     text = item.address,
@@ -97,16 +109,21 @@ fun SearchResultCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(
+                modifier = Modifier.height(24.dp),
+            )
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement =
+                    Arrangement.spacedBy(6.dp),
             ) {
-                item.tags.take(3).forEach { tag ->
-                    SearchResultTag(
-                        text = tag.displayName,
-                    )
-                }
+                item.tags
+                    .take(3)
+                    .forEach { tag ->
+                        SearchResultTag(
+                            text = tag,
+                        )
+                    }
             }
         }
     }

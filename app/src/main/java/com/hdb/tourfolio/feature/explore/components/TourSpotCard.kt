@@ -62,9 +62,9 @@ fun TourSpotCard(
     ) {
         AsyncImage(
             model =
-                imageUrl,
+            imageUrl,
             contentDescription =
-                title,
+            title,
             modifier =
                 Modifier.fillMaxSize(),
             contentScale =
@@ -105,7 +105,7 @@ fun TourSpotCard(
         ) {
             Text(
                 text =
-                    title,
+                title,
                 style =
                     LocalAppTypography
                         .current
@@ -113,10 +113,10 @@ fun TourSpotCard(
                         .bold
                         .copy(
                             color =
-                                Natural100,
+                            Natural100,
                         ),
                 maxLines =
-                    1,
+                1,
                 overflow =
                     TextOverflow.Ellipsis,
             )
@@ -130,7 +130,7 @@ fun TourSpotCard(
 
             Text(
                 text =
-                    content,
+                content,
                 style =
                     LocalAppTypography
                         .current
@@ -143,7 +143,7 @@ fun TourSpotCard(
                                 ),
                         ),
                 maxLines =
-                    1,
+                1,
                 overflow =
                     TextOverflow.Ellipsis,
             )
@@ -168,7 +168,7 @@ fun TourSpotCard(
                     .forEach { tag ->
                         TourSpotTag(
                             text =
-                                tag,
+                            tag,
                         )
                     }
             }
@@ -186,7 +186,7 @@ private fun TourSpotTag(
             modifier
                 .background(
                     color =
-                        Primary,
+                    Primary,
                     shape =
                         RoundedCornerShape(
                             7.dp,
@@ -211,10 +211,10 @@ private fun TourSpotTag(
                     .bold
                     .copy(
                         color =
-                            Natural100,
+                        Natural100,
                     ),
             maxLines =
-                1,
+            1,
             overflow =
                 TextOverflow.Ellipsis,
             modifier =

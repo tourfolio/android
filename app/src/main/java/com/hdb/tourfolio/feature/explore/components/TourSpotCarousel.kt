@@ -67,15 +67,15 @@ fun TourSpotCarousel(
 
         val horizontalPadding =
             (
-                    (maxWidth - cardWidth) /
-                            2
-                    ).coerceAtLeast(
-                    0.dp,
-                )
+                (maxWidth - cardWidth) /
+                    2
+            ).coerceAtLeast(
+                0.dp,
+            )
 
         HorizontalPager(
             state =
-                pagerState,
+            pagerState,
             pageSize =
                 PageSize.Fixed(
                     cardWidth,
@@ -83,7 +83,7 @@ fun TourSpotCarousel(
             contentPadding =
                 PaddingValues(
                     horizontal =
-                        horizontalPadding,
+                    horizontalPadding,
                 ),
             pageSpacing =
                 0.dp,
@@ -96,20 +96,20 @@ fun TourSpotCarousel(
         ) { page ->
             val offset =
                 (
-                        (pagerState.currentPage - page) +
-                                pagerState.currentPageOffsetFraction
-                        ).absoluteValue.coerceIn(
-                        0f,
-                        1f,
-                    )
+                    (pagerState.currentPage - page) +
+                        pagerState.currentPageOffsetFraction
+                ).absoluteValue.coerceIn(
+                    0f,
+                    1f,
+                )
 
             val scale =
                 1f -
-                        (offset * 0.08f)
+                    (offset * 0.08f)
 
             val alpha =
                 1f -
-                        (offset * 0.25f)
+                    (offset * 0.25f)
 
             TourSpotCarouselCard(
                 item =
@@ -157,7 +157,7 @@ private fun TourSpotCarouselCard(
                 )
                 .clickable(
                     onClick =
-                        onClick,
+                    onClick,
                 ),
     ) {
         AsyncImage(
@@ -234,7 +234,7 @@ private fun TourSpotCarouselCard(
                             .bold
                             .copy(
                                 color =
-                                    Natural100,
+                                Natural100,
                             ),
                 )
             }
@@ -256,10 +256,10 @@ private fun TourSpotCarouselCard(
                         .bold
                         .copy(
                             color =
-                                Natural100,
+                            Natural100,
                         ),
                 maxLines =
-                    1,
+                1,
                 overflow =
                     TextOverflow.Ellipsis,
             )
@@ -267,9 +267,9 @@ private fun TourSpotCarouselCard(
 
         CarouselPageIndicator(
             currentPage =
-                currentPage,
+            currentPage,
             pageCount =
-                pageCount,
+            pageCount,
             modifier =
                 Modifier
                     .align(
@@ -290,7 +290,7 @@ private fun CarouselPageIndicator(
 ) {
     Row(
         modifier =
-            modifier,
+        modifier,
         horizontalArrangement =
             Arrangement.spacedBy(
                 6.dp,
@@ -334,9 +334,9 @@ private fun CarouselPageIndicator(
                                     width =
                                         1.5.dp,
                                     color =
-                                        Natural100,
+                                    Natural100,
                                     shape =
-                                        CircleShape,
+                                    CircleShape,
                                 )
                             },
                         ),

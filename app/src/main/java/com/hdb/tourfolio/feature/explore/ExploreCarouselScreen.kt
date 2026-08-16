@@ -37,8 +37,8 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.components.CarouselContent
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
@@ -55,7 +55,7 @@ fun ExploreCarouselScreen(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val mainCardsUiState by
-    viewModel.mainCardsUiState.collectAsStateWithLifecycle()
+        viewModel.mainCardsUiState.collectAsStateWithLifecycle()
 
     when (val state = mainCardsUiState) {
         ExploreMainCardsUiState.Loading -> {
@@ -151,8 +151,8 @@ private fun ExploreCarouselContent(
 
             val canAutoMove =
                 !pagerState.isScrollInProgress &&
-                        pagerState.settledPage ==
-                        pageBeforeDelay
+                    pagerState.settledPage ==
+                    pageBeforeDelay
 
             if (!canAutoMove) {
                 continue
@@ -173,20 +173,20 @@ private fun ExploreCarouselContent(
     ) { page ->
         val pageOffset =
             (
-                    (pagerState.currentPage - page) +
-                            pagerState.currentPageOffsetFraction
-                    ).absoluteValue
+                (pagerState.currentPage - page) +
+                    pagerState.currentPageOffsetFraction
+            ).absoluteValue
 
         val pageAlpha =
             1f -
-                    pageOffset
-                        .coerceIn(
-                            minimumValue = 0f,
-                            maximumValue = 1f,
-                        )
-                        .times(
-                            0.55f,
-                        )
+                pageOffset
+                    .coerceIn(
+                        minimumValue = 0f,
+                        maximumValue = 1f,
+                    )
+                    .times(
+                        0.55f,
+                    )
 
         Box(
             modifier =
@@ -218,7 +218,7 @@ private fun ExploreCarouselContent(
 
                 ExploreCarouselHeader(
                     onSearchClick =
-                        onFinished,
+                    onFinished,
                     modifier =
                         Modifier
                             .align(
@@ -272,24 +272,18 @@ private fun ExploreCarouselPage(
         CarouselContent(
             title =
                 item.title,
-
             content =
                 item.subTitle,
-
             place =
                 item.location,
-
             tags =
                 item.tags,
-
             themeType =
                 item.themeType,
-
             currentIndex =
-                currentIndex,
+            currentIndex,
             totalCount =
-                totalCount,
-
+            totalCount,
             modifier =
                 Modifier
                     .align(
@@ -307,7 +301,7 @@ private fun ExploreCarouselHeader(
 ) {
     Row(
         modifier =
-            modifier,
+        modifier,
         verticalAlignment =
             Alignment.CenterVertically,
         horizontalArrangement =
@@ -323,7 +317,7 @@ private fun ExploreCarouselHeader(
                     .bold
                     .copy(
                         color =
-                            Natural100,
+                        Natural100,
                     ),
         )
 
@@ -335,7 +329,7 @@ private fun ExploreCarouselHeader(
                     )
                     .clickable(
                         onClick =
-                            onSearchClick,
+                        onSearchClick,
                     ),
             contentAlignment =
                 Alignment.Center,
@@ -358,9 +352,7 @@ private fun ExploreCarouselHeader(
 }
 
 @Composable
-private fun ExploreCarouselLoading(
-    modifier: Modifier = Modifier,
-) {
+private fun ExploreCarouselLoading(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
@@ -373,7 +365,7 @@ private fun ExploreCarouselLoading(
     ) {
         CircularProgressIndicator(
             color =
-                Primary,
+            Primary,
         )
     }
 }
@@ -408,7 +400,7 @@ private fun ExploreCarouselError(
                         .bold
                         .copy(
                             color =
-                                Natural10,
+                            Natural10,
                         ),
             )
 
@@ -421,7 +413,7 @@ private fun ExploreCarouselError(
 
             Text(
                 text =
-                    message,
+                message,
                 style =
                     LocalAppTypography
                         .current
@@ -429,7 +421,7 @@ private fun ExploreCarouselError(
                         .medium
                         .copy(
                             color =
-                                Natural60,
+                            Natural60,
                         ),
             )
 
@@ -442,7 +434,7 @@ private fun ExploreCarouselError(
 
             TextButton(
                 onClick =
-                    onRetryClick,
+                onRetryClick,
             ) {
                 Text(
                     text =
@@ -454,7 +446,7 @@ private fun ExploreCarouselError(
                             .bold
                             .copy(
                                 color =
-                                    Primary,
+                                Primary,
                             ),
                 )
             }

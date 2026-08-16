@@ -34,3 +34,72 @@ data class ExploreCardDto(
     val address: String,
     val tags: List<String>,
 )
+
+/*
+ * 콘텐츠 허브
+ */
+
+data class ExploreHubDto(
+    val themes: List<ExploreHubThemeDto>,
+    val trendingSpots: List<ExploreHubTrendingSpotDto>,
+)
+
+data class ExploreHubThemeDto(
+    val themeId: Long,
+    val title: String,
+    val placeCount: Int,
+    val imageUrl: String,
+)
+
+data class ExploreHubTrendingSpotDto(
+    val spotId: Long,
+    val name: String,
+    val location: String,
+    val popularityRank: Int,
+    val imageUrl: String,
+    val address: String,
+)
+
+/*
+ * 복합 필터링 검색
+ */
+data class ExploreSearchDto(
+    val spots: List<ExploreSearchSpotDto>,
+    val totalCount: Int,
+)
+
+data class ExploreSearchSpotDto(
+    val spotId: Long,
+    val name: String,
+    val location: String,
+    val address: String,
+    val imageUrl: String,
+    val tags: List<String>,
+)
+
+data class ExploreSpotDetailDto(
+    val spotId: Long,
+    val name: String,
+    val address: String,
+    val tags: List<String>,
+    val description: String,
+    val operatingHours: String?,
+    val closedDays: String?,
+    val admissionFee: String?,
+    val website: String?,
+    val phoneNumber: String?,
+    val attractionPoints: List<ExploreAttractionPointDto>,
+    val nearbySpots: List<ExploreNearbySpotDto>,
+)
+
+data class ExploreAttractionPointDto(
+    val title: String,
+    val iconType: String,
+    val iconUrl: String?,
+)
+
+data class ExploreNearbySpotDto(
+    val spotId: Long,
+    val name: String,
+    val imageUrl: String,
+)

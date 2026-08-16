@@ -26,12 +26,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,13 +39,11 @@ import com.hdb.tourfolio.feature.explore.components.RegionCard
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.TourSpotCard
 import com.hdb.tourfolio.feature.explore.components.TourSpotCarousel
-import com.hdb.tourfolio.feature.explore.mock.TourSpotMockData
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
-import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 data class ThemeTravelItem(
     val id: Long,
@@ -65,12 +61,12 @@ fun ExploreScreen(
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
     val exploreCardsUiState by
-    viewModel.exploreCardsUiState
-        .collectAsStateWithLifecycle()
+        viewModel.exploreCardsUiState
+            .collectAsStateWithLifecycle()
 
     val trendingUiState by
-    viewModel.trendingUiState
-        .collectAsStateWithLifecycle()
+        viewModel.trendingUiState
+            .collectAsStateWithLifecycle()
 
     val themeTravelItems =
         remember {
@@ -151,7 +147,7 @@ fun ExploreScreen(
                     items =
                         state.featuredCards,
                     onItemClick =
-                        onTourSpotClick,
+                    onTourSpotClick,
                 )
             }
         }
@@ -243,7 +239,7 @@ fun ExploreScreen(
                             imageUrl =
                                 item.imageUrl,
                             onClick =
-                                onTourSpotClick,
+                            onTourSpotClick,
                             modifier =
                                 Modifier.width(
                                     360.dp,
@@ -311,7 +307,7 @@ fun ExploreScreen(
                             imageUrl =
                                 item.imageUrl,
                             onClick =
-                                onTourSpotClick,
+                            onTourSpotClick,
                         )
                     }
                 }
@@ -383,9 +379,7 @@ private fun ExploreSectionTitle(
 }
 
 @Composable
-private fun ExploreSectionLoading(
-    height: androidx.compose.ui.unit.Dp,
-) {
+private fun ExploreSectionLoading(height: androidx.compose.ui.unit.Dp) {
     Box(
         modifier =
             Modifier
@@ -398,7 +392,7 @@ private fun ExploreSectionLoading(
     ) {
         CircularProgressIndicator(
             color =
-                Primary,
+            Primary,
         )
     }
 }
@@ -421,7 +415,7 @@ private fun ExploreSectionError(
     ) {
         Text(
             text =
-                message,
+            message,
             style =
                 LocalAppTypography
                     .current
@@ -429,13 +423,13 @@ private fun ExploreSectionError(
                     .medium
                     .copy(
                         color =
-                            Natural60,
+                        Natural60,
                     ),
         )
 
         TextButton(
             onClick =
-                onRetryClick,
+            onRetryClick,
         ) {
             Text(
                 text =
@@ -447,10 +441,9 @@ private fun ExploreSectionError(
                         .bold
                         .copy(
                             color =
-                                Primary,
+                            Primary,
                         ),
             )
         }
     }
 }
-
