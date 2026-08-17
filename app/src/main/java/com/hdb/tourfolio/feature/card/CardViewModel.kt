@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:function-signature")
+
 package com.hdb.tourfolio.feature.card
 
 import androidx.lifecycle.ViewModel
@@ -369,7 +371,7 @@ private fun CardDetailDto.toUiModel(): CardDetailUiModel {
         imageUrl = imageUrl,
         imageRes = null,
         address = address,
-        glowColorCode = glowColorCode,
+        glowColorCode = glowColorCode.orEmpty(),
         cardNumber = cardNumber,
         phrase = phrase,
         acquisitionPath = acquisitionPath,

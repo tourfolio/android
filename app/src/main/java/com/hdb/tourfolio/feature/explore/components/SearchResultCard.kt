@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.explore.ExploreSearchSpotUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreSearchSpotUiModel
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100

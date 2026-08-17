@@ -42,16 +42,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    /*
-     * 같은 Route 이지만 BottomNavBar를 숨겨야 하는 경우 사용
-     */
     var hideBottomBar by rememberSaveable {
         mutableStateOf(false)
     }
 
-    /*
-     * 하단 내비게이션의 메인 화면 라우트에서만 BottomNavBar를 표시(?)
-     */
     val showBottomBar =
         !hideBottomBar &&
             bottomNavItems.any { bottomNavItem ->
