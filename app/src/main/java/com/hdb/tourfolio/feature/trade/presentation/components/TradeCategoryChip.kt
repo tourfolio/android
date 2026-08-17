@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.components
+package com.hdb.tourfolio.feature.trade.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -18,8 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural70
-import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
@@ -42,7 +43,7 @@ fun TradeCategoryChip(
                 width = 1.dp,
                 color =
                     if (selected) {
-                        Primary
+                        Primary70
                     } else {
                         Natural70
                     },
@@ -57,9 +58,9 @@ fun TradeCategoryChip(
                 style = LocalAppTypography.current.labelLarge.bold,
                 color =
                     if (selected) {
-                        Primary
+                        Primary70
                     } else {
-                        Natural70
+                        Natural60
                     },
             )
         }

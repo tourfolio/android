@@ -1,4 +1,4 @@
-package com.hdb.tourfolio.feature.trade.tabs
+package com.hdb.tourfolio.feature.trade.presentation.tabs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

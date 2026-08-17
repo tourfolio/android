@@ -1,10 +1,10 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.tabs
+package com.hdb.tourfolio.feature.trade.presentation.tabs
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,15 +30,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.R
-import com.hdb.tourfolio.feature.trade.components.FilterDropdown
-import com.hdb.tourfolio.feature.trade.components.PriceChangeType
-import com.hdb.tourfolio.feature.trade.components.TourStockCard
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hdb.tourfolio.core.network.dto.PortfolioDto
+import com.hdb.tourfolio.core.network.dto.PortfolioItemDto
+import com.hdb.tourfolio.feature.trade.presentation.components.FilterDropdown
+import com.hdb.tourfolio.feature.trade.presentation.components.PriceChangeType
+import com.hdb.tourfolio.feature.trade.presentation.components.TourStockCard
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural50
 import com.hdb.tourfolio.ui.theme.Natural60
+import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
@@ -46,16 +52,73 @@ import java.util.Locale
 private data class HoldingStockItem(
     val id: Long,
     val title: String,
-    val region: String,
+    val currentPrice: Long,
     val evaluationAmount: Long,
     val profitAmount: Long,
     val profitRate: Double,
     val quantity: Int,
-    @DrawableRes val imageRes: Int,
 )
 
 @Composable
-fun HoldingsTab(modifier: Modifier = Modifier) {
+fun HoldingsTab(
+    modifier: Modifier = Modifier,
+    onStockClick: (Long, String, Long?, Long?) -> Unit = { _, _, _, _ -> },
+    viewModel: HoldingsViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    HoldingsTabContent(
+        modifier = modifier,
+        uiState = uiState,
+        onStockClick = onStockClick,
+        onRetryClick = { viewModel.fetchPortfolio() },
+    )
+}
+
+@Composable
+private fun HoldingsTabContent(
+    uiState: PortfolioUiState,
+    onStockClick: (Long, String, Long?, Long?) -> Unit,
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when (uiState) {
+        is PortfolioUiState.Loading -> {
+            LoadingHoldings(
+                modifier =
+                    modifier
+                        .fillMaxSize()
+                        .background(Natural100),
+            )
+        }
+
+        is PortfolioUiState.Error -> {
+            ErrorHoldings(
+                message = uiState.message,
+                onRetryClick = onRetryClick,
+                modifier =
+                    modifier
+                        .fillMaxSize()
+                        .background(Natural100),
+            )
+        }
+
+        is PortfolioUiState.Success -> {
+            HoldingsList(
+                portfolio = uiState.portfolio,
+                onStockClick = onStockClick,
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HoldingsList(
+    portfolio: PortfolioDto,
+    onStockClick: (Long, String, Long?, Long?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var selectedSortOption by rememberSaveable {
         mutableStateOf("수익률")
     }
@@ -69,48 +132,11 @@ fun HoldingsTab(modifier: Modifier = Modifier) {
             )
         }
 
-   /*
-    *  임시데이터
-    */
     val holdingStocks =
-        remember {
-            listOf(
-                HoldingStockItem(
-                    id = 1L,
-                    title = "안압지",
-                    region = "경주",
-                    evaluationAmount = 4_560_000L,
-                    profitAmount = 560_000L,
-                    profitRate = 14.00,
-                    quantity = 42,
-                    imageRes = R.drawable.bg_cheomseongdae_demo,
-                ),
-                HoldingStockItem(
-                    id = 2L,
-                    title = "광안리",
-                    region = "부산",
-                    evaluationAmount = 3_800_000L,
-                    profitAmount = 320_000L,
-                    profitRate = 9.20,
-                    quantity = 35,
-                    imageRes = R.drawable.bg_huinnyeoul_demo,
-                ),
-                HoldingStockItem(
-                    id = 3L,
-                    title = "첨성대",
-                    region = "경주",
-                    evaluationAmount = 4_200_000L,
-                    profitAmount = -120_000L,
-                    profitRate = -2.78,
-                    quantity = 28,
-                    imageRes = R.drawable.bg_cheomseongdae_demo,
-                ),
-            )
+        remember(portfolio) {
+            portfolio.items.map { it.toHoldingStockItem() }
         }
 
-    /*
-     * 현재는 임시 데이터에 대해 로컬 정렬
-     */
     val sortedHoldingStocks =
         remember(
             holdingStocks,
@@ -157,10 +183,12 @@ fun HoldingsTab(modifier: Modifier = Modifier) {
             0.0
         }
 
-    // 임시 데이터
+    /*
+     * 임시 데이터 - 월간 수익 API 연동 전까지 사용
+     */
     val monthlyProfit = 240_000L
     val monthlyProfitRate = 2.15
-    val holdingPoint = 20_000L
+    val holdingPoint = portfolio.cashBalance
 
     LazyColumn(
         modifier =
@@ -208,36 +236,110 @@ fun HoldingsTab(modifier: Modifier = Modifier) {
                 sortOptions = sortOptions,
                 onSortOptionSelected = { option ->
                     selectedSortOption = option
-
-                    /*
-                     * 서버 정렬을 적용한다면 다음과 같이 ViewModel에 전달
-                     * viewModel.changeSortOption(option)
-                     */
                 },
             )
         }
 
-        items(
-            items = sortedHoldingStocks,
-            key = { item -> item.id },
-        ) { item ->
-            TourStockCard(
-                title = item.title,
-                subtitle = item.region,
-                imageRes = item.imageRes,
-                priceText = "${formatNumber(item.evaluationAmount)}P",
-                changeText =
-                    buildChangeText(
-                        amount = item.profitAmount,
-                        rate = item.profitRate,
-                    ),
-                changeType = item.profitAmount.toPriceChangeType(),
-                onClick = {
-                    // 상세화면이 없다면 제거
-                },
-            )
+        if (sortedHoldingStocks.isEmpty()) {
+            item {
+                EmptyHoldings()
+            }
+        } else {
+            items(
+                items = sortedHoldingStocks,
+                key = { item -> item.id },
+            ) { item ->
+                TourStockCard(
+                    title = item.title,
+                    priceText = "${formatNumber(item.evaluationAmount)}P",
+                    changeText =
+                        buildChangeText(
+                            amount = item.profitAmount,
+                            rate = item.profitRate,
+                        ),
+                    changeType = item.profitAmount.toPriceChangeType(),
+                    showLike = false,
+                    onClick = {
+                        onStockClick(item.id, item.title, item.currentPrice, null)
+                    },
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun LoadingHoldings(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(color = Primary)
+    }
+}
+
+@Composable
+private fun ErrorHoldings(
+    message: String,
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "보유 종목을 불러오지 못했습니다.",
+                style = LocalAppTypography.current.bodyLarge.bold,
+                color = Natural10,
+            )
+
+            Text(
+                text = message,
+                style = LocalAppTypography.current.bodySmall.medium,
+                color = Natural50,
+            )
+
+            TextButton(onClick = onRetryClick) {
+                Text(
+                    text = "다시 시도",
+                    style = LocalAppTypography.current.bodySmall.bold,
+                    color = Primary,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyHoldings(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "보유 중인 관광지가 없습니다.",
+            style = LocalAppTypography.current.bodyLarge.medium,
+            color = Natural60,
+        )
+    }
+}
+
+private fun PortfolioItemDto.toHoldingStockItem(): HoldingStockItem {
+    val profitAmount = (currentPrice - averagePurchasePrice) * quantity
+
+    return HoldingStockItem(
+        id = spotId,
+        title = spotName,
+        currentPrice = currentPrice,
+        evaluationAmount = evaluationAmount,
+        profitAmount = profitAmount,
+        profitRate = profitLossRate,
+        quantity = quantity,
+    )
 }
 
 @Composable
@@ -469,12 +571,45 @@ private fun Long.toPriceChangeType(): PriceChangeType =
         else -> PriceChangeType.UNCHANGED
     }
 
-private fun Long.toChangeColor(): androidx.compose.ui.graphics.Color =
-    when {
-        this > 0 -> Red
-        this < 0 -> com.hdb.tourfolio.ui.theme.Blue
-        else -> Natural50
-    }
+private fun mockPortfolioDto(): PortfolioDto =
+    PortfolioDto(
+        memberId = 4L,
+        username = "투어폴리오유저",
+        cashBalance = 20_000L,
+        totalStockValue = 12_560_000L,
+        totalAssetValue = 12_580_000L,
+        totalProfitLossRate = 8.72,
+        items =
+            listOf(
+                PortfolioItemDto(
+                    spotId = 1L,
+                    spotName = "안압지",
+                    quantity = 42,
+                    averagePurchasePrice = 8_000L,
+                    currentPrice = 9_200L,
+                    evaluationAmount = 4_560_000L,
+                    profitLossRate = 14.00,
+                ),
+                PortfolioItemDto(
+                    spotId = 2L,
+                    spotName = "광안리",
+                    quantity = 35,
+                    averagePurchasePrice = 10_240L,
+                    currentPrice = 11_280L,
+                    evaluationAmount = 3_800_000L,
+                    profitLossRate = 9.20,
+                ),
+                PortfolioItemDto(
+                    spotId = 3L,
+                    spotName = "첨성대",
+                    quantity = 28,
+                    averagePurchasePrice = 15_430L,
+                    currentPrice = 15_000L,
+                    evaluationAmount = 4_200_000L,
+                    profitLossRate = -2.78,
+                ),
+            ),
+    )
 
 @Preview(
     name = "Holdings Tab Preview",
@@ -487,6 +622,10 @@ private fun HoldingsTabPreview() {
     TourfolioTheme(
         dynamicColor = false,
     ) {
-        HoldingsTab()
+        HoldingsTabContent(
+            uiState = PortfolioUiState.Success(mockPortfolioDto()),
+            onStockClick = { _, _, _, _ -> },
+            onRetryClick = {},
+        )
     }
 }

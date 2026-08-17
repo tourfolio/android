@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.tabs
+package com.hdb.tourfolio.feature.trade.presentation.tabs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,12 +32,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.core.network.dto.PortfolioDto
 import com.hdb.tourfolio.core.network.dto.PortfolioItemDto
 import com.hdb.tourfolio.core.network.dto.StockDto
-import com.hdb.tourfolio.feature.trade.components.AssetChartCard
-import com.hdb.tourfolio.feature.trade.components.AssetPeriod
-import com.hdb.tourfolio.feature.trade.components.PriceChangeType
-import com.hdb.tourfolio.feature.trade.components.RankedStockCard
-import com.hdb.tourfolio.feature.trade.components.alignAssetHistory
-import com.hdb.tourfolio.feature.trade.components.mockAssetHistory
+import com.hdb.tourfolio.feature.trade.presentation.components.AssetChartCard
+import com.hdb.tourfolio.feature.trade.presentation.components.AssetPeriod
+import com.hdb.tourfolio.feature.trade.presentation.components.PriceChangeType
+import com.hdb.tourfolio.feature.trade.presentation.components.RankedStockCard
+import com.hdb.tourfolio.feature.trade.presentation.components.alignAssetHistory
+import com.hdb.tourfolio.feature.trade.presentation.components.mockAssetHistory
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural20
 import com.hdb.tourfolio.ui.theme.Natural50

@@ -7,6 +7,8 @@ import com.hdb.tourfolio.core.network.CardApiService
 import com.hdb.tourfolio.core.network.ExploreApiService
 import com.hdb.tourfolio.core.network.PortfolioApiService
 import com.hdb.tourfolio.core.network.StockApiService
+import com.hdb.tourfolio.core.network.TradeApiService
+import com.hdb.tourfolio.core.network.WatchlistApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +49,7 @@ object NetworkModule {
         gson: Gson,
     ): Retrofit =
         Retrofit.Builder()
+
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -71,4 +74,12 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideExploreApiService(retrofit: Retrofit): ExploreApiService = retrofit.create(ExploreApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideWatchlistApiService(retrofit: Retrofit): WatchlistApiService = retrofit.create(WatchlistApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTradeApiService(retrofit: Retrofit): TradeApiService = retrofit.create(TradeApiService::class.java)
 }

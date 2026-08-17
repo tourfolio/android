@@ -1,6 +1,6 @@
 @file:Suppress("ktlint:standard:function-naming")
 
-package com.hdb.tourfolio.feature.trade.components
+package com.hdb.tourfolio.feature.trade.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
