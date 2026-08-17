@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.feature.explore.ExploreHubTrendingSpotUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreHubTrendingSpotUiModel
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10

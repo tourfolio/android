@@ -24,7 +24,7 @@ data class CardDetailDto(
     val rarity: String,
     val theme: String,
     val imageUrl: String,
-    val glowColorCode: String,
+    val glowColorCode: String?,
     val cardNumber: String,
     val phrase: String,
     val isOwned: Boolean,

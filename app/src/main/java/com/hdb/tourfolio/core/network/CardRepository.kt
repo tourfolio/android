@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:function-signature")
+
 package com.hdb.tourfolio.core.network
 
 import com.hdb.tourfolio.core.network.dto.CardAcquireDto

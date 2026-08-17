@@ -39,6 +39,8 @@ import com.hdb.tourfolio.feature.explore.components.RegionCard
 import com.hdb.tourfolio.feature.explore.components.SearchBar
 import com.hdb.tourfolio.feature.explore.components.TourSpotCard
 import com.hdb.tourfolio.feature.explore.components.TourSpotCarousel
+import com.hdb.tourfolio.feature.explore.model.ExploreCardsUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreTrendingUiState
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -71,18 +73,6 @@ fun ExploreScreen(
     val themeTravelItems =
         remember {
             listOf(
-                ThemeTravelItem(
-                    id = 1L,
-                    title = "서울로 떠나는 역사탐방",
-                    places = 10,
-                    imageRes = R.drawable.bg_seoul_demo,
-                ),
-                ThemeTravelItem(
-                    id = 3L,
-                    title = "경주로 떠나는 야경명소",
-                    places = 10,
-                    imageRes = R.drawable.bg_gyeongju_demo,
-                ),
                 ThemeTravelItem(
                     id = 2L,
                     title = "여름에 꼭 봐야할 부산 명소",

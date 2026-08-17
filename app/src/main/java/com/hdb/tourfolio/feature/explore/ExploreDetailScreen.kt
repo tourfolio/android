@@ -45,6 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.feature.explore.model.ExploreAttractionPointUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreSpotDetailUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreSpotDetailUiState
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100

@@ -47,6 +47,11 @@ import com.hdb.tourfolio.feature.explore.components.SearchFilterBottomSheet
 import com.hdb.tourfolio.feature.explore.components.SearchFilterTab
 import com.hdb.tourfolio.feature.explore.components.SearchHomeSections
 import com.hdb.tourfolio.feature.explore.components.SearchResultCard
+import com.hdb.tourfolio.feature.explore.model.ExploreAutocompleteUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreFilterPreviewUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreHubUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreSearchSpotUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreSearchUiState
 import com.hdb.tourfolio.feature.explore.model.RegionType
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
@@ -61,11 +66,6 @@ private enum class SearchPageMode {
     RESULT,
 }
 
-/*
- * ExploreSearchScreen에서 처음 보여줄 추천 태그 8개입니다.
- *
- * 모두 실제 서버에서 사용하는 태그 값입니다.
- */
 private val RECOMMENDED_SEARCH_TAGS =
     listOf(
         TagType.HISTORY,
@@ -85,12 +85,6 @@ fun ExploreSearchScreen(
     modifier: Modifier = Modifier,
     viewModel: ExploreViewModel = hiltViewModel(),
 ) {
-    /*
-     * ---------------------------------------------------------
-     * API State
-     * ---------------------------------------------------------
-     */
-
     val hubUiState by
         viewModel.hubUiState
             .collectAsStateWithLifecycle()
@@ -107,21 +101,11 @@ fun ExploreSearchScreen(
         viewModel.filterPreviewUiState
             .collectAsStateWithLifecycle()
 
-    /*
-     * 검색 화면 최초 진입 시에만
-     * 콘텐츠 허브 API를 호출합니다.
-     */
     LaunchedEffect(Unit) {
         if (hubUiState is ExploreHubUiState.Idle) {
             viewModel.fetchHub()
         }
     }
-
-    /*
-     * ---------------------------------------------------------
-     * 화면 상태
-     * ---------------------------------------------------------
-     */
 
     var query by
         rememberSaveable {
@@ -140,10 +124,6 @@ fun ExploreSearchScreen(
             mutableStateOf(false)
         }
 
-    /*
-     * Enum 자체를 rememberSaveable에 넣는 것보다
-     * name 문자열로 보관합니다.
-     */
     var selectedTagNames by
         rememberSaveable {
             mutableStateOf(
@@ -174,12 +154,6 @@ fun ExploreSearchScreen(
 
     val focusManager =
         LocalFocusManager.current
-
-    /*
-     * ---------------------------------------------------------
-     * 저장된 String → Enum
-     * ---------------------------------------------------------
-     */
 
     val selectedTags =
         remember(
@@ -223,21 +197,11 @@ fun ExploreSearchScreen(
                 .toSet()
         }
 
-    /*
-     * ---------------------------------------------------------
-     * 초기 화면 데이터
-     * ---------------------------------------------------------
-     */
-
     val recommendedTags =
         remember {
             RECOMMENDED_SEARCH_TAGS
         }
 
-    /*
-     * 인기 검색어는 아직 API 연동하지 않으므로
-     * 기존 데이터를 그대로 유지합니다.
-     */
     val popularKeywords =
         remember {
             listOf(
@@ -254,10 +218,6 @@ fun ExploreSearchScreen(
             )
         }
 
-    /*
-     * 콘텐츠 허브 API의 trendingSpots를
-     * 추천 관광지 영역에 연결합니다.
-     */
     val recommendedSpots =
         when (
             val state =
@@ -272,14 +232,6 @@ fun ExploreSearchScreen(
             }
         }
 
-    /*
-     * ---------------------------------------------------------
-     * 자동완성
-     * ---------------------------------------------------------
-     *
-     * query가 변경되고 검색창에 focus가 있는 경우
-     * ViewModel에서 search API 기반 자동완성을 요청합니다.
-     */
     LaunchedEffect(
         query,
         isSearchFocused,
@@ -310,21 +262,9 @@ fun ExploreSearchScreen(
             }
         }
 
-    /*
-     * 검색창 입력 중에는 자동완성 화면 영역을 사용합니다.
-     *
-     * 결과가 0개더라도 입력 중에는 INITIAL 화면으로
-     * 갑자기 돌아가지 않도록 query/focus 기준으로 판단합니다.
-     */
     val showAutocompleteArea =
         isSearchFocused &&
             query.isNotBlank()
-
-    /*
-     * ---------------------------------------------------------
-     * 실제 검색 결과
-     * ---------------------------------------------------------
-     */
 
     val searchResults =
         when (
@@ -339,12 +279,6 @@ fun ExploreSearchScreen(
                 emptyList()
             }
         }
-
-    /*
-     * ---------------------------------------------------------
-     * 공통 함수
-     * ---------------------------------------------------------
-     */
 
     fun clearAppliedFilters() {
         selectedTagNames =
@@ -366,12 +300,6 @@ fun ExploreSearchScreen(
         viewModel.clearAutocomplete()
     }
 
-    /*
-     * 직접 검색어를 입력하고 키보드 Search 또는
-     * 검색 아이콘을 눌렀을 때 호출합니다.
-     *
-     * 새 검색어 검색 시 기존 필터는 제거합니다.
-     */
     fun submitSearch() {
         val normalizedQuery =
             query.trim()
@@ -398,9 +326,6 @@ fun ExploreSearchScreen(
         )
     }
 
-    /*
-     * 자동완성 항목 클릭
-     */
     fun selectAutocompleteKeyword(keyword: String) {
         query =
             keyword
@@ -418,21 +343,12 @@ fun ExploreSearchScreen(
         )
     }
 
-    /*
-     * 뒤로가기
-     */
     fun handleBack() {
-        /*
-         * 검색 입력 중이면 먼저 키보드/자동완성만 닫습니다.
-         */
         if (isSearchFocused) {
             closeSearchInput()
             return
         }
 
-        /*
-         * 결과 화면이면 초기 검색 화면으로 돌아갑니다.
-         */
         if (
             pageMode ==
             SearchPageMode.RESULT
@@ -458,12 +374,6 @@ fun ExploreSearchScreen(
     BackHandler {
         handleBack()
     }
-
-    /*
-     * ---------------------------------------------------------
-     * Screen
-     * ---------------------------------------------------------
-     */
 
     Column(
         modifier =
@@ -495,20 +405,12 @@ fun ExploreSearchScreen(
             },
         )
 
-        /*
-         * ---------------------------------------------------------
-         * 자동완성 영역
-         * ---------------------------------------------------------
-         */
         if (showAutocompleteArea) {
             when (
                 val state =
                     autocompleteUiState
             ) {
                 ExploreAutocompleteUiState.Idle -> {
-                    /*
-                     * 입력 직후 debounce 전의 짧은 구간입니다.
-                     */
                 }
 
                 ExploreAutocompleteUiState.Loading -> {
@@ -540,11 +442,6 @@ fun ExploreSearchScreen(
                 }
             }
         } else {
-            /*
-             * ---------------------------------------------------------
-             * 초기 / 결과 화면
-             * ---------------------------------------------------------
-             */
             when (pageMode) {
                 SearchPageMode.INITIAL -> {
                     Column(
@@ -561,12 +458,6 @@ fun ExploreSearchScreen(
                                     bottom = 32.dp,
                                 ),
                     ) {
-                        /*
-                         * Hub API가 실패하더라도
-                         * 추천 태그 / 인기 검색어는 그대로 보여줍니다.
-                         *
-                         * 추천 관광지만 빈 목록이 됩니다.
-                         */
                         SearchHomeSections(
                             recommendedTags =
                             recommendedTags,
@@ -574,10 +465,6 @@ fun ExploreSearchScreen(
                             popularKeywords,
                             recommendedSpots =
                             recommendedSpots,
-                            /*
-                             * 추천 태그 클릭은 keyword 검색이 아니라
-                             * tags 필터로 서버에 요청합니다.
-                             */
                             onTagClick = { tag ->
                                 query =
                                     tag.displayName
@@ -605,9 +492,6 @@ fun ExploreSearchScreen(
                                         ),
                                 )
                             },
-                            /*
-                             * 인기 검색어는 keyword 검색
-                             */
                             onKeywordClick = { keyword ->
                                 query =
                                     keyword
@@ -792,20 +676,10 @@ fun ExploreSearchScreen(
             selectedThemes,
             appliedRegions =
             selectedRegions,
-            /*
-             * 서버 search API의 totalCount
-             */
             resultCount =
             filterResultCount,
-            /*
-             * 체크박스 변경 후 count 조회 중인지
-             */
             isResultCountLoading =
             isFilterResultCountLoading,
-            /*
-             * 바텀시트 내부 임시 선택값이 변경될 때마다
-             * 검색 API를 이용해 결과 개수만 미리 조회
-             */
             onSelectionChanged = { tags, themes, regions ->
                 viewModel.previewFilterCount(
                     tags =

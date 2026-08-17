@@ -1,15 +1,25 @@
+@file:Suppress("ktlint:standard:function-signature")
+
 package com.hdb.tourfolio.feature.explore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hdb.tourfolio.core.network.ExploreRepository
-import com.hdb.tourfolio.core.network.dto.ExploreCardDto
-import com.hdb.tourfolio.core.network.dto.ExploreMainCardDto
-import com.hdb.tourfolio.core.network.dto.ExploreSearchSpotDto
-import com.hdb.tourfolio.core.network.dto.ExploreSpotDetailDto
+import com.hdb.tourfolio.feature.explore.model.ExploreAutocompleteUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreCardsUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreFilterPreviewUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreHubTrendingSpotUiModel
+import com.hdb.tourfolio.feature.explore.model.ExploreHubUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreMainCardsUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreSearchUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreSpotDetailUiState
+import com.hdb.tourfolio.feature.explore.model.ExploreTrendingUiState
 import com.hdb.tourfolio.feature.explore.model.RegionType
 import com.hdb.tourfolio.feature.explore.model.TagType
 import com.hdb.tourfolio.feature.explore.model.ThemeType
+import com.hdb.tourfolio.feature.explore.model.normalizeExploreFilters
+import com.hdb.tourfolio.feature.explore.model.normalizeServerTags
+import com.hdb.tourfolio.feature.explore.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -29,219 +39,11 @@ private val CAROUSEL_TOUR_SPOT_IDS =
 
 private const val FEATURED_CARD_COUNT = 4
 private const val RECOMMENDED_CARD_COUNT = 3
+
 private const val AUTOCOMPLETE_LIMIT = 10
 private const val AUTOCOMPLETE_DEBOUNCE_MS = 300L
 
-/*
- * ---------------------------------------------------------
- * 탐색 첫 진입 풀스크린 Carousel
- * ---------------------------------------------------------
- */
-data class ExploreMainCardUiModel(
-    val id: Long,
-    val title: String,
-    val subTitle: String,
-    val description: String,
-    val location: String,
-    val address: String,
-    val imageUrl: String,
-    val themeType: ThemeType,
-    val tags: List<String>,
-)
-
-sealed interface ExploreMainCardsUiState {
-    data object Loading : ExploreMainCardsUiState
-
-    data class Success(
-        val cards: List<ExploreMainCardUiModel>,
-    ) : ExploreMainCardsUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreMainCardsUiState
-}
-
-/*
- * ---------------------------------------------------------
- * ExploreScreen 관광지 카드
- * ---------------------------------------------------------
- */
-data class ExploreCardUiModel(
-    val id: Long,
-    val title: String,
-    val areaCode: String,
-    val areaName: String,
-    val themeTag: String,
-    val tier: Int,
-    val imageUrl: String,
-    val description: String,
-    val mapX: String,
-    val mapY: String,
-    val address: String,
-    val tags: List<String>,
-)
-
-sealed interface ExploreCardsUiState {
-    data object Loading : ExploreCardsUiState
-
-    data class Success(
-        val featuredCards: List<ExploreCardUiModel>,
-        val recommendedCards: List<ExploreCardUiModel>,
-    ) : ExploreCardsUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreCardsUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 지금 뜨는 여행지
- * ---------------------------------------------------------
- */
-sealed interface ExploreTrendingUiState {
-    data object Loading : ExploreTrendingUiState
-
-    data class Success(
-        val cards: List<ExploreCardUiModel>,
-    ) : ExploreTrendingUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreTrendingUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 콘텐츠 허브
- * ---------------------------------------------------------
- */
-data class ExploreHubTrendingSpotUiModel(
-    val id: Long,
-    val title: String,
-    val location: String,
-    val popularityRank: Int,
-    val imageUrl: String,
-    val address: String,
-)
-
-sealed interface ExploreHubUiState {
-    data object Idle : ExploreHubUiState
-
-    data object Loading : ExploreHubUiState
-
-    data class Success(
-        val trendingSpots: List<ExploreHubTrendingSpotUiModel>,
-    ) : ExploreHubUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreHubUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 복합 검색 결과
- * ---------------------------------------------------------
- */
-data class ExploreSearchSpotUiModel(
-    val id: Long,
-    val title: String,
-    val location: String,
-    val address: String,
-    val imageUrl: String,
-    val tags: List<String>,
-)
-
-sealed interface ExploreSearchUiState {
-    data object Idle : ExploreSearchUiState
-
-    data object Loading : ExploreSearchUiState
-
-    data class Success(
-        val spots: List<ExploreSearchSpotUiModel>,
-        val totalCount: Int,
-    ) : ExploreSearchUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreSearchUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 자동완성
- * ---------------------------------------------------------
- */
-sealed interface ExploreAutocompleteUiState {
-    data object Idle : ExploreAutocompleteUiState
-
-    data object Loading : ExploreAutocompleteUiState
-
-    data class Success(
-        val keywords: List<String>,
-    ) : ExploreAutocompleteUiState
-
-    data object Error : ExploreAutocompleteUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 필터 결과 개수 미리보기
- * ---------------------------------------------------------
- */
-sealed interface ExploreFilterPreviewUiState {
-    data object Idle : ExploreFilterPreviewUiState
-
-    data object Loading : ExploreFilterPreviewUiState
-
-    data class Success(
-        val totalCount: Int,
-    ) : ExploreFilterPreviewUiState
-
-    data object Error : ExploreFilterPreviewUiState
-}
-
-/*
- * ---------------------------------------------------------
- * 관광지 상세
- *
- * GET /api/v1/explore/spots/{spotId}
- * ---------------------------------------------------------
- */
-data class ExploreSpotDetailUiModel(
-    val id: Long,
-    val title: String,
-    val address: String,
-    val tags: List<String>,
-    val description: String,
-    val operatingHours: String,
-    val closedDays: String,
-    val admissionFee: String,
-    val website: String,
-    val phoneNumber: String,
-    val attractionPoints: List<ExploreAttractionPointUiModel>,
-)
-
-data class ExploreAttractionPointUiModel(
-    val title: String,
-    val iconType: String,
-    val iconUrl: String?,
-)
-
-sealed interface ExploreSpotDetailUiState {
-    data object Idle : ExploreSpotDetailUiState
-
-    data object Loading : ExploreSpotDetailUiState
-
-    data class Success(
-        val detail: ExploreSpotDetailUiModel,
-    ) : ExploreSpotDetailUiState
-
-    data class Error(
-        val message: String,
-    ) : ExploreSpotDetailUiState
-}
+private const val FILTER_PREVIEW_DEBOUNCE_MS = 250L
 
 @HiltViewModel
 class ExploreViewModel
@@ -250,9 +52,7 @@ class ExploreViewModel
         private val exploreRepository: ExploreRepository,
     ) : ViewModel() {
     /*
-     * ---------------------------------------------------------
      * 첫 진입 Carousel
-     * ---------------------------------------------------------
      */
         private val mainCardsState =
             MutableStateFlow<ExploreMainCardsUiState>(
@@ -263,9 +63,7 @@ class ExploreViewModel
             mainCardsState.asStateFlow()
 
     /*
-     * ---------------------------------------------------------
      * ExploreScreen 전체 관광지 카드
-     * ---------------------------------------------------------
      */
         private val exploreCardsState =
             MutableStateFlow<ExploreCardsUiState>(
@@ -276,9 +74,7 @@ class ExploreViewModel
             exploreCardsState.asStateFlow()
 
     /*
-     * ---------------------------------------------------------
      * 지금 뜨는 여행지
-     * ---------------------------------------------------------
      */
         private val trendingState =
             MutableStateFlow<ExploreTrendingUiState>(
@@ -289,9 +85,7 @@ class ExploreViewModel
             trendingState.asStateFlow()
 
     /*
-     * ---------------------------------------------------------
      * 검색 화면 콘텐츠 허브
-     * ---------------------------------------------------------
      */
         private val hubState =
             MutableStateFlow<ExploreHubUiState>(
@@ -302,9 +96,7 @@ class ExploreViewModel
             hubState.asStateFlow()
 
     /*
-     * ---------------------------------------------------------
      * 검색 결과
-     * ---------------------------------------------------------
      */
         private val searchState =
             MutableStateFlow<ExploreSearchUiState>(
@@ -315,9 +107,7 @@ class ExploreViewModel
             searchState.asStateFlow()
 
     /*
-     * ---------------------------------------------------------
      * 자동완성
-     * ---------------------------------------------------------
      */
         private val autocompleteState =
             MutableStateFlow<ExploreAutocompleteUiState>(
@@ -330,9 +120,7 @@ class ExploreViewModel
         private var autocompleteJob: Job? = null
 
     /*
-     * ---------------------------------------------------------
      * 필터 결과 count 미리보기
-     * ---------------------------------------------------------
      */
         private val filterPreviewState =
             MutableStateFlow<ExploreFilterPreviewUiState>(
@@ -345,9 +133,7 @@ class ExploreViewModel
         private var filterPreviewJob: Job? = null
 
     /*
-     * ---------------------------------------------------------
      * 관광지 상세
-     * ---------------------------------------------------------
      */
         private val spotDetailState =
             MutableStateFlow<ExploreSpotDetailUiState>(
@@ -358,21 +144,13 @@ class ExploreViewModel
             spotDetailState.asStateFlow()
 
         init {
-        /*
-         * 탐색 메인에서 필요한 API만 즉시 조회합니다.
-         *
-         * hub / search / detail은
-         * 해당 화면 진입 시 호출합니다.
-         */
             fetchMainCards()
             fetchExploreCards()
             fetchTrendingCards()
         }
 
     /*
-     * ---------------------------------------------------------
      * 첫 진입 풀스크린 Carousel
-     * ---------------------------------------------------------
      */
         fun fetchMainCards() {
             viewModelScope.launch {
@@ -409,11 +187,7 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 전체 관광지 카드
-     *
-     * GET /api/v1/explore/cards
-     * ---------------------------------------------------------
      */
         fun fetchExploreCards() {
             viewModelScope.launch {
@@ -459,10 +233,8 @@ class ExploreViewModel
                             }
 
                         ExploreCardsUiState.Success(
-                            featuredCards =
-                            featuredCards,
-                            recommendedCards =
-                            recommendedCards,
+                            featuredCards = featuredCards,
+                            recommendedCards = recommendedCards,
                         )
                     } catch (e: CancellationException) {
                         throw e
@@ -477,11 +249,7 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 지금 뜨는 여행지
-     *
-     * GET /api/v1/explore/trending
-     * ---------------------------------------------------------
      */
         fun fetchTrendingCards() {
             viewModelScope.launch {
@@ -513,11 +281,7 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 콘텐츠 허브
-     *
-     * GET /api/v1/explore/hub
-     * ---------------------------------------------------------
      */
         fun fetchHub() {
             viewModelScope.launch {
@@ -533,18 +297,12 @@ class ExploreViewModel
                             trendingSpots =
                                 response.trendingSpots.map { spot ->
                                     ExploreHubTrendingSpotUiModel(
-                                        id =
-                                            spot.spotId,
-                                        title =
-                                            spot.name,
-                                        location =
-                                            spot.location,
-                                        popularityRank =
-                                            spot.popularityRank,
-                                        imageUrl =
-                                            spot.imageUrl,
-                                        address =
-                                            spot.address,
+                                        id = spot.spotId,
+                                        title = spot.name,
+                                        location = spot.location,
+                                        popularityRank = spot.popularityRank,
+                                        imageUrl = spot.imageUrl,
+                                        address = spot.address,
                                     )
                                 },
                         )
@@ -561,11 +319,7 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 복합 검색
-     *
-     * GET /api/v1/explore/search
-     * ---------------------------------------------------------
      */
         fun searchSpots(
             keyword: String? = null,
@@ -579,39 +333,12 @@ class ExploreViewModel
 
                 searchState.value =
                     try {
-                    /*
-                     * "전체" 선택은 해당 필터가 없는 것과 동일하게
-                     * 서버에는 전달하지 않습니다.
-                     */
-                        val normalizedTags =
-                            if (
-                                tags.size ==
-                                TagType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                tags
-                            }
-
-                        val normalizedThemes =
-                            if (
-                                themes.size ==
-                                ThemeType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                themes
-                            }
-
-                        val normalizedRegions =
-                            if (
-                                regions.size ==
-                                RegionType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                regions
-                            }
+                        val filters =
+                            normalizeExploreFilters(
+                                tags = tags,
+                                themes = themes,
+                                regions = regions,
+                            )
 
                         val response =
                             exploreRepository.searchSpots(
@@ -623,7 +350,7 @@ class ExploreViewModel
                                             value.isNotBlank()
                                         },
                                 regions =
-                                    normalizedRegions
+                                    filters.regions
                                         .map { type ->
                                             type.displayName
                                         }
@@ -631,7 +358,7 @@ class ExploreViewModel
                                             values.isNotEmpty()
                                         },
                                 themes =
-                                    normalizedThemes
+                                    filters.themes
                                         .map { type ->
                                             type.displayName
                                         }
@@ -639,7 +366,7 @@ class ExploreViewModel
                                             values.isNotEmpty()
                                         },
                                 tags =
-                                    normalizedTags
+                                    filters.tags
                                         .map { type ->
                                             type.displayName
                                         }
@@ -653,8 +380,7 @@ class ExploreViewModel
                                 response.spots.map { spot ->
                                     spot.toUiModel()
                                 },
-                            totalCount =
-                                response.totalCount,
+                            totalCount = response.totalCount,
                         )
                     } catch (e: CancellationException) {
                         throw e
@@ -669,11 +395,11 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 자동완성
-     * ---------------------------------------------------------
      */
-        fun requestAutocomplete(query: String) {
+        fun requestAutocomplete(
+            query: String,
+        ) {
             autocompleteJob?.cancel()
 
             val normalizedQuery =
@@ -681,9 +407,7 @@ class ExploreViewModel
                     .trim()
                     .removePrefix("#")
 
-            if (
-                normalizedQuery.isBlank()
-            ) {
+            if (normalizedQuery.isBlank()) {
                 autocompleteState.value =
                     ExploreAutocompleteUiState.Idle
 
@@ -702,8 +426,7 @@ class ExploreViewModel
                     try {
                         val response =
                             exploreRepository.searchSpots(
-                                keyword =
-                                normalizedQuery,
+                                keyword = normalizedQuery,
                             )
 
                         val keywords =
@@ -728,20 +451,16 @@ class ExploreViewModel
                                 .distinct()
                                 .filter { candidate ->
                                     candidate.contains(
-                                        other =
-                                        normalizedQuery,
-                                        ignoreCase =
-                                        true,
+                                        other = normalizedQuery,
+                                        ignoreCase = true,
                                     )
                                 }
                                 .sortedWith(
                                     compareBy<String> { candidate ->
                                         if (
                                             candidate.startsWith(
-                                                prefix =
-                                                normalizedQuery,
-                                                ignoreCase =
-                                                true,
+                                                prefix = normalizedQuery,
+                                                ignoreCase = true,
                                             )
                                         ) {
                                             0
@@ -760,8 +479,7 @@ class ExploreViewModel
 
                         autocompleteState.value =
                             ExploreAutocompleteUiState.Success(
-                                keywords =
-                                keywords,
+                                keywords = keywords,
                             )
                     } catch (e: CancellationException) {
                         throw e
@@ -773,9 +491,7 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 필터 결과 개수 미리보기
-     * ---------------------------------------------------------
      */
         fun previewFilterCount(
             tags: Set<TagType>,
@@ -798,49 +514,25 @@ class ExploreViewModel
             filterPreviewJob =
                 viewModelScope.launch {
                     delay(
-                        250L,
+                        FILTER_PREVIEW_DEBOUNCE_MS,
                     )
 
                     filterPreviewState.value =
                         ExploreFilterPreviewUiState.Loading
 
                     try {
-                        val normalizedTags =
-                            if (
-                                tags.size ==
-                                TagType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                tags
-                            }
-
-                        val normalizedThemes =
-                            if (
-                                themes.size ==
-                                ThemeType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                themes
-                            }
-
-                        val normalizedRegions =
-                            if (
-                                regions.size ==
-                                RegionType.entries.size
-                            ) {
-                                emptySet()
-                            } else {
-                                regions
-                            }
+                        val filters =
+                            normalizeExploreFilters(
+                                tags = tags,
+                                themes = themes,
+                                regions = regions,
+                            )
 
                         val response =
                             exploreRepository.searchSpots(
-                                keyword =
-                                null,
+                                keyword = null,
                                 regions =
-                                    normalizedRegions
+                                    filters.regions
                                         .map { type ->
                                             type.displayName
                                         }
@@ -848,7 +540,7 @@ class ExploreViewModel
                                             values.isNotEmpty()
                                         },
                                 themes =
-                                    normalizedThemes
+                                    filters.themes
                                         .map { type ->
                                             type.displayName
                                         }
@@ -856,7 +548,7 @@ class ExploreViewModel
                                             values.isNotEmpty()
                                         },
                                 tags =
-                                    normalizedTags
+                                    filters.tags
                                         .map { type ->
                                             type.displayName
                                         }
@@ -880,13 +572,11 @@ class ExploreViewModel
         }
 
     /*
-     * ---------------------------------------------------------
      * 관광지 상세 조회
-     *
-     * GET /api/v1/explore/spots/{spotId}
-     * ---------------------------------------------------------
      */
-        fun fetchSpotDetail(spotId: Long) {
+        fun fetchSpotDetail(
+            spotId: Long,
+        ) {
             viewModelScope.launch {
                 spotDetailState.value =
                     ExploreSpotDetailUiState.Loading
@@ -938,185 +628,3 @@ class ExploreViewModel
                 ExploreSearchUiState.Idle
         }
     }
-
-/*
- * ---------------------------------------------------------
- * 첫 진입 Carousel DTO → UI Model
- * ---------------------------------------------------------
- */
-private fun ExploreMainCardDto.toUiModel(): ExploreMainCardUiModel {
-    val mappedTheme =
-        ThemeType.entries.firstOrNull { type ->
-            type.displayName ==
-                theme
-        } ?: throw IllegalArgumentException(
-            "지원하지 않는 관광지 테마입니다: $theme",
-        )
-
-    return ExploreMainCardUiModel(
-        id =
-        spotId,
-        title =
-        name,
-        subTitle =
-        subTitle,
-        description =
-        description,
-        location =
-        location,
-        address =
-        address,
-        imageUrl =
-        imageUrl,
-        themeType =
-        mappedTheme,
-        tags =
-            normalizeServerTags(
-                tags,
-            ),
-    )
-}
-
-/*
- * ---------------------------------------------------------
- * 일반 관광지 DTO → UI Model
- * ---------------------------------------------------------
- */
-private fun ExploreCardDto.toUiModel(): ExploreCardUiModel =
-    ExploreCardUiModel(
-        id =
-        id,
-        title =
-        name,
-        areaCode =
-        areaCode,
-        areaName =
-        areaName,
-        themeTag =
-        themeTag,
-        tier =
-        tier,
-        imageUrl =
-        imageUrl,
-        description =
-        description,
-        mapX =
-        mapX,
-        mapY =
-        mapY,
-        address =
-        address,
-        tags =
-            normalizeServerTags(
-                tags,
-            ),
-    )
-
-/*
- * ---------------------------------------------------------
- * 검색 DTO → UI Model
- * ---------------------------------------------------------
- */
-private fun ExploreSearchSpotDto.toUiModel(): ExploreSearchSpotUiModel =
-    ExploreSearchSpotUiModel(
-        id =
-        spotId,
-        title =
-        name,
-        location =
-        location,
-        address =
-        address,
-        imageUrl =
-        imageUrl,
-        tags =
-            normalizeServerTags(
-                tags,
-            ),
-    )
-
-/*
- * ---------------------------------------------------------
- * 관광지 상세 DTO → UI Model
- * ---------------------------------------------------------
- */
-private fun ExploreSpotDetailDto.toUiModel(): ExploreSpotDetailUiModel =
-    ExploreSpotDetailUiModel(
-        id =
-        spotId,
-        title =
-        name,
-        address =
-        address,
-        tags =
-            normalizeServerTags(
-                tags,
-            ),
-        description =
-        description,
-        operatingHours =
-            operatingHours
-                .orEmpty()
-                .ifBlank {
-                    "운영 시간 정보가 없습니다."
-                },
-        closedDays =
-            closedDays
-                .orEmpty()
-                .ifBlank {
-                    "휴무일 정보가 없습니다."
-                },
-        admissionFee =
-            admissionFee
-                .orEmpty()
-                .ifBlank {
-                    "입장료 정보가 없습니다."
-                },
-        website =
-            website
-                .orEmpty()
-                .ifBlank {
-                    "홈페이지 정보가 없습니다."
-                },
-        phoneNumber =
-            phoneNumber
-                .orEmpty()
-                .ifBlank {
-                    "전화번호 정보가 없습니다."
-                },
-        attractionPoints =
-            attractionPoints.map { point ->
-                ExploreAttractionPointUiModel(
-                    title =
-                        point.title,
-                    iconType =
-                        point.iconType,
-                    iconUrl =
-                        point.iconUrl,
-                )
-            },
-    )
-
-/*
- * ---------------------------------------------------------
- * 서버 태그 정리
- *
- * 아래 두 경우 모두 처리합니다.
- *
- * ["역사", "궁궐"]
- *
- * ["역사,궁궐,조선왕조,국보"]
- * ---------------------------------------------------------
- */
-private fun normalizeServerTags(tags: List<String>): List<String> =
-    tags
-        .flatMap { tagGroup ->
-            tagGroup.split(",")
-        }
-        .map { tag ->
-            tag.trim()
-        }
-        .filter { tag ->
-            tag.isNotBlank()
-        }
-        .distinct()
