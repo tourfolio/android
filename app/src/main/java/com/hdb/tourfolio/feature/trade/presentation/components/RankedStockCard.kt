@@ -29,6 +29,7 @@ import com.hdb.tourfolio.ui.theme.Red
 @Composable
 fun RankedStockCard(
     title: String,
+    regionName: String,
     priceText: String,
     changeText: String,
     changeType: PriceChangeType,
@@ -55,14 +56,25 @@ fun RankedStockCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = title,
-                style = LocalAppTypography.current.bodyLarge.bold,
-                color = Natural10,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            Column(
                 modifier = Modifier.weight(1f),
-            )
+            ) {
+                Text(
+                    text = title,
+                    style = LocalAppTypography.current.bodyLarge.bold,
+                    color = Natural10,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                Text(
+                    text = regionName,
+                    style = LocalAppTypography.current.labelLarge.medium,
+                    color = Natural50,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
 
             Spacer(modifier = Modifier.width(12.dp))
 

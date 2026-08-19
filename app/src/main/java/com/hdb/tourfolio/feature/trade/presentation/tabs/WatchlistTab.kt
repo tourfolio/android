@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hdb.tourfolio.core.network.dto.WatchlistItemDto
+import com.hdb.tourfolio.domain.watchlist.model.WatchlistItem
 import com.hdb.tourfolio.feature.trade.presentation.components.PriceChangeType
 import com.hdb.tourfolio.feature.trade.presentation.components.TourStockCard
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
@@ -32,7 +32,7 @@ import com.hdb.tourfolio.ui.theme.Natural50
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private data class WatchlistItem(
+private data class WatchlistCardItem(
     val entryId: Long,
     val spotId: Long,
     val title: String,
@@ -48,15 +48,16 @@ private data class WatchlistItem(
 fun WatchlistTab(
     modifier: Modifier = Modifier,
     onStockClick: (Long, String, Long?, Long?) -> Unit = { _, _, _, _ -> },
-    viewModel: WatchlistViewModel = hiltViewModel(),
+    viewModel: TradeWatchlistViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     WatchlistTabContent(
         modifier = modifier,
-        uiState = uiState,
+        uiState = state.watchlistResult,
         onStockClick = onStockClick,
-        onRetryClick = { viewModel.fetchWatchlist() },
+        onRetryClick = { viewModel.processIntent(TradeWatchlistIntent.FetchWatchlist) },
+        onLikeClick = { spotId -> viewModel.processIntent(TradeWatchlistIntent.ToggleLike(spotId)) },
     )
 }
 
@@ -65,6 +66,7 @@ private fun WatchlistTabContent(
     uiState: WatchlistUiState,
     onStockClick: (Long, String, Long?, Long?) -> Unit,
     onRetryClick: () -> Unit,
+    onLikeClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -81,7 +83,7 @@ private fun WatchlistTabContent(
         }
 
         is WatchlistUiState.Success -> {
-            val watchlistItems = uiState.items.map { it.toWatchlistItem() }
+            val watchlistItems = uiState.items.map { it.toWatchlistCardItem() }
 
             if (watchlistItems.isEmpty()) {
                 EmptyWatchlist(modifier = modifier.fillMaxSize().background(Natural100))
@@ -119,9 +121,7 @@ private fun WatchlistTabContent(
                             changeText = item.changeText,
                             changeType = item.changeType,
                             isLiked = true,
-                            onLikeClick = {
-                                // 관심 목록 제거 - API 연동 전까지 미구현
-                            },
+                            onLikeClick = { onLikeClick(item.spotId) },
                             onClick = {
                                 onStockClick(item.spotId, item.title, item.currentPrice, item.prevPrice)
                             },
@@ -193,7 +193,7 @@ private fun EmptyWatchlist(modifier: Modifier = Modifier) {
     }
 }
 
-private fun WatchlistItemDto.toWatchlistItem(): WatchlistItem {
+private fun WatchlistItem.toWatchlistCardItem(): WatchlistCardItem {
     val changeType =
         when {
             changeRate > 0 -> PriceChangeType.RISE
@@ -201,18 +201,7 @@ private fun WatchlistItemDto.toWatchlistItem(): WatchlistItem {
             else -> PriceChangeType.UNCHANGED
         }
 
-    /*
-     * 응답에 어제 가격이 없어 현재가와 등락률로 역산한다.
-     */
-    val rateFraction = changeRate / 100.0
-    val prevPrice =
-        if (rateFraction <= -1.0) {
-            currentPrice
-        } else {
-            (currentPrice / (1 + rateFraction)).toLong()
-        }
-
-    return WatchlistItem(
+    return WatchlistCardItem(
         entryId = id,
         spotId = spotId,
         title = spotName,
@@ -225,11 +214,11 @@ private fun WatchlistItemDto.toWatchlistItem(): WatchlistItem {
     )
 }
 
-private fun mockWatchlistItemDtos(): List<WatchlistItemDto> =
+private fun mockWatchlistItems(): List<WatchlistItem> =
     listOf(
-        WatchlistItemDto(1L, 101L, "경복궁", "서울", "역사", 18_900L, 5.59, "2026-07-31T05:56:17.134Z"),
-        WatchlistItemDto(2L, 102L, "해운대", "부산", "자연", 9_800L, 10.36, "2026-07-31T05:56:17.134Z"),
-        WatchlistItemDto(3L, 103L, "첨성대", "경주", "역사", 12_050L, -4.59, "2026-07-31T05:56:17.134Z"),
+        WatchlistItem(1L, 101L, "경복궁", "서울", "역사", 18_900L, 5.59, 17_900L),
+        WatchlistItem(2L, 102L, "해운대", "부산", "자연", 9_800L, 10.36, 8_900L),
+        WatchlistItem(3L, 103L, "첨성대", "경주", "역사", 12_050L, -4.59, 12_650L),
     )
 
 @Preview(
@@ -242,9 +231,10 @@ private fun mockWatchlistItemDtos(): List<WatchlistItemDto> =
 private fun WatchlistTabPreview() {
     TourfolioTheme(dynamicColor = false) {
         WatchlistTabContent(
-            uiState = WatchlistUiState.Success(mockWatchlistItemDtos()),
+            uiState = WatchlistUiState.Success(mockWatchlistItems()),
             onStockClick = { _, _, _, _ -> },
             onRetryClick = {},
+            onLikeClick = {},
         )
     }
 }

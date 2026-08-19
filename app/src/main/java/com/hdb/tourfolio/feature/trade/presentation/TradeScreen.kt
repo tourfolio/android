@@ -13,7 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hdb.tourfolio.feature.trade.presentation.auth.AuthOverlay
+import com.hdb.tourfolio.feature.auth.presentation.AuthOverlay
 import com.hdb.tourfolio.feature.trade.presentation.components.TradeHeader
 import com.hdb.tourfolio.feature.trade.presentation.components.TradeTabBar
 import com.hdb.tourfolio.feature.trade.presentation.tabs.HoldingsTab

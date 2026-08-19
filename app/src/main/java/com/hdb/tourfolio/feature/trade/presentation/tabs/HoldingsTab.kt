@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hdb.tourfolio.core.network.dto.PortfolioDto
-import com.hdb.tourfolio.core.network.dto.PortfolioItemDto
+import com.hdb.tourfolio.domain.portfolio.model.Portfolio
+import com.hdb.tourfolio.domain.portfolio.model.PortfolioItem
 import com.hdb.tourfolio.feature.trade.presentation.components.FilterDropdown
 import com.hdb.tourfolio.feature.trade.presentation.components.PriceChangeType
 import com.hdb.tourfolio.feature.trade.presentation.components.TourStockCard
@@ -63,27 +63,27 @@ private data class HoldingStockItem(
 fun HoldingsTab(
     modifier: Modifier = Modifier,
     onStockClick: (Long, String, Long?, Long?) -> Unit = { _, _, _, _ -> },
-    viewModel: HoldingsViewModel = hiltViewModel(),
+    viewModel: TradeHoldingsViewModel = hiltViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     HoldingsTabContent(
         modifier = modifier,
-        uiState = uiState,
+        uiState = state.portfolio,
         onStockClick = onStockClick,
-        onRetryClick = { viewModel.fetchPortfolio() },
+        onRetryClick = { viewModel.processIntent(TradeHoldingsIntent.RefreshPortfolio) },
     )
 }
 
 @Composable
 private fun HoldingsTabContent(
-    uiState: PortfolioUiState,
+    uiState: PortfolioSectionUiState,
     onStockClick: (Long, String, Long?, Long?) -> Unit,
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
-        is PortfolioUiState.Loading -> {
+        is PortfolioSectionUiState.Loading -> {
             LoadingHoldings(
                 modifier =
                     modifier
@@ -92,7 +92,7 @@ private fun HoldingsTabContent(
             )
         }
 
-        is PortfolioUiState.Error -> {
+        is PortfolioSectionUiState.Error -> {
             ErrorHoldings(
                 message = uiState.message,
                 onRetryClick = onRetryClick,
@@ -103,7 +103,7 @@ private fun HoldingsTabContent(
             )
         }
 
-        is PortfolioUiState.Success -> {
+        is PortfolioSectionUiState.Success -> {
             HoldingsList(
                 portfolio = uiState.portfolio,
                 onStockClick = onStockClick,
@@ -115,7 +115,7 @@ private fun HoldingsTabContent(
 
 @Composable
 private fun HoldingsList(
-    portfolio: PortfolioDto,
+    portfolio: Portfolio,
     onStockClick: (Long, String, Long?, Long?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -328,7 +328,7 @@ private fun EmptyHoldings(modifier: Modifier = Modifier) {
     }
 }
 
-private fun PortfolioItemDto.toHoldingStockItem(): HoldingStockItem {
+private fun PortfolioItem.toHoldingStockItem(): HoldingStockItem {
     val profitAmount = (currentPrice - averagePurchasePrice) * quantity
 
     return HoldingStockItem(
@@ -571,8 +571,8 @@ private fun Long.toPriceChangeType(): PriceChangeType =
         else -> PriceChangeType.UNCHANGED
     }
 
-private fun mockPortfolioDto(): PortfolioDto =
-    PortfolioDto(
+private fun mockPortfolio(): Portfolio =
+    Portfolio(
         memberId = 4L,
         username = "투어폴리오유저",
         cashBalance = 20_000L,
@@ -581,7 +581,7 @@ private fun mockPortfolioDto(): PortfolioDto =
         totalProfitLossRate = 8.72,
         items =
             listOf(
-                PortfolioItemDto(
+                PortfolioItem(
                     spotId = 1L,
                     spotName = "안압지",
                     quantity = 42,
@@ -590,7 +590,7 @@ private fun mockPortfolioDto(): PortfolioDto =
                     evaluationAmount = 4_560_000L,
                     profitLossRate = 14.00,
                 ),
-                PortfolioItemDto(
+                PortfolioItem(
                     spotId = 2L,
                     spotName = "광안리",
                     quantity = 35,
@@ -599,7 +599,7 @@ private fun mockPortfolioDto(): PortfolioDto =
                     evaluationAmount = 3_800_000L,
                     profitLossRate = 9.20,
                 ),
-                PortfolioItemDto(
+                PortfolioItem(
                     spotId = 3L,
                     spotName = "첨성대",
                     quantity = 28,
@@ -623,7 +623,7 @@ private fun HoldingsTabPreview() {
         dynamicColor = false,
     ) {
         HoldingsTabContent(
-            uiState = PortfolioUiState.Success(mockPortfolioDto()),
+            uiState = PortfolioSectionUiState.Success(mockPortfolio()),
             onStockClick = { _, _, _, _ -> },
             onRetryClick = {},
         )

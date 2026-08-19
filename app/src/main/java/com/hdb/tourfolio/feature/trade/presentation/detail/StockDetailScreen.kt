@@ -26,11 +26,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,11 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.core.network.TradeType
-import com.hdb.tourfolio.core.network.dto.TradeResponseDto
+import com.hdb.tourfolio.domain.portfolio.model.PortfolioItem
+import com.hdb.tourfolio.domain.stock.model.Stock
+import com.hdb.tourfolio.domain.trade.model.TradeResult
+import com.hdb.tourfolio.domain.trade.model.TradeType
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetChartCard
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetPeriod
-import com.hdb.tourfolio.feature.trade.presentation.components.alignAssetHistory
+import com.hdb.tourfolio.feature.trade.presentation.components.AssetPoint
 import com.hdb.tourfolio.feature.trade.presentation.components.mockAssetHistory
 import com.hdb.tourfolio.ui.theme.Blue
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
@@ -61,7 +63,6 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
-import kotlin.random.Random
 
 @Composable
 fun StockDetailScreen(
@@ -71,25 +72,34 @@ fun StockDetailScreen(
     initialCurrentPrice: Long? = null,
     initialPrevPrice: Long? = null,
     modifier: Modifier = Modifier,
-    tradeViewModel: TradeViewModel = hiltViewModel(),
-    watchlistLikeViewModel: WatchlistLikeViewModel = hiltViewModel(),
+    viewModel: StockDetailViewModel = hiltViewModel(),
 ) {
-    val tradeUiState by tradeViewModel.uiState.collectAsStateWithLifecycle()
-    val isLiked by watchlistLikeViewModel.isLiked.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(stockId, stockName) {
+        viewModel.processIntent(StockDetailIntent.Enter(spotId = stockId, keyword = stockName))
+    }
 
     StockDetailContent(
         stockId = stockId,
         stockName = stockName,
         onBackClick = onBackClick,
+        stock = state.stock,
         initialCurrentPrice = initialCurrentPrice,
         initialPrevPrice = initialPrevPrice,
-        tradeUiState = tradeUiState,
-        onTrade = { type, quantity ->
-            tradeViewModel.trade(spotId = stockId, type = type, quantity = quantity)
+        selectedPeriod = state.selectedPeriod,
+        chartHistory = state.chartHistory,
+        onPeriodSelected = { period ->
+            viewModel.processIntent(StockDetailIntent.SelectPeriod(spotId = stockId, period = period))
         },
-        onTradeSheetDismiss = { tradeViewModel.resetState() },
-        isLiked = isLiked,
-        onLikeClick = { watchlistLikeViewModel.toggleLike(spotId = stockId.toInt()) },
+        tradeUiState = state.tradeState,
+        onTrade = { type, quantity ->
+            viewModel.processIntent(StockDetailIntent.Trade(spotId = stockId, type = type, quantity = quantity))
+        },
+        onTradeSheetDismiss = { viewModel.processIntent(StockDetailIntent.ResetTradeState) },
+        isLiked = state.isLiked,
+        onLikeClick = { viewModel.processIntent(StockDetailIntent.ToggleLike(spotId = stockId)) },
+        holding = state.holding,
         modifier = modifier,
     )
 }
@@ -99,19 +109,20 @@ private fun StockDetailContent(
     stockId: Long,
     stockName: String,
     onBackClick: () -> Unit,
+    stock: Stock?,
     initialCurrentPrice: Long?,
     initialPrevPrice: Long?,
+    selectedPeriod: AssetPeriod,
+    chartHistory: List<AssetPoint>,
+    onPeriodSelected: (AssetPeriod) -> Unit,
     tradeUiState: TradeUiState,
     onTrade: (TradeType, Int) -> Unit,
     onTradeSheetDismiss: () -> Unit,
     isLiked: Boolean,
     onLikeClick: () -> Unit,
+    holding: PortfolioItem?,
     modifier: Modifier = Modifier,
 ) {
-    var selectedPeriod by rememberSaveable {
-        mutableStateOf(AssetPeriod.WEEK)
-    }
-
     var showSellSheet by remember {
         mutableStateOf(false)
     }
@@ -121,80 +132,21 @@ private fun StockDetailContent(
     }
 
     /*
-     * 목록 화면에서 전달받은 실제 현재가가 있으면 그 값에 맞춰 임시 추이 데이터의
-     * 끝점을 보정한다. 시세 추이 API가 없어 그래프 모양 자체는 여전히 임시 데이터다.
+     * api/stocks(keyword 검색)로 조회한 실제 현재가/전일가가 있으면 그 값을 쓰고,
+     * 아직 응답이 도착하지 않은 첫 프레임에는 목록 화면에서 넘겨받은 값으로 대체한다.
      */
-    val priceHistory =
-        remember(selectedPeriod, stockId, initialCurrentPrice) {
-            val history = mockAssetHistory(period = selectedPeriod, seed = stockId)
-            if (initialCurrentPrice != null) alignAssetHistory(history, initialCurrentPrice) else history
-        }
+    val resolvedCurrentPrice = stock?.currentPrice ?: initialCurrentPrice
+    val resolvedPrevPrice = stock?.prevPrice ?: initialPrevPrice
 
-    val currentPrice = priceHistory.last().value
-    val changeAmount = currentPrice - priceHistory.first().value
+    val currentPrice = resolvedCurrentPrice ?: chartHistory.lastOrNull()?.value ?: 0L
+    val prevDayPrice = resolvedPrevPrice ?: currentPrice
+    val changeAmount = currentPrice - prevDayPrice
     val changeRate =
-        if (priceHistory.first().value != 0L) {
-            changeAmount * 100.0 / priceHistory.first().value
-        } else {
-            0.0
-        }
+        stock?.changeRate ?: if (prevDayPrice != 0L) changeAmount * 100.0 / prevDayPrice else 0.0
 
-    /*
-     * 임시 데이터 - 공모가/거래량 API 연동 전까지 사용
-     */
-    val offeringPrice = 20_000L
-    val offeringChangeRate =
-        if (offeringPrice != 0L) {
-            (currentPrice - offeringPrice) * 100.0 / offeringPrice
-        } else {
-            0.0
-        }
-    val fallbackPrevDayPrice =
-        remember(stockId, currentPrice) {
-            val random = Random(stockId * 97 + 13)
-            (currentPrice * (1 - random.nextDouble(0.01, 0.06))).toLong()
-        }
-    val prevDayPrice = initialPrevPrice ?: fallbackPrevDayPrice
-    val todayVolume =
-        remember(stockId) {
-            Random(stockId * 131 + 7).nextInt(500, 5000)
-        }
-
-    /*
-     * 임시 데이터 - 내 보유현황 API 연동 전까지 사용
-     */
-    val avgPrice =
-        remember(stockId) {
-            Random(stockId * 53 + 11).nextLong(8_000, 25_000)
-        }
-    val holdingQuantity =
-        remember(stockId) {
-            Random(stockId * 71 + 5).nextInt(5, 50)
-        }
-    val holdingTotalAmount = currentPrice * holdingQuantity
-    val holdingProfitAmount = (currentPrice - avgPrice) * holdingQuantity
-    val holdingProfitRate =
-        if (avgPrice != 0L) {
-            (currentPrice - avgPrice) * 100.0 / avgPrice
-        } else {
-            0.0
-        }
-
-    /*
-     * 임시 데이터 - 관광 데이터 지표 API 연동 전까지 사용
-     */
-    val demandIntensity =
-        remember(stockId) {
-            Random(stockId * 19 + 3).nextInt(3, 11)
-        }
-    val visitorForecast =
-        remember(stockId) {
-            Random(stockId * 23 + 9).nextInt(3, 11)
-        }
-    val resourceDemand =
-        remember(stockId) {
-            Random(stockId * 29 + 17).nextInt(3, 11)
-        }
+    val offeringChangeRate = remember(currentPrice) { mockOfferingChangeRate(currentPrice) }
+    val todayVolume = remember(stockId) { mockTodayVolume(stockId) }
+    val tourDataIndicators = remember(stockId) { mockTourDataIndicators(stockId) }
 
     Column(
         modifier =
@@ -221,17 +173,16 @@ private fun StockDetailContent(
                 totalAmount = currentPrice,
                 changeAmount = changeAmount,
                 changeRate = changeRate,
-                assetHistory = priceHistory,
+                assetHistory = chartHistory,
+                periods = AssetPeriod.entries,
                 selectedPeriod = selectedPeriod,
-                onPeriodSelected = { period ->
-                    selectedPeriod = period
-                },
+                onPeriodSelected = onPeriodSelected,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             DetailInfoGrid(
-                offeringPrice = offeringPrice,
+                offeringPrice = MOCK_OFFERING_PRICE,
                 offeringChangeRate = offeringChangeRate,
                 prevDayPrice = prevDayPrice,
                 todayVolume = todayVolume,
@@ -247,13 +198,11 @@ private fun StockDetailContent(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            MyHoldingSummary(
-                avgPrice = avgPrice,
-                quantity = holdingQuantity,
-                totalAmount = holdingTotalAmount,
-                profitAmount = holdingProfitAmount,
-                profitRate = holdingProfitRate,
-            )
+            if (holding != null) {
+                MyHoldingSummary(holding = holding)
+            } else {
+                NoHoldingNotice()
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -266,9 +215,9 @@ private fun StockDetailContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             TourDataSection(
-                demandIntensity = demandIntensity,
-                visitorForecast = visitorForecast,
-                resourceDemand = resourceDemand,
+                demandIntensity = tourDataIndicators.demandIntensity,
+                visitorForecast = tourDataIndicators.visitorForecast,
+                resourceDemand = tourDataIndicators.resourceDemand,
             )
         }
 
@@ -291,14 +240,14 @@ private fun StockDetailContent(
             buttonLabel = "판매하기",
             buttonColor = Natural20,
             currentPrice = currentPrice,
-            avgPrice = avgPrice,
-            maxQuantity = holdingQuantity,
+            avgPrice = holding?.averagePurchasePrice ?: 0L,
+            maxQuantity = holding?.quantity ?: 0,
             tradeUiState = tradeUiState,
             onDismiss = {
                 showSellSheet = false
                 onTradeSheetDismiss()
             },
-            onConfirmClick = { _, quantity ->
+            onConfirmClick = { quantity ->
                 onTrade(TradeType.SELL, quantity)
             },
         )
@@ -313,14 +262,14 @@ private fun StockDetailContent(
             buttonLabel = "구매하기",
             buttonColor = Primary,
             currentPrice = currentPrice,
-            avgPrice = avgPrice,
-            maxQuantity = holdingQuantity,
+            avgPrice = holding?.averagePurchasePrice ?: 0L,
+            maxQuantity = holding?.quantity ?: 0,
             tradeUiState = tradeUiState,
             onDismiss = {
                 showBuySheet = false
                 onTradeSheetDismiss()
             },
-            onConfirmClick = { _, quantity ->
+            onConfirmClick = { quantity ->
                 onTrade(TradeType.BUY, quantity)
             },
         )
@@ -416,32 +365,49 @@ private fun DetailInfoTile(
 }
 
 @Composable
+private fun NoHoldingNotice(modifier: Modifier = Modifier) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Natural99)
+                .padding(horizontal = 18.dp, vertical = 24.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = "보유 중인 수량이 없습니다.",
+            style = LocalAppTypography.current.bodyLarge.medium,
+            color = Natural50,
+        )
+    }
+}
+
+@Composable
 private fun MyHoldingSummary(
-    avgPrice: Long,
-    quantity: Int,
-    totalAmount: Long,
-    profitAmount: Long,
-    profitRate: Double,
+    holding: PortfolioItem,
     modifier: Modifier = Modifier,
 ) {
+    val profitAmount = holding.evaluationAmount - holding.averagePurchasePrice * holding.quantity
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         DetailInfoTile(
             label = "1주 평균",
-            value = "%,dP".format(avgPrice),
+            value = "%,dP".format(holding.averagePurchasePrice),
         )
 
         DetailInfoTile(
             label = "보유 수량",
-            value = "%,d주".format(quantity),
+            value = "%,d주".format(holding.quantity),
         )
 
         TotalAmountCard(
-            totalAmount = totalAmount,
+            totalAmount = holding.evaluationAmount,
             profitAmount = profitAmount,
-            profitRate = profitRate,
+            profitRate = holding.profitLossRate,
         )
     }
 }
@@ -662,7 +628,7 @@ private fun TradeBottomSheet(
     maxQuantity: Int,
     tradeUiState: TradeUiState,
     onDismiss: () -> Unit,
-    onConfirmClick: (price: Long, quantity: Int) -> Unit,
+    onConfirmClick: (quantity: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -797,7 +763,7 @@ private fun TradeBottomSheet(
 
             when (tradeUiState) {
                 is TradeUiState.Success -> {
-                    TradeResultSummary(response = tradeUiState.response)
+                    TradeResultSummary(result = tradeUiState.result)
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -817,7 +783,7 @@ private fun TradeBottomSheet(
                         containerColor = buttonColor,
                         onClick = {
                             if (!isLoading) {
-                                onConfirmClick(currentPrice, quantity)
+                                onConfirmClick(quantity)
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
@@ -842,7 +808,7 @@ private fun TradeBottomSheet(
 
 @Composable
 private fun TradeResultSummary(
-    response: TradeResponseDto,
+    result: TradeResult,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -861,13 +827,13 @@ private fun TradeResultSummary(
         )
 
         Text(
-            text = "체결가 %,dP · %,d주".format(response.price, response.quantity),
+            text = "체결가 %,dP · %,d주".format(result.price, result.quantity),
             style = LocalAppTypography.current.bodySmall.medium,
             color = Natural50,
         )
 
         Text(
-            text = "총 %,dP".format(response.totalAmount),
+            text = "총 %,dP".format(result.totalAmount),
             style = LocalAppTypography.current.bodyLarge.bold,
             color = Natural10,
         )
@@ -1004,14 +970,19 @@ private fun StockDetailScreenPreview() {
         StockDetailContent(
             stockId = 1L,
             stockName = "경복궁",
+            stock = null,
             initialCurrentPrice = 18_900L,
             initialPrevPrice = 17_780L,
+            selectedPeriod = AssetPeriod.WEEK,
+            chartHistory = mockAssetHistory(period = AssetPeriod.WEEK, seed = 1L),
+            onPeriodSelected = {},
             tradeUiState = TradeUiState.Idle,
             onTrade = { _, _ -> },
             onTradeSheetDismiss = {},
             isLiked = false,
             onLikeClick = {},
             onBackClick = {},
+            holding = null,
         )
     }
 }

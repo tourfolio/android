@@ -43,13 +43,24 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
+/**
+ * 화면마다 지원하는 기간 API 파라미터 집합이 달라(예: 종목 상세는 1W/3M/1Y/5Y/ALL,
+ * 포트폴리오 요약은 1W/1M/3M/1Y/ALL) 화면별로 별도 enum을 만들고 이 인터페이스만 공유한다.
+ */
+interface PeriodOption {
+    val label: String
+}
+
+/*
+ * api/stocks/{spotId}/chart의 period 파라미터(1W/3M/1Y/5Y/ALL)와 1:1 대응한다.
+ */
 enum class AssetPeriod(
-    val label: String,
-) {
+    override val label: String,
+) : PeriodOption {
     WEEK("1주"),
-    MONTH("1달"),
     THREE_MONTH("3달"),
     YEAR("1년"),
+    FIVE_YEAR("5년"),
     ALL("전체"),
 }
 
@@ -59,14 +70,15 @@ data class AssetPoint(
 )
 
 @Composable
-fun AssetChartCard(
+fun <T : PeriodOption> AssetChartCard(
     label: String,
     totalAmount: Long,
     changeAmount: Long,
     changeRate: Double,
     assetHistory: List<AssetPoint>,
-    selectedPeriod: AssetPeriod,
-    onPeriodSelected: (AssetPeriod) -> Unit,
+    periods: List<T>,
+    selectedPeriod: T,
+    onPeriodSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val changeColor =
@@ -128,6 +140,7 @@ fun AssetChartCard(
         Spacer(modifier = Modifier.height(20.dp))
 
         PeriodTabRow(
+            periods = periods,
             selectedPeriod = selectedPeriod,
             onPeriodSelected = onPeriodSelected,
             modifier = Modifier.fillMaxWidth(),
@@ -220,16 +233,17 @@ private fun ChartAxisLabels(
 }
 
 @Composable
-private fun PeriodTabRow(
-    selectedPeriod: AssetPeriod,
-    onPeriodSelected: (AssetPeriod) -> Unit,
+private fun <T : PeriodOption> PeriodTabRow(
+    periods: List<T>,
+    selectedPeriod: T,
+    onPeriodSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        AssetPeriod.entries.forEach { period ->
+        periods.forEach { period ->
             PeriodTabChip(
                 label = period.label,
                 selected = period == selectedPeriod,
@@ -303,10 +317,10 @@ fun mockAssetHistory(
     val stepDays =
         when (period) {
             AssetPeriod.WEEK -> 7L
-            AssetPeriod.MONTH -> 30L
             AssetPeriod.THREE_MONTH -> 90L
             AssetPeriod.YEAR -> 365L
-            AssetPeriod.ALL -> 730L
+            AssetPeriod.FIVE_YEAR -> 1_825L
+            AssetPeriod.ALL -> 3_650L
         }
 
     val random = Random(seed * 31 + period.ordinal + 1L)
