@@ -27,12 +27,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.hdb.tourfolio.feature.card.CardScreen
-import com.hdb.tourfolio.feature.explore.CityTravelDetailScreen
-import com.hdb.tourfolio.feature.explore.ExploreDetailScreen
-import com.hdb.tourfolio.feature.explore.ExploreEntryScreen
-import com.hdb.tourfolio.feature.explore.ExploreSearchScreen
-import com.hdb.tourfolio.feature.home.HomeScreen
+import com.hdb.tourfolio.feature.card.presentation.CardScreen
+import com.hdb.tourfolio.feature.explore.presentation.CityTravelDetailScreen
+import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
+import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
+import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
+import com.hdb.tourfolio.feature.home.presentation.HomeScreen
 import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
 import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
 
@@ -286,6 +286,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
             composable(Screen.Trade.route) {
                 TradeScreen(
+                    onSearchClick = {
+                        // 추후 검색 화면 연결
+                    },
+                    onNotificationClick = {
+                        // 추후 알림 화면 연결
+                    },
                     onStockClick = { stockId, stockName, currentPrice, prevPrice ->
                         navController.navigate(
                             Screen.StockDetail.createRoute(stockId, stockName, currentPrice, prevPrice),
@@ -329,12 +335,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navArgument("stockId") { type = NavType.LongType },
                         navArgument("stockName") { type = NavType.StringType },
                         navArgument("currentPrice") {
-                            type = NavType.LongType
-                            defaultValue = Screen.StockDetail.NO_VALUE
+                            type = NavType.StringType
+                            nullable = true
                         },
                         navArgument("prevPrice") {
-                            type = NavType.LongType
-                            defaultValue = Screen.StockDetail.NO_VALUE
+                            type = NavType.StringType
+                            nullable = true
                         },
                     ),
             ) { backStackEntry ->
@@ -346,12 +352,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         ?: ""
                 val currentPrice =
                     backStackEntry.arguments
-                        ?.getLong("currentPrice")
-                        ?.takeIf { it != Screen.StockDetail.NO_VALUE }
+                        ?.getString("currentPrice")
+                        ?.toLongOrNull()
                 val prevPrice =
                     backStackEntry.arguments
-                        ?.getLong("prevPrice")
-                        ?.takeIf { it != Screen.StockDetail.NO_VALUE }
+                        ?.getString("prevPrice")
+                        ?.toLongOrNull()
 
                 StockDetailScreen(
                     stockId = stockId,

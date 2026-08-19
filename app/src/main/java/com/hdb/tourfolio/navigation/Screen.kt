@@ -39,8 +39,6 @@ sealed class Screen(val route: String) {
 
     data object StockDetail :
         Screen("stock_detail/{stockId}/{stockName}?currentPrice={currentPrice}&prevPrice={prevPrice}") {
-        const val NO_VALUE = -1L
-
         fun createRoute(
             stockId: Long,
             stockName: String,
@@ -48,9 +46,7 @@ sealed class Screen(val route: String) {
             prevPrice: Long? = null,
         ): String {
             val base = "stock_detail/$stockId/${Uri.encode(stockName)}"
-            val currentPriceParam = currentPrice ?: NO_VALUE
-            val prevPriceParam = prevPrice ?: NO_VALUE
-            return "$base?currentPrice=$currentPriceParam&prevPrice=$prevPriceParam"
+            return "$base?currentPrice=${currentPrice ?: ""}&prevPrice=${prevPrice ?: ""}"
         }
     }
 }

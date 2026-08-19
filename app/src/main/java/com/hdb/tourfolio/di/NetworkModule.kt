@@ -1,14 +1,15 @@
 package com.hdb.tourfolio.di
 
 import com.google.gson.Gson
-import com.hdb.tourfolio.core.network.AuthApiService
-import com.hdb.tourfolio.core.network.AuthInterceptor
-import com.hdb.tourfolio.core.network.CardApiService
-import com.hdb.tourfolio.core.network.ExploreApiService
-import com.hdb.tourfolio.core.network.PortfolioApiService
-import com.hdb.tourfolio.core.network.StockApiService
-import com.hdb.tourfolio.core.network.TradeApiService
-import com.hdb.tourfolio.core.network.WatchlistApiService
+import com.hdb.tourfolio.BuildConfig
+import com.hdb.tourfolio.data.auth.remote.AuthApiService
+import com.hdb.tourfolio.data.card.remote.CardApiService
+import com.hdb.tourfolio.data.common.network.AuthInterceptor
+import com.hdb.tourfolio.data.explore.remote.ExploreApiService
+import com.hdb.tourfolio.data.portfolio.remote.PortfolioApiService
+import com.hdb.tourfolio.data.stock.remote.StockApiService
+import com.hdb.tourfolio.data.trade.remote.TradeApiService
+import com.hdb.tourfolio.data.watchlist.remote.WatchlistApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,7 +34,7 @@ object NetworkModule {
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val loggingInterceptor =
             HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
             }
 
         return OkHttpClient.Builder()
@@ -49,7 +50,6 @@ object NetworkModule {
         gson: Gson,
     ): Retrofit =
         Retrofit.Builder()
-
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
