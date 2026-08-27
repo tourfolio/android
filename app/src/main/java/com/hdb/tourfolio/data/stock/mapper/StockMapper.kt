@@ -1,0 +1,26 @@
+package com.hdb.tourfolio.data.stock.mapper
+
+import com.hdb.tourfolio.data.stock.remote.dto.StockChartPointDto
+import com.hdb.tourfolio.data.stock.remote.dto.StockDto
+import com.hdb.tourfolio.domain.stock.model.Stock
+import com.hdb.tourfolio.domain.stock.model.StockChartPoint
+
+fun StockDto.toDomain(): Stock =
+    Stock(
+        id = id,
+        name = name,
+        areaCode = areaCode,
+        tier = tier,
+        currentPrice = currentPrice,
+        prevPrice = prevPrice,
+        changeRate = changeRate,
+        lastUpdated = lastUpdated,
+        regionName = regionName,
+        address = address,
+    )
+
+fun StockChartPointDto.toDomain(): StockChartPoint =
+    StockChartPoint(
+        date = date,
+        price = price,
+    )
