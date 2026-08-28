@@ -39,6 +39,7 @@ import com.hdb.tourfolio.feature.explore.presentation.components.RegionCard
 import com.hdb.tourfolio.feature.explore.presentation.components.SearchBar
 import com.hdb.tourfolio.feature.explore.presentation.components.TourSpotCard
 import com.hdb.tourfolio.feature.explore.presentation.components.TourSpotCarousel
+import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -57,6 +58,8 @@ fun ExploreScreen(
     onCityTravelClick: (Long) -> Unit = {},
     onTourSpotClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
+    onNotificationClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ExploreHomeViewModel = hiltViewModel(),
 ) {
@@ -82,8 +85,15 @@ fun ExploreScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 36.dp),
     ) {
-        ExploreHeader(
-            modifier = Modifier.padding(start = 22.dp, top = 20.dp, end = 22.dp),
+        CommonHeader(
+            onProfileClick = onProfileClick,
+            onNotificationClick = onNotificationClick,
+            modifier =
+                Modifier.padding(
+                    start = 22.dp,
+                    top = 20.dp,
+                    end = 22.dp,
+                ),
         )
 
         Spacer(modifier = Modifier.height(28.dp))
@@ -224,26 +234,6 @@ fun ExploreScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun ExploreHeader(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            text = "Tourfolio",
-            style = LocalAppTypography.current.headlineLarge.heavy.copy(color = Natural10),
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.ic_bell_black),
-            contentDescription = "알림",
-            modifier = Modifier.size(27.dp),
-        )
     }
 }
 

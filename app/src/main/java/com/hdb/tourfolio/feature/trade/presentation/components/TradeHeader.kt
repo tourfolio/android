@@ -50,7 +50,7 @@ fun TradeHeader(
             Image(
                 painter =
                     painterResource(
-                        id = R.drawable.ic_profile,
+                        id = R.drawable.ic_user_black,
                     ),
                 contentDescription = "프로필",
                 modifier =

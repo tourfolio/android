@@ -37,7 +37,7 @@ import com.hdb.tourfolio.feature.card.presentation.components.CardAcquisitionSuc
 import com.hdb.tourfolio.feature.card.presentation.components.CardDetailBottomSheet
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterBar
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterState
-import com.hdb.tourfolio.feature.card.presentation.components.CardHeader
+import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.feature.card.presentation.components.ExpandedImageScreen
 import com.hdb.tourfolio.feature.card.presentation.components.LocationDialogType
 import com.hdb.tourfolio.feature.card.presentation.components.LocationPermissionDialog
@@ -308,7 +308,7 @@ fun CardScreen(
                 Column(
                     modifier = Modifier.padding(start = 22.dp, top = 20.dp, end = 22.dp),
                 ) {
-                    CardHeader(
+                    CommonHeader(
                         onProfileClick = onProfileClick,
                         onNotificationClick = onNotificationClick,
                     )

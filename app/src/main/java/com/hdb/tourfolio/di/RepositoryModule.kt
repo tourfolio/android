@@ -3,6 +3,7 @@ package com.hdb.tourfolio.di
 import com.hdb.tourfolio.data.auth.AuthRepositoryImpl
 import com.hdb.tourfolio.data.card.CardRepositoryImpl
 import com.hdb.tourfolio.data.explore.ExploreRepositoryImpl
+import com.hdb.tourfolio.data.mypage.MyPageRepositoryImpl
 import com.hdb.tourfolio.data.portfolio.PortfolioRepositoryImpl
 import com.hdb.tourfolio.data.stock.StockRepositoryImpl
 import com.hdb.tourfolio.data.trade.TradeRepositoryImpl
@@ -10,6 +11,7 @@ import com.hdb.tourfolio.data.watchlist.WatchlistRepositoryImpl
 import com.hdb.tourfolio.domain.auth.repository.AuthRepository
 import com.hdb.tourfolio.domain.card.repository.CardRepository
 import com.hdb.tourfolio.domain.explore.repository.ExploreRepository
+import com.hdb.tourfolio.domain.mypage.repository.MyPageRepository
 import com.hdb.tourfolio.domain.portfolio.repository.PortfolioRepository
 import com.hdb.tourfolio.domain.stock.repository.StockRepository
 import com.hdb.tourfolio.domain.trade.repository.TradeRepository
@@ -50,4 +52,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindExploreRepository(impl: ExploreRepositoryImpl): ExploreRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMyPageRepository(impl: MyPageRepositoryImpl): MyPageRepository
 }
