@@ -87,6 +87,7 @@ data class ExploreSearchSpotUiModel(
 data class ExploreSpotDetailUiModel(
     val id: Long,
     val title: String,
+    val imageUrl: String,
     val address: String,
     val tags: List<String>,
     val description: String,

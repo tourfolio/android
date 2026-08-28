@@ -348,7 +348,7 @@ fun CardScreen(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "총 ${cards.size}장",
+                        text = "총 ${collection.filteredCount}장",
                         style = LocalAppTypography.current.bodySmall.medium.copy(color = Natural60),
                     )
 

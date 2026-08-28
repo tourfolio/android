@@ -14,6 +14,7 @@ data class CardCollection(
     val collectionRate: Double,
     val ownedCount: Int,
     val totalCount: Int,
+    val filteredCount: Int,
     val cards: List<Card>,
 )
 

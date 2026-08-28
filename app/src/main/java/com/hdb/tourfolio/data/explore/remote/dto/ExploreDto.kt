@@ -80,6 +80,7 @@ data class ExploreSearchSpotDto(
 data class ExploreSpotDetailDto(
     val spotId: Long,
     val name: String,
+    val imageUrl: String,
     val address: String,
     val tags: List<String>,
     val description: String,

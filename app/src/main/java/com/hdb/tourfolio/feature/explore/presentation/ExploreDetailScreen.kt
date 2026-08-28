@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreAttractionPointUiModel
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreSpotDetailUiModel
@@ -131,6 +132,7 @@ private fun ExploreDetailContent(
     ) {
         TourSpotHero(
             title = detail.title,
+            imageUrl = detail.imageUrl,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
         )
@@ -256,6 +258,7 @@ private fun ExploreDetailContent(
 @Composable
 private fun TourSpotHero(
     title: String,
+    imageUrl: String,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -263,8 +266,8 @@ private fun TourSpotHero(
     Box(
         modifier = modifier.fillMaxWidth().height(430.dp),
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.bg_gyeongju_demo),
+        AsyncImage(
+            model = imageUrl,
             contentDescription = title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,

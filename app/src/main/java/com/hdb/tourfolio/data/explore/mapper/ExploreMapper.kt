@@ -101,6 +101,7 @@ fun ExploreSpotDetailDto.toDomain(): ExploreSpotDetail =
     ExploreSpotDetail(
         spotId = spotId,
         name = name,
+        imageUrl = imageUrl,
         address = address,
         tags = normalizeServerTags(tags),
         description = description,

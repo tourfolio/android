@@ -279,6 +279,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         // 추후 연결
                     },
                     onSpotClick = { spotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(tourSpotId = spotId),
+                        )
                         // 추후 의논 후 제거 혹은 구현
                     },
                 )

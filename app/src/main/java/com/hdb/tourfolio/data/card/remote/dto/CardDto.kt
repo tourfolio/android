@@ -11,10 +11,15 @@ data class CardItemDto(
 )
 
 data class CardCollectionDto(
+    val summary: CardCollectionSummaryDto,
+    val filteredCount: Int,
+    val cards: List<CardItemDto>,
+)
+
+data class CardCollectionSummaryDto(
     val collectionRate: Double,
     val ownedCount: Int,
     val totalCount: Int,
-    val cards: List<CardItemDto>,
 )
 
 data class CardDetailDto(
