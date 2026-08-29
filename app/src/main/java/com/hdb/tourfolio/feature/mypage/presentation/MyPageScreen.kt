@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.mypage.presentation.components.MyPageMenuCard
 import com.hdb.tourfolio.feature.mypage.presentation.components.MyPageMenuItem
@@ -44,12 +45,14 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
 
 private enum class AccountDialogType {
+    LOGOUT,
     DELETE_ACCOUNT,
 }
 
 @Composable
 fun MyPageScreen(
     onBackClick: () -> Unit,
+    onLogoutSuccess: () -> Unit = {},
     onDeleteAccountSuccess: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
@@ -83,6 +86,10 @@ fun MyPageScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
+                MyPageEffect.LogoutSuccess -> {
+                    onLogoutSuccess()
+                }
+
                 MyPageEffect.DeleteAccountSuccess -> {
                     onDeleteAccountSuccess()
                 }
@@ -199,36 +206,18 @@ fun MyPageScreen(
                     /*
                      * 프로필 이미지
                      */
-                    Box(
+                    Image(
+                        painter =
+                            painterResource(
+                                id = R.drawable.ic_profile,
+                            ),
+                        contentDescription =
+                            "프로필 이미지",
                         modifier =
-                            Modifier
-                                .size(
-                                    120.dp,
-                                )
-                                .clip(
-                                    CircleShape,
-                                )
-                                .background(
-                                    Primary.copy(
-                                        alpha = 0.45f,
-                                    ),
-                                ),
-                        contentAlignment =
-                            Alignment.Center,
-                    ) {
-                        Image(
-                            painter =
-                                painterResource(
-                                    id = R.drawable.ic_profile,
-                                ),
-                            contentDescription =
-                                "프로필 이미지",
-                            modifier =
-                                Modifier.size(
-                                    55.dp,
-                                ),
-                        )
-                    }
+                            Modifier.size(
+                                120.dp,
+                            ),
+                    )
 
                     Spacer(
                         modifier =
@@ -404,7 +393,8 @@ fun MyPageScreen(
                                     title =
                                         "로그아웃",
                                     onClick = {
-                                        // 추후 연동
+                                        accountDialogType =
+                                            AccountDialogType.LOGOUT
                                     },
                                 ),
                                 MyPageMenuItem(
@@ -433,6 +423,25 @@ fun MyPageScreen(
      * 회원탈퇴 확인 모달
      */
     when (accountDialogType) {
+        AccountDialogType.LOGOUT -> {
+            CommonModal(
+                message =
+                    "로그아웃하시겠습니까?",
+                onConfirmClick = {
+                    accountDialogType =
+                        null
+
+                    viewModel.processIntent(
+                        MyPageIntent.Logout,
+                    )
+                },
+                onDismissClick = {
+                    accountDialogType =
+                        null
+                },
+            )
+        }
+
         AccountDialogType.DELETE_ACCOUNT -> {
             CommonModal(
                 message =

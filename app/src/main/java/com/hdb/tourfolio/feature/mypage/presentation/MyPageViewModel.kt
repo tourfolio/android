@@ -4,6 +4,7 @@ import com.hdb.tourfolio.core.mvi.MviEffect
 import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
+import com.hdb.tourfolio.domain.auth.usecase.LogoutUseCase
 import com.hdb.tourfolio.domain.mypage.model.MyPage
 import com.hdb.tourfolio.domain.mypage.usecase.DeleteAccountUseCase
 import com.hdb.tourfolio.domain.mypage.usecase.GetMyPageUseCase
@@ -56,6 +57,8 @@ sealed interface MyPageIntent : MviIntent {
 
     data object DeleteAccount : MyPageIntent
 
+    data object Logout : MyPageIntent
+
     data object ClearNicknameUpdateState : MyPageIntent
 }
 
@@ -73,6 +76,8 @@ data class MyPageState(
  * 일회성 이벤트
  */
 sealed interface MyPageEffect : MviEffect {
+    data object LogoutSuccess : MyPageEffect
+
     data object DeleteAccountSuccess : MyPageEffect
 
     data class Error(
@@ -87,6 +92,7 @@ constructor(
     private val getMyPageUseCase: GetMyPageUseCase,
     private val updateNicknameUseCase: UpdateNicknameUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
+    private val logoutUseCase: LogoutUseCase,
 ) : MviViewModel<MyPageIntent, MyPageState, MyPageEffect>(
     MyPageState(),
 ) {
@@ -111,6 +117,9 @@ constructor(
 
             MyPageIntent.DeleteAccount ->
                 deleteAccount()
+
+            MyPageIntent.Logout ->
+                logout()
 
             MyPageIntent.ClearNicknameUpdateState ->
                 clearNicknameUpdateState()
@@ -236,6 +245,26 @@ constructor(
                     message =
                         e.message
                             ?: "회원 탈퇴에 실패했습니다.",
+                ),
+            )
+        }
+    }
+
+    private suspend fun logout() {
+        try {
+            logoutUseCase()
+
+            sendEffect(
+                MyPageEffect.LogoutSuccess,
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            sendEffect(
+                MyPageEffect.Error(
+                    message =
+                        e.message
+                            ?: "로그아웃에 실패했습니다.",
                 ),
             )
         }

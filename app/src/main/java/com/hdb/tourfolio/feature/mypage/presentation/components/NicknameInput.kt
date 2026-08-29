@@ -67,10 +67,10 @@ fun NicknameInput(
                         0.7f,
                     )
                     .height(
-                        1.dp,
+                        1.5.dp,
                     )
                     .background(
-                        Natural60,
+                        Primary,
                     ),
         )
     }

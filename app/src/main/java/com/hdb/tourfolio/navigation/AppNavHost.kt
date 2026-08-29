@@ -403,6 +403,19 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navController.popBackStack()
                     },
                     // 인증화면 구현 후 해제
+//                    onLogoutSuccess = {
+//                        navController.navigate(
+//                            Screen.Auth.route,
+//                        ) {
+//                            popUpTo(
+//                                navController.graph.id,
+//                            ) {
+//                                inclusive = true
+//                            }
+//
+//                            launchSingleTop = true
+//                        }
+//                    },
 //                    onDeleteAccountSuccess = {
 //                        navController.navigate(
 //                            Screen.Auth.route,
