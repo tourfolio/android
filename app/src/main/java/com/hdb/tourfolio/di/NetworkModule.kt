@@ -6,6 +6,9 @@ import com.hdb.tourfolio.data.auth.remote.AuthApiService
 import com.hdb.tourfolio.data.card.remote.CardApiService
 import com.hdb.tourfolio.data.common.network.AuthInterceptor
 import com.hdb.tourfolio.data.explore.remote.ExploreApiService
+import com.hdb.tourfolio.data.home.remote.HomeApiService
+import com.hdb.tourfolio.data.mypage.remote.MyPageApiService
+import com.hdb.tourfolio.data.notification.remote.NotificationApiService
 import com.hdb.tourfolio.data.portfolio.remote.PortfolioApiService
 import com.hdb.tourfolio.data.stock.remote.StockApiService
 import com.hdb.tourfolio.data.trade.remote.TradeApiService
@@ -82,4 +85,16 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideTradeApiService(retrofit: Retrofit): TradeApiService = retrofit.create(TradeApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideMyPageApiService(retrofit: Retrofit): MyPageApiService = retrofit.create(MyPageApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService = retrofit.create(NotificationApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideHomeApiService(retrofit: Retrofit): HomeApiService = retrofit.create(HomeApiService::class.java)
 }

@@ -2,19 +2,15 @@
 
 package com.hdb.tourfolio.feature.explore.presentation
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,14 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.components.CarouselContent
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreMainCardUiModel
+import com.hdb.tourfolio.ui.components.CommonHeader
+import com.hdb.tourfolio.ui.components.CommonHeaderType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -163,13 +159,17 @@ private fun ExploreCarouselContent(
                     onClick = { onTourSpotClick(item.id) },
                 )
 
-                ExploreCarouselHeader(
+                CommonHeader(
+                    type = CommonHeaderType.SEARCH,
                     onSearchClick = onFinished,
                     modifier =
                         Modifier
                             .align(Alignment.TopStart)
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                            .padding(
+                                horizontal = 20.dp,
+                                vertical = 16.dp,
+                            ),
                 )
             } else {
                 ExploreScreen(modifier = Modifier.fillMaxSize())
@@ -206,37 +206,6 @@ private fun ExploreCarouselPage(
             totalCount = totalCount,
             modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
         )
-    }
-}
-
-@Composable
-private fun ExploreCarouselHeader(
-    onSearchClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(
-            text = "Tourfolio",
-            style = LocalAppTypography.current.headlineLarge.bold.copy(color = Natural100),
-        )
-
-        Box(
-            modifier =
-                Modifier
-                    .size(48.dp)
-                    .clickable(onClick = onSearchClick),
-            contentAlignment = Alignment.Center,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = "탐색 화면으로 이동",
-                modifier = Modifier.size(28.dp),
-            )
-        }
     }
 }
 

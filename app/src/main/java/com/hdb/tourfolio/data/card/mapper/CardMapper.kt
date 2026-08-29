@@ -25,9 +25,10 @@ fun CardItemDto.toDomain(): Card =
 
 fun CardCollectionDto.toDomain(): CardCollection =
     CardCollection(
-        collectionRate = collectionRate,
-        ownedCount = ownedCount,
-        totalCount = totalCount,
+        collectionRate = summary.collectionRate,
+        ownedCount = summary.ownedCount,
+        totalCount = summary.totalCount,
+        filteredCount = filteredCount,
         cards = cards.map { it.toDomain() },
     )
 

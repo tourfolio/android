@@ -11,7 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 
-private val CAROUSEL_TOUR_SPOT_IDS = listOf(1L, 2L, 10L)
+private const val MAX_CAROUSEL_CARD_COUNT = 3
 
 sealed interface ExploreMainCardsUiState {
     data object Loading : ExploreMainCardsUiState
@@ -58,9 +58,9 @@ class ExploreCarouselViewModel
                 try {
                     val cards = getMainCardsUseCase()
                     val selectedCards =
-                        CAROUSEL_TOUR_SPOT_IDS.mapNotNull { spotId ->
-                            cards.firstOrNull { card -> card.spotId == spotId }?.toUiModel()
-                        }
+                        cards
+                            .take(MAX_CAROUSEL_CARD_COUNT)
+                            .map { card -> card.toUiModel() }
                     ExploreMainCardsUiState.Success(cards = selectedCards)
                 } catch (e: CancellationException) {
                     throw e

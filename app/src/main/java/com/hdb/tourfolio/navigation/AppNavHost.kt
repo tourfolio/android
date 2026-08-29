@@ -33,6 +33,8 @@ import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
 import com.hdb.tourfolio.feature.home.presentation.HomeScreen
+import com.hdb.tourfolio.feature.mypage.presentation.MyPageScreen
+import com.hdb.tourfolio.feature.notification.presentation.NotificationScreen
 import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
 import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
 
@@ -164,6 +166,20 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             Screen.ExploreSearch.route,
                         )
                     },
+                    onProfileClick = {
+                        navController.navigate(
+                            Screen.MyPage.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNotificationClick = {
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
                 )
             }
 
@@ -279,6 +295,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         // 추후 연결
                     },
                     onSpotClick = { spotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(tourSpotId = spotId),
+                        )
                         // 추후 의논 후 제거 혹은 구현
                     },
                 )
@@ -300,8 +319,35 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
 
-            composable(Screen.Home.route) {
-                HomeScreen()
+            composable(
+                route = Screen.Home.route,
+            ) {
+                HomeScreen(
+                    onProfileClick = {
+                        navController.navigate(
+                            Screen.MyPage.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNotificationClick = {
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onTourSpotClick = { tourSpotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId =
+                                tourSpotId,
+                                fromIntro =
+                                false,
+                            ),
+                        )
+                    },
+                )
             }
 
             composable(Screen.Quest.route) {
@@ -316,10 +362,18 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             ) {
                 CardScreen(
                     onProfileClick = {
-                        // 추후 프로필 연결
+                        navController.navigate(
+                            Screen.MyPage.route,
+                        ) {
+                            launchSingleTop = true
+                        }
                     },
                     onNotificationClick = {
-                        // 추후 알림 연결
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
                     },
                     onExpandedImageVisibilityChange = { isExpanded ->
                         hideBottomBar =
@@ -365,6 +419,53 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     initialCurrentPrice = currentPrice,
                     initialPrevPrice = prevPrice,
                     onBackClick = { navController.popBackStack() },
+                )
+            }
+
+            composable(
+                route = Screen.MyPage.route,
+            ) {
+                MyPageScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    // 인증화면 구현 후 해제
+//                    onLogoutSuccess = {
+//                        navController.navigate(
+//                            Screen.Auth.route,
+//                        ) {
+//                            popUpTo(
+//                                navController.graph.id,
+//                            ) {
+//                                inclusive = true
+//                            }
+//
+//                            launchSingleTop = true
+//                        }
+//                    },
+//                    onDeleteAccountSuccess = {
+//                        navController.navigate(
+//                            Screen.Auth.route,
+//                        ) {
+//                            popUpTo(
+//                                navController.graph.id,
+//                            ) {
+//                                inclusive = true
+//                            }
+//
+//                            launchSingleTop = true
+//                        }
+//                    },
+                )
+            }
+
+            composable(
+                route = Screen.Notification.route,
+            ) {
+                NotificationScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
                 )
             }
         }

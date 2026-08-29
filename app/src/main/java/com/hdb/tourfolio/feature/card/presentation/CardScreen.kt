@@ -37,7 +37,6 @@ import com.hdb.tourfolio.feature.card.presentation.components.CardAcquisitionSuc
 import com.hdb.tourfolio.feature.card.presentation.components.CardDetailBottomSheet
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterBar
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterState
-import com.hdb.tourfolio.feature.card.presentation.components.CardHeader
 import com.hdb.tourfolio.feature.card.presentation.components.ExpandedImageScreen
 import com.hdb.tourfolio.feature.card.presentation.components.LocationDialogType
 import com.hdb.tourfolio.feature.card.presentation.components.LocationPermissionDialog
@@ -49,6 +48,7 @@ import com.hdb.tourfolio.feature.card.presentation.components.TourCard
 import com.hdb.tourfolio.feature.card.presentation.components.getCurrentPreciseLocation
 import com.hdb.tourfolio.feature.card.presentation.components.isPreciseLocationGranted
 import com.hdb.tourfolio.feature.card.presentation.components.shouldShowLocationPermissionFlow
+import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -308,7 +308,7 @@ fun CardScreen(
                 Column(
                     modifier = Modifier.padding(start = 22.dp, top = 20.dp, end = 22.dp),
                 ) {
-                    CardHeader(
+                    CommonHeader(
                         onProfileClick = onProfileClick,
                         onNotificationClick = onNotificationClick,
                     )
@@ -348,7 +348,7 @@ fun CardScreen(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = "총 ${cards.size}장",
+                        text = "총 ${collection.filteredCount}장",
                         style = LocalAppTypography.current.bodySmall.medium.copy(color = Natural60),
                     )
 

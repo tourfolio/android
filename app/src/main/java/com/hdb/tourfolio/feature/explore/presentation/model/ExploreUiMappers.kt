@@ -64,6 +64,7 @@ fun ExploreSpotDetail.toUiModel(): ExploreSpotDetailUiModel =
     ExploreSpotDetailUiModel(
         id = spotId,
         title = name,
+        imageUrl = imageUrl,
         address = address,
         tags = tags,
         description = description,

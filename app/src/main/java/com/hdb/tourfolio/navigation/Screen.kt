@@ -17,6 +17,10 @@ sealed class Screen(val route: String) {
 
     data object Card : Screen("card")
 
+    data object MyPage : Screen("my_page")
+
+    data object Notification : Screen("notification")
+
     data object CityTravelDetail :
         Screen("city_travel_detail/{travelId}") {
         const val ARG_TRAVEL_ID = "travelId"

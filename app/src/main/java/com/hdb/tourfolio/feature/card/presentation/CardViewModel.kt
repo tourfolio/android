@@ -32,6 +32,7 @@ sealed interface CardCollectionUiState {
 
     data class Success(
         val summary: CardCollectionSummary,
+        val filteredCount: Int,
         val cards: List<CardListItemUiModel>,
     ) : CardCollectionUiState
 
@@ -150,6 +151,7 @@ class CardViewModel
                                 ownedCount = collection.ownedCount,
                                 totalCount = collection.totalCount,
                             ),
+                        filteredCount = collection.filteredCount,
                         cards = collection.cards.map { it.toUiModel() },
                     )
                 } catch (e: CancellationException) {
