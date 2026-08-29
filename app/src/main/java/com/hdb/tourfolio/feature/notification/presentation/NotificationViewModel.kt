@@ -47,61 +47,58 @@ sealed interface NotificationEffect : MviEffect
 
 @HiltViewModel
 class NotificationViewModel
-@Inject
-constructor(
-    private val getNotificationsUseCase: GetNotificationsUseCase,
-) : MviViewModel<
-        NotificationIntent,
-        NotificationState,
-        NotificationEffect,
-        >(
-    NotificationState(),
-) {
-
-    init {
-        processIntent(
-            NotificationIntent.FetchNotifications,
-        )
-    }
-
-    override suspend fun handleIntent(
-        intent: NotificationIntent,
-    ) {
-        when (intent) {
-            NotificationIntent.FetchNotifications ->
-                fetchNotifications()
-        }
-    }
-
-    private suspend fun fetchNotifications() {
-        setState {
-            copy(
-                notificationState =
-                    NotificationRequestState.Loading,
+    @Inject
+    constructor(
+        private val getNotificationsUseCase: GetNotificationsUseCase,
+    ) : MviViewModel<
+            NotificationIntent,
+            NotificationState,
+            NotificationEffect,
+            >(
+            NotificationState(),
+        ) {
+        init {
+            processIntent(
+                NotificationIntent.FetchNotifications,
             )
         }
 
-        val result =
-            try {
-                NotificationRequestState.Success(
-                    notifications =
-                        getNotificationsUseCase(),
-                )
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                NotificationRequestState.Error(
-                    message =
-                        e.message
-                            ?: "알림 목록을 불러오지 못했습니다.",
+        override suspend fun handleIntent(intent: NotificationIntent) {
+            when (intent) {
+                NotificationIntent.FetchNotifications ->
+                    fetchNotifications()
+            }
+        }
+
+        private suspend fun fetchNotifications() {
+            setState {
+                copy(
+                    notificationState =
+                        NotificationRequestState.Loading,
                 )
             }
 
-        setState {
-            copy(
-                notificationState =
+            val result =
+                try {
+                    NotificationRequestState.Success(
+                        notifications =
+                            getNotificationsUseCase(),
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    NotificationRequestState.Error(
+                        message =
+                            e.message
+                                ?: "알림 목록을 불러오지 못했습니다.",
+                    )
+                }
+
+            setState {
+                copy(
+                    notificationState =
                     result,
-            )
+                )
+            }
         }
     }
-}

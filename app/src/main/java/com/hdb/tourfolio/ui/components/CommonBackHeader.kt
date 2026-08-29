@@ -71,7 +71,7 @@ fun CommonBackHeader(
                     .bold
                     .copy(
                         color =
-                            Natural10,
+                        Natural10,
                     ),
         )
     }

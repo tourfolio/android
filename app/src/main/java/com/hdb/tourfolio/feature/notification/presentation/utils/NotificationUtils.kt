@@ -9,9 +9,7 @@ import java.time.format.DateTimeFormatter
  * 알림 타입에 맞는 아이콘 반환
  */
 @DrawableRes
-fun getNotificationIconRes(
-    type: String,
-): Int? =
+fun getNotificationIconRes(type: String): Int? =
     when (type) {
         "카드" ->
             R.drawable.ic_card_green
@@ -35,9 +33,7 @@ fun getNotificationIconRes(
 /*
  * 서버 날짜:
  */
-fun formatNotificationDate(
-    createdAt: String,
-): String =
+fun formatNotificationDate(createdAt: String): String =
     try {
         val dateTime =
             LocalDateTime.parse(

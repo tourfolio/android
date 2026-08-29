@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -25,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -40,8 +38,8 @@ import com.hdb.tourfolio.feature.mypage.presentation.components.NicknameSection
 import com.hdb.tourfolio.ui.components.CommonBackHeader
 import com.hdb.tourfolio.ui.components.CommonModal
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
-import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 
 private enum class AccountDialogType {
@@ -58,15 +56,15 @@ fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
 ) {
     val state by
-    viewModel.state
-        .collectAsStateWithLifecycle()
+        viewModel.state
+            .collectAsStateWithLifecycle()
 
     val context =
         LocalContext.current
 
     val isNicknameUpdating =
         state.nicknameUpdateState is
-                NicknameUpdateState.Loading
+            NicknameUpdateState.Loading
 
     var isEditingNickname by remember {
         mutableStateOf(false)
@@ -113,7 +111,7 @@ fun MyPageScreen(
     LaunchedEffect(state.nicknameUpdateState) {
         if (
             state.nicknameUpdateState
-                    is NicknameUpdateState.Success
+                is NicknameUpdateState.Success
         ) {
             isEditingNickname =
                 false
@@ -230,16 +228,16 @@ fun MyPageScreen(
                         nickname =
                             myPage.nickname,
                         nicknameInput =
-                            nicknameInput,
+                        nicknameInput,
                         isEditing =
-                            isEditingNickname,
+                        isEditingNickname,
                         isUpdating =
-                            isNicknameUpdating,
+                        isNicknameUpdating,
                         errorMessage =
                             (
-                                    state.nicknameUpdateState
-                                            as? NicknameUpdateState.Error
-                                    )?.message,
+                                state.nicknameUpdateState
+                                    as? NicknameUpdateState.Error
+                            )?.message,
                         onNicknameChange = {
                             nicknameInput = it
                         },
@@ -254,7 +252,7 @@ fun MyPageScreen(
                             viewModel.processIntent(
                                 MyPageIntent.UpdateNickname(
                                     nickname =
-                                        nicknameInput,
+                                    nicknameInput,
                                 ),
                             )
                         },

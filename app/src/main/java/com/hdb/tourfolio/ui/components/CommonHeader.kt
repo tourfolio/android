@@ -78,9 +78,9 @@ fun CommonHeader(
                         contentDescription =
                             "내 정보",
                         onClick =
-                            onProfileClick,
+                        onProfileClick,
                         tint =
-                            contentColor,
+                        contentColor,
                     )
 
                     CommonHeaderIconButton(
@@ -89,9 +89,9 @@ fun CommonHeader(
                         contentDescription =
                             "알림",
                         onClick =
-                            onNotificationClick,
+                        onNotificationClick,
                         tint =
-                            contentColor,
+                        contentColor,
                     )
                 }
             }
@@ -103,11 +103,11 @@ fun CommonHeader(
                     contentDescription =
                         "탐색",
                     onClick =
-                        onSearchClick,
+                    onSearchClick,
                     iconSize =
                         30.dp,
                     tint =
-                        contentColor,
+                    contentColor,
                 )
             }
         }
@@ -141,7 +141,7 @@ private fun CommonHeaderIconButton(
                     id = iconRes,
                 ),
             contentDescription =
-                contentDescription,
+            contentDescription,
             modifier =
                 Modifier.size(
                     iconSize,

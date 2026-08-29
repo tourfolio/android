@@ -47,60 +47,57 @@ sealed interface HomeEffect : MviEffect
 
 @HiltViewModel
 class HomeViewModel
-@Inject
-constructor(
-    private val getHomeUseCase: GetHomeUseCase,
-) : MviViewModel<
-        HomeIntent,
-        HomeState,
-        HomeEffect,
-        >(
-    HomeState(),
-) {
-
-    init {
-        processIntent(
-            HomeIntent.FetchHome,
-        )
-    }
-
-    override suspend fun handleIntent(
-        intent: HomeIntent,
-    ) {
-        when (intent) {
-            HomeIntent.FetchHome ->
-                fetchHome()
-        }
-    }
-
-    private suspend fun fetchHome() {
-        setState {
-            copy(
-                homeState =
-                    HomeRequestState.Loading,
+    @Inject
+    constructor(
+        private val getHomeUseCase: GetHomeUseCase,
+    ) : MviViewModel<
+            HomeIntent,
+            HomeState,
+            HomeEffect,
+            >(
+            HomeState(),
+        ) {
+        init {
+            processIntent(
+                HomeIntent.FetchHome,
             )
         }
 
-        val result =
-            try {
-                HomeRequestState.Success(
-                    home =
-                        getHomeUseCase(),
-                )
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                HomeRequestState.Error(
-                    message =
-                        e.message
-                            ?: "홈 정보를 불러오지 못했습니다.",
+        override suspend fun handleIntent(intent: HomeIntent) {
+            when (intent) {
+                HomeIntent.FetchHome ->
+                    fetchHome()
+            }
+        }
+
+        private suspend fun fetchHome() {
+            setState {
+                copy(
+                    homeState =
+                        HomeRequestState.Loading,
                 )
             }
 
-        setState {
-            copy(
-                homeState = result,
-            )
+            val result =
+                try {
+                    HomeRequestState.Success(
+                        home =
+                            getHomeUseCase(),
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    HomeRequestState.Error(
+                        message =
+                            e.message
+                                ?: "홈 정보를 불러오지 못했습니다.",
+                    )
+                }
+
+            setState {
+                copy(
+                    homeState = result,
+                )
+            }
         }
     }
-}

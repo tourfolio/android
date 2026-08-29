@@ -341,9 +341,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
                                 tourSpotId =
-                                    tourSpotId,
+                                tourSpotId,
                                 fromIntro =
-                                    false,
+                                false,
                             ),
                         )
                     },

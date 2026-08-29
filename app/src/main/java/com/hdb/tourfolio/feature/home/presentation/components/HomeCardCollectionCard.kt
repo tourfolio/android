@@ -38,8 +38,8 @@ fun HomeCardCollectionCard(
 ) {
     val progress =
         (
-                collectionRate / 100.0
-                )
+            collectionRate / 100.0
+        )
             .toFloat()
             .coerceIn(
                 0f,

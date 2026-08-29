@@ -87,195 +87,190 @@ sealed interface MyPageEffect : MviEffect {
 
 @HiltViewModel
 class MyPageViewModel
-@Inject
-constructor(
-    private val getMyPageUseCase: GetMyPageUseCase,
-    private val updateNicknameUseCase: UpdateNicknameUseCase,
-    private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val logoutUseCase: LogoutUseCase,
-) : MviViewModel<MyPageIntent, MyPageState, MyPageEffect>(
-    MyPageState(),
-) {
-
-    init {
-        processIntent(
-            MyPageIntent.FetchMyPage,
-        )
-    }
-
-    override suspend fun handleIntent(
-        intent: MyPageIntent,
-    ) {
-        when (intent) {
-            MyPageIntent.FetchMyPage ->
-                fetchMyPage()
-
-            is MyPageIntent.UpdateNickname ->
-                updateNickname(
-                    nickname = intent.nickname,
-                )
-
-            MyPageIntent.DeleteAccount ->
-                deleteAccount()
-
-            MyPageIntent.Logout ->
-                logout()
-
-            MyPageIntent.ClearNicknameUpdateState ->
-                clearNicknameUpdateState()
-        }
-    }
-
-    private suspend fun fetchMyPage() {
-        setState {
-            copy(
-                myPageState =
-                    MyPageRequestState.Loading,
+    @Inject
+    constructor(
+        private val getMyPageUseCase: GetMyPageUseCase,
+        private val updateNicknameUseCase: UpdateNicknameUseCase,
+        private val deleteAccountUseCase: DeleteAccountUseCase,
+        private val logoutUseCase: LogoutUseCase,
+    ) : MviViewModel<MyPageIntent, MyPageState, MyPageEffect>(
+            MyPageState(),
+        ) {
+        init {
+            processIntent(
+                MyPageIntent.FetchMyPage,
             )
         }
 
-        val result =
+        override suspend fun handleIntent(intent: MyPageIntent) {
+            when (intent) {
+                MyPageIntent.FetchMyPage ->
+                    fetchMyPage()
+
+                is MyPageIntent.UpdateNickname ->
+                    updateNickname(
+                        nickname = intent.nickname,
+                    )
+
+                MyPageIntent.DeleteAccount ->
+                    deleteAccount()
+
+                MyPageIntent.Logout ->
+                    logout()
+
+                MyPageIntent.ClearNicknameUpdateState ->
+                    clearNicknameUpdateState()
+            }
+        }
+
+        private suspend fun fetchMyPage() {
+            setState {
+                copy(
+                    myPageState =
+                        MyPageRequestState.Loading,
+                )
+            }
+
+            val result =
+                try {
+                    MyPageRequestState.Success(
+                        myPage =
+                            getMyPageUseCase(),
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    MyPageRequestState.Error(
+                        message =
+                            e.message
+                                ?: "마이페이지 정보를 불러오지 못했습니다.",
+                    )
+                }
+
+            setState {
+                copy(
+                    myPageState = result,
+                )
+            }
+        }
+
+        private suspend fun updateNickname(nickname: String) {
+            if (nickname.isBlank()) {
+                setState {
+                    copy(
+                        nicknameUpdateState =
+                            NicknameUpdateState.Error(
+                                message =
+                                    "닉네임을 입력해주세요.",
+                            ),
+                    )
+                }
+
+                return
+            }
+
+            setState {
+                copy(
+                    nicknameUpdateState =
+                        NicknameUpdateState.Loading,
+                )
+            }
+
             try {
-                MyPageRequestState.Success(
-                    myPage =
-                        getMyPageUseCase(),
+                val updatedNickname =
+                    updateNicknameUseCase(
+                        nickname =
+                            nickname.trim(),
+                    )
+
+                setState {
+                    copy(
+                        nicknameUpdateState =
+                            NicknameUpdateState.Success(
+                                nickname =
+                                updatedNickname,
+                            ),
+                        myPageState =
+                            when (
+                                val current =
+                                    myPageState
+                            ) {
+                                is MyPageRequestState.Success ->
+                                    MyPageRequestState.Success(
+                                        myPage =
+                                            current.myPage.copy(
+                                                nickname =
+                                                updatedNickname,
+                                            ),
+                                    )
+
+                                else ->
+                                    current
+                            },
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                setState {
+                    copy(
+                        nicknameUpdateState =
+                            NicknameUpdateState.Error(
+                                message =
+                                    e.message
+                                        ?: "닉네임 수정에 실패했습니다.",
+                            ),
+                    )
+                }
+            }
+        }
+
+        private suspend fun deleteAccount() {
+            try {
+                deleteAccountUseCase()
+
+                sendEffect(
+                    MyPageEffect.DeleteAccountSuccess,
                 )
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                MyPageRequestState.Error(
-                    message =
-                        e.message
-                            ?: "마이페이지 정보를 불러오지 못했습니다.",
+                sendEffect(
+                    MyPageEffect.Error(
+                        message =
+                            e.message
+                                ?: "회원 탈퇴에 실패했습니다.",
+                    ),
                 )
             }
-
-        setState {
-            copy(
-                myPageState = result,
-            )
         }
-    }
 
-    private suspend fun updateNickname(
-        nickname: String,
-    ) {
-        if (nickname.isBlank()) {
+        private suspend fun logout() {
+            try {
+                logoutUseCase()
+
+                sendEffect(
+                    MyPageEffect.LogoutSuccess,
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                sendEffect(
+                    MyPageEffect.Error(
+                        message =
+                            e.message
+                                ?: "로그아웃에 실패했습니다.",
+                    ),
+                )
+            }
+        }
+
+        private fun clearNicknameUpdateState() {
             setState {
                 copy(
                     nicknameUpdateState =
-                        NicknameUpdateState.Error(
-                            message =
-                                "닉네임을 입력해주세요.",
-                        ),
-                )
-            }
-
-            return
-        }
-
-        setState {
-            copy(
-                nicknameUpdateState =
-                    NicknameUpdateState.Loading,
-            )
-        }
-
-        try {
-            val updatedNickname =
-                updateNicknameUseCase(
-                    nickname =
-                        nickname.trim(),
-                )
-
-            setState {
-                copy(
-                    nicknameUpdateState =
-                        NicknameUpdateState.Success(
-                            nickname =
-                                updatedNickname,
-                        ),
-                    myPageState =
-                        when (
-                            val current =
-                                myPageState
-                        ) {
-                            is MyPageRequestState.Success ->
-                                MyPageRequestState.Success(
-                                    myPage =
-                                        current.myPage.copy(
-                                            nickname =
-                                                updatedNickname,
-                                        ),
-                                )
-
-                            else ->
-                                current
-                        },
-                )
-            }
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            setState {
-                copy(
-                    nicknameUpdateState =
-                        NicknameUpdateState.Error(
-                            message =
-                                e.message
-                                    ?: "닉네임 수정에 실패했습니다.",
-                        ),
+                        NicknameUpdateState.Idle,
                 )
             }
         }
     }
-
-    private suspend fun deleteAccount() {
-        try {
-            deleteAccountUseCase()
-
-            sendEffect(
-                MyPageEffect.DeleteAccountSuccess,
-            )
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            sendEffect(
-                MyPageEffect.Error(
-                    message =
-                        e.message
-                            ?: "회원 탈퇴에 실패했습니다.",
-                ),
-            )
-        }
-    }
-
-    private suspend fun logout() {
-        try {
-            logoutUseCase()
-
-            sendEffect(
-                MyPageEffect.LogoutSuccess,
-            )
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            sendEffect(
-                MyPageEffect.Error(
-                    message =
-                        e.message
-                            ?: "로그아웃에 실패했습니다.",
-                ),
-            )
-        }
-    }
-
-    private fun clearNicknameUpdateState() {
-        setState {
-            copy(
-                nicknameUpdateState =
-                    NicknameUpdateState.Idle,
-            )
-        }
-    }
-}

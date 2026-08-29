@@ -5,10 +5,9 @@ import com.hdb.tourfolio.domain.home.repository.HomeRepository
 import javax.inject.Inject
 
 class GetHomeUseCase
-@Inject
-constructor(
-    private val homeRepository: HomeRepository,
-) {
-    suspend operator fun invoke(): Home =
-        homeRepository.getHome()
-}
+    @Inject
+    constructor(
+        private val homeRepository: HomeRepository,
+    ) {
+        suspend operator fun invoke(): Home = homeRepository.getHome()
+    }

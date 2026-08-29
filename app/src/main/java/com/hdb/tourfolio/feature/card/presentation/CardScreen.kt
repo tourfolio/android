@@ -37,7 +37,6 @@ import com.hdb.tourfolio.feature.card.presentation.components.CardAcquisitionSuc
 import com.hdb.tourfolio.feature.card.presentation.components.CardDetailBottomSheet
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterBar
 import com.hdb.tourfolio.feature.card.presentation.components.CardFilterState
-import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.feature.card.presentation.components.ExpandedImageScreen
 import com.hdb.tourfolio.feature.card.presentation.components.LocationDialogType
 import com.hdb.tourfolio.feature.card.presentation.components.LocationPermissionDialog
@@ -49,6 +48,7 @@ import com.hdb.tourfolio.feature.card.presentation.components.TourCard
 import com.hdb.tourfolio.feature.card.presentation.components.getCurrentPreciseLocation
 import com.hdb.tourfolio.feature.card.presentation.components.isPreciseLocationGranted
 import com.hdb.tourfolio.feature.card.presentation.components.shouldShowLocationPermissionFlow
+import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100

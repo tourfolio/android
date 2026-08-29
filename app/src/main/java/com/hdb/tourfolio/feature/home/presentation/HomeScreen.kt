@@ -49,8 +49,8 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by
-    viewModel.state
-        .collectAsStateWithLifecycle()
+        viewModel.state
+            .collectAsStateWithLifecycle()
 
     when (
         val homeState =
@@ -72,7 +72,7 @@ fun HomeScreen(
                     )
                 },
                 modifier =
-                    modifier,
+                modifier,
             )
         }
 
@@ -85,13 +85,13 @@ fun HomeScreen(
                 recommendedSpots =
                     homeState.home.recommendedSpots,
                 onProfileClick =
-                    onProfileClick,
+                onProfileClick,
                 onNotificationClick =
-                    onNotificationClick,
+                onNotificationClick,
                 onTourSpotClick =
-                    onTourSpotClick,
+                onTourSpotClick,
                 modifier =
-                    modifier,
+                modifier,
             )
         }
     }
@@ -154,11 +154,11 @@ private fun HomeContent(
 
                     CommonHeader(
                         onProfileClick =
-                            onProfileClick,
+                        onProfileClick,
                         onNotificationClick =
-                            onNotificationClick,
+                        onNotificationClick,
                         contentColor =
-                            Natural100,
+                        Natural100,
                         modifier =
                             Modifier
                                 .align(
@@ -191,7 +191,7 @@ private fun HomeContent(
                                     .titleLarge
                                     .copy(
                                         color =
-                                            Natural100,
+                                        Natural100,
                                     ),
                         )
 
@@ -331,7 +331,7 @@ private fun HomeContent(
                         .bold
                         .copy(
                             color =
-                                Natural10,
+                            Natural10,
                         ),
                 modifier =
                     Modifier.padding(
@@ -362,7 +362,7 @@ private fun HomeContent(
             ) {
                 items(
                     items =
-                        recommendedSpots,
+                    recommendedSpots,
                     key = { spot ->
                         spot.id
                     },
@@ -379,7 +379,7 @@ private fun HomeContent(
                         imageUrl =
                             spot.imageUrl,
                         onClick =
-                            onTourSpotClick,
+                        onTourSpotClick,
                         modifier =
                             Modifier.width(
                                 330.dp,
@@ -401,9 +401,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun HomeLoading(
-    modifier: Modifier = Modifier,
-) {
+private fun HomeLoading(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
@@ -450,7 +448,7 @@ private fun HomeError(
                         .bold
                         .copy(
                             color =
-                                Natural10,
+                            Natural10,
                         ),
             )
 
@@ -470,13 +468,13 @@ private fun HomeError(
                         .medium
                         .copy(
                             color =
-                                Natural60,
+                            Natural60,
                         ),
             )
 
             TextButton(
                 onClick =
-                    onRetryClick,
+                onRetryClick,
             ) {
                 Text(
                     text =
@@ -488,7 +486,7 @@ private fun HomeError(
                             .bold
                             .copy(
                                 color =
-                                    Primary,
+                                Primary,
                             ),
                 )
             }

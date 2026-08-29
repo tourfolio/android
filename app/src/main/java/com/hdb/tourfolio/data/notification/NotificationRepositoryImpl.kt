@@ -9,13 +9,12 @@ import javax.inject.Singleton
 
 @Singleton
 class NotificationRepositoryImpl
-@Inject
-constructor(
-    private val notificationApiService: NotificationApiService,
-) : NotificationRepository {
-
-    override suspend fun getNotifications(): NotificationList =
-        notificationApiService
-            .getNotifications()
-            .toDomain()
-}
+    @Inject
+    constructor(
+        private val notificationApiService: NotificationApiService,
+    ) : NotificationRepository {
+        override suspend fun getNotifications(): NotificationList =
+            notificationApiService
+                .getNotifications()
+                .toDomain()
+    }

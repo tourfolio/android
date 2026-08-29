@@ -13,50 +13,47 @@ import javax.inject.Singleton
 
 @Singleton
 class MyPageRepositoryImpl
-@Inject
-constructor(
-    private val myPageApiService: MyPageApiService,
-    private val sessionLocalDataSource: SessionLocalDataSource,
-) : MyPageRepository {
+    @Inject
+    constructor(
+        private val myPageApiService: MyPageApiService,
+        private val sessionLocalDataSource: SessionLocalDataSource,
+    ) : MyPageRepository {
+        override suspend fun getMyPage(): MyPage =
+            myPageApiService
+                .getMyPage()
+                .toDomain()
 
-    override suspend fun getMyPage(): MyPage =
-        myPageApiService
-            .getMyPage()
-            .toDomain()
+        override suspend fun updateNickname(nickname: String): String {
+            try {
+                val response =
+                    myPageApiService.updateNickname(
+                        UpdateNicknameRequestDto(
+                            nickname = nickname,
+                        ),
+                    )
 
-    override suspend fun updateNickname(
-        nickname: String,
-    ): String {
-        try {
-            val response =
-                myPageApiService.updateNickname(
-                    UpdateNicknameRequestDto(
-                        nickname = nickname,
-                    ),
-                )
+                return response.nickname
+            } catch (e: HttpException) {
+                when (e.code()) {
+                    400 ->
+                        throw MyPageException.InvalidNicknameException()
 
-            return response.nickname
-        } catch (e: HttpException) {
-            when (e.code()) {
-                400 ->
-                    throw MyPageException.InvalidNicknameException()
+                    404 ->
+                        throw MyPageException.UserNotFoundException()
 
-                404 ->
-                    throw MyPageException.UserNotFoundException()
-
-                else ->
-                    throw e
+                    else ->
+                        throw e
+                }
             }
         }
-    }
 
-    override suspend fun deleteAccount() {
-        myPageApiService.deleteAccount()
+        override suspend fun deleteAccount() {
+            myPageApiService.deleteAccount()
 
         /*
          * 탈퇴 성공 후 더 이상 현재 세션을 유지하면 안 되므로
          * 로컬 로그인 정보까지 삭제
          */
-        sessionLocalDataSource.clear()
+            sessionLocalDataSource.clear()
+        }
     }
-}

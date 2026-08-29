@@ -46,8 +46,8 @@ fun NotificationScreen(
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val state by
-    viewModel.state
-        .collectAsStateWithLifecycle()
+        viewModel.state
+            .collectAsStateWithLifecycle()
 
     Column(
         modifier =
@@ -145,9 +145,9 @@ private fun NotificationContent(
         ) { notification ->
             NotificationItem(
                 notification =
-                    notification,
+                notification,
                 isNew =
-                    true,
+                true,
             )
         }
 
@@ -162,9 +162,9 @@ private fun NotificationContent(
         ) { notification ->
             NotificationItem(
                 notification =
-                    notification,
+                notification,
                 isNew =
-                    false,
+                false,
             )
         }
 
@@ -305,9 +305,7 @@ private fun NotificationItem(
 }
 
 @Composable
-private fun NotificationLoading(
-    modifier: Modifier = Modifier,
-) {
+private fun NotificationLoading(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier.fillMaxSize(),
@@ -377,7 +375,7 @@ private fun NotificationError(
 
             TextButton(
                 onClick =
-                    onRetryClick,
+                onRetryClick,
             ) {
                 Text(
                     text = "다시 시도",

@@ -19,7 +19,7 @@ sealed class Screen(val route: String) {
 
     data object MyPage : Screen("my_page")
 
-data object Notification : Screen("notification")
+    data object Notification : Screen("notification")
 
     data object CityTravelDetail :
         Screen("city_travel_detail/{travelId}") {

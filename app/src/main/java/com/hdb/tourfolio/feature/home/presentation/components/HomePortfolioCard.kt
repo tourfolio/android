@@ -107,7 +107,7 @@ fun HomePortfolioCard(
             Text(
                 text =
                     "${formatSignedPoint(todayProfit)} " +
-                            "(${formatSignedRate(todayProfitRate)})",
+                        "(${formatSignedRate(todayProfitRate)})",
                 style =
                     LocalAppTypography
                         .current
@@ -229,16 +229,12 @@ private fun PortfolioDivider() {
     )
 }
 
-private fun formatNumber(
-    value: Long,
-): String =
+private fun formatNumber(value: Long): String =
     "%,d".format(
         value,
     )
 
-private fun formatSignedPoint(
-    value: Long,
-): String =
+private fun formatSignedPoint(value: Long): String =
     when {
         value > 0 ->
             "+${formatNumber(value)}P"
@@ -250,9 +246,7 @@ private fun formatSignedPoint(
             "0P"
     }
 
-private fun formatSignedRate(
-    value: Double,
-): String =
+private fun formatSignedRate(value: Double): String =
     when {
         value > 0 ->
             "+%.2f%%".format(

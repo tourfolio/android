@@ -9,13 +9,12 @@ import javax.inject.Singleton
 
 @Singleton
 class HomeRepositoryImpl
-@Inject
-constructor(
-    private val homeApiService: HomeApiService,
-) : HomeRepository {
-
-    override suspend fun getHome(): Home =
-        homeApiService
-            .getHome()
-            .toDomain()
-}
+    @Inject
+    constructor(
+        private val homeApiService: HomeApiService,
+    ) : HomeRepository {
+        override suspend fun getHome(): Home =
+            homeApiService
+                .getHome()
+                .toDomain()
+    }
