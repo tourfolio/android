@@ -302,12 +302,6 @@ private fun TourSpotHero(
                 onClick = onBackClick,
                 rotationDegrees = 180f,
             )
-
-            DetailHeaderButton(
-                iconRes = R.drawable.ic_share1,
-                contentDescription = "공유하기",
-                onClick = onShareClick,
-            )
         }
     }
 }

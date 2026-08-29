@@ -13,7 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
@@ -32,17 +35,13 @@ fun CommonHeader(
     onNotificationClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-) {
-    val isSearchHeader =
-        type == CommonHeaderType.SEARCH
-
-    val contentColor =
-        if (isSearchHeader) {
+    contentColor: Color =
+        if (type == CommonHeaderType.SEARCH) {
             Natural100
         } else {
             Natural10
-        }
-
+        },
+) {
     Row(
         modifier =
             modifier.fillMaxWidth(),
@@ -80,6 +79,8 @@ fun CommonHeader(
                             "내 정보",
                         onClick =
                             onProfileClick,
+                        tint =
+                            contentColor,
                     )
 
                     CommonHeaderIconButton(
@@ -89,6 +90,8 @@ fun CommonHeader(
                             "알림",
                         onClick =
                             onNotificationClick,
+                        tint =
+                            contentColor,
                     )
                 }
             }
@@ -101,7 +104,10 @@ fun CommonHeader(
                         "탐색",
                     onClick =
                         onSearchClick,
-                    iconSize = 30.dp,
+                    iconSize =
+                        30.dp,
+                    tint =
+                        contentColor,
                 )
             }
         }
@@ -114,7 +120,8 @@ private fun CommonHeaderIconButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    iconSize: androidx.compose.ui.unit.Dp = 25.dp,
+    iconSize: Dp = 25.dp,
+    tint: Color,
 ) {
     Box(
         modifier =
@@ -138,6 +145,10 @@ private fun CommonHeaderIconButton(
             modifier =
                 Modifier.size(
                     iconSize,
+                ),
+            colorFilter =
+                ColorFilter.tint(
+                    tint,
                 ),
         )
     }

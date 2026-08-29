@@ -319,8 +319,35 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
 
-            composable(Screen.Home.route) {
-                HomeScreen()
+            composable(
+                route = Screen.Home.route,
+            ) {
+                HomeScreen(
+                    onProfileClick = {
+                        navController.navigate(
+                            Screen.MyPage.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNotificationClick = {
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onTourSpotClick = { tourSpotId ->
+                        navController.navigate(
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId =
+                                    tourSpotId,
+                                fromIntro =
+                                    false,
+                            ),
+                        )
+                    },
+                )
             }
 
             composable(Screen.Quest.route) {
