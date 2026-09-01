@@ -7,18 +7,15 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,12 +24,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.hdb.tourfolio.feature.attendance.presentation.MonthlyAttendanceScreen
 import com.hdb.tourfolio.feature.card.presentation.CardScreen
 import com.hdb.tourfolio.feature.explore.presentation.CityTravelDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
 import com.hdb.tourfolio.feature.home.presentation.HomeScreen
+import com.hdb.tourfolio.feature.mission.presentation.MissionScreen
 import com.hdb.tourfolio.feature.mypage.presentation.MyPageScreen
 import com.hdb.tourfolio.feature.notification.presentation.NotificationScreen
 import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
@@ -350,8 +349,38 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
 
-            composable(Screen.Quest.route) {
-                QuestScreen()
+            composable(Screen.Mission.route) {
+                MissionScreen(
+                    onProfileClick = {
+                        navController.navigate(
+                            Screen.MyPage.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onNotificationClick = {
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onAttendanceHistoryClick = {
+                        navController.navigate(
+                            Screen.MonthlyAttendance.route,
+                        ) {
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
+
+            composable(Screen.MonthlyAttendance.route) {
+                MonthlyAttendanceScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
             }
 
             /*
@@ -469,17 +498,5 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
         }
-    }
-}
-
-// TODO: 실제 화면 구성 후 제거
-
-@Composable
-fun QuestScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "업적")
     }
 }
