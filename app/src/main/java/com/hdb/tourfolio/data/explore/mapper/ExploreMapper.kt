@@ -2,6 +2,9 @@ package com.hdb.tourfolio.data.explore.mapper
 
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreAttractionPointDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreCardDto
+import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDetailDto
+import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDto
+import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionSpotDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreHubDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreMainCardDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreSearchDto
@@ -10,6 +13,9 @@ import com.hdb.tourfolio.data.explore.remote.dto.ExploreSpotDetailDto
 import com.hdb.tourfolio.domain.common.model.ThemeType
 import com.hdb.tourfolio.domain.explore.model.ExploreAttractionPoint
 import com.hdb.tourfolio.domain.explore.model.ExploreCard
+import com.hdb.tourfolio.domain.explore.model.ExploreCollection
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionDetail
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionSpot
 import com.hdb.tourfolio.domain.explore.model.ExploreHub
 import com.hdb.tourfolio.domain.explore.model.ExploreHubTheme
 import com.hdb.tourfolio.domain.explore.model.ExploreHubTrendingSpot
@@ -127,6 +133,33 @@ private fun ExploreAttractionPointDto.toDomain(): ExploreAttractionPoint =
         iconType = iconType,
         iconUrl = iconUrl,
     )
+
+fun ExploreCollectionDto.toDomain(): ExploreCollection =
+    ExploreCollection(
+        collectionId = collectionId,
+        title = title,
+        thumbnailUrl = thumbnailUrl,
+        placeCount = placeCount,
+    )
+
+fun ExploreCollectionDetailDto.toDomain(): ExploreCollectionDetail =
+    ExploreCollectionDetail(
+        collectionId = collectionId,
+        title = title,
+        placeCount = placeCount,
+        spots =
+            spots.map { spot ->
+                spot.toDomain()
+            },
+    )
+
+private fun ExploreCollectionSpotDto.toDomain(): ExploreCollectionSpot =
+    ExploreCollectionSpot(
+        spotId = spotId,
+        name = name,
+        imageUrl = imageUrl.orEmpty(),
+    )
+
 
 /*
  * 서버에서 전달되는 태그 정규화

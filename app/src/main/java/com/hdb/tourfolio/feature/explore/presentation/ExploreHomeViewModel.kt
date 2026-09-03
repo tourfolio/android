@@ -5,8 +5,10 @@ import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
 import com.hdb.tourfolio.domain.explore.usecase.GetExploreCardsUseCase
+import com.hdb.tourfolio.domain.explore.usecase.GetExploreCollectionsUseCase
 import com.hdb.tourfolio.domain.explore.usecase.GetTrendingCardsUseCase
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreCardUiModel
+import com.hdb.tourfolio.feature.explore.presentation.model.ExploreCollectionUiModel
 import com.hdb.tourfolio.feature.explore.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -40,15 +42,30 @@ sealed interface ExploreTrendingUiState {
     ) : ExploreTrendingUiState
 }
 
+sealed interface ExploreCollectionsUiState {
+    data object Loading : ExploreCollectionsUiState
+
+    data class Success(
+        val collections: List<ExploreCollectionUiModel>,
+    ) : ExploreCollectionsUiState
+
+    data class Error(
+        val message: String,
+    ) : ExploreCollectionsUiState
+}
+
 sealed interface ExploreHomeIntent : MviIntent {
     data object FetchExploreCards : ExploreHomeIntent
 
     data object FetchTrendingCards : ExploreHomeIntent
+
+    data object FetchCollections : ExploreHomeIntent
 }
 
 data class ExploreHomeState(
     val exploreCards: ExploreCardsUiState = ExploreCardsUiState.Loading,
     val trending: ExploreTrendingUiState = ExploreTrendingUiState.Loading,
+    val collections: ExploreCollectionsUiState = ExploreCollectionsUiState.Loading,
 ) : MviState
 
 sealed interface ExploreHomeEffect : MviEffect
@@ -59,16 +76,19 @@ class ExploreHomeViewModel
     constructor(
         private val getExploreCardsUseCase: GetExploreCardsUseCase,
         private val getTrendingCardsUseCase: GetTrendingCardsUseCase,
+        private val getExploreCollectionsUseCase: GetExploreCollectionsUseCase,
     ) : MviViewModel<ExploreHomeIntent, ExploreHomeState, ExploreHomeEffect>(ExploreHomeState()) {
         init {
             processIntent(ExploreHomeIntent.FetchExploreCards)
             processIntent(ExploreHomeIntent.FetchTrendingCards)
+            processIntent(ExploreHomeIntent.FetchCollections)
         }
 
         override suspend fun handleIntent(intent: ExploreHomeIntent) {
             when (intent) {
                 ExploreHomeIntent.FetchExploreCards -> fetchExploreCards()
                 ExploreHomeIntent.FetchTrendingCards -> fetchTrendingCards()
+                ExploreHomeIntent.FetchCollections -> fetchCollections()
             }
         }
 
@@ -77,7 +97,7 @@ class ExploreHomeViewModel
 
             val result =
                 try {
-                    val cards = getExploreCardsUseCase().map { it.toUiModel() }
+                    val cards = getExploreCardsUseCase().map { card -> card.toUiModel() }
                     val shuffledCards = cards.shuffled()
                     val featuredCards = shuffledCards.take(FEATURED_CARD_COUNT)
                     val remainingCards = shuffledCards.drop(FEATURED_CARD_COUNT)
@@ -107,7 +127,7 @@ class ExploreHomeViewModel
 
             val result =
                 try {
-                    ExploreTrendingUiState.Success(cards = getTrendingCardsUseCase().map { it.toUiModel() })
+                    ExploreTrendingUiState.Success(cards = getTrendingCardsUseCase().map { card -> card.toUiModel() })
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
@@ -115,5 +135,39 @@ class ExploreHomeViewModel
                 }
 
             setState { copy(trending = result) }
+        }
+
+        private suspend fun fetchCollections() {
+            setState {
+                copy(
+                    collections =
+                        ExploreCollectionsUiState.Loading,
+                )
+            }
+
+            val result =
+                try {
+                    ExploreCollectionsUiState.Success(
+                        collections =
+                            getExploreCollectionsUseCase()
+                                .map { collection ->
+                                    collection.toUiModel()
+                                },
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    ExploreCollectionsUiState.Error(
+                        message =
+                            e.message
+                                ?: "투어 컬렉션을 불러오지 못했습니다.",
+                    )
+                }
+
+            setState {
+                copy(
+                    collections = result,
+                )
+            }
         }
     }

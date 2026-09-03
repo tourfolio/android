@@ -1,27 +1,31 @@
 package com.hdb.tourfolio.feature.explore.presentation.model
 
-import androidx.annotation.DrawableRes
 import com.hdb.tourfolio.domain.common.model.ThemeType
 
 /*
- * 지역별 추천 여행지 상세
+ * 투어 컬렉션 목록
  */
-data class CityTravelDetailUiModel(
+data class ExploreCollectionUiModel(
     val id: Long,
-    val categoryTitle: String,
     val title: String,
+    val thumbnailUrl: String,
     val placeCount: Int,
-    @DrawableRes val cityImageRes: Int,
-    val spots: List<CityTravelSpotUiModel>,
 )
 
 /*
- * 각 지역별 추천여행 코스
+ * 투어 컬렉션 상세
  */
-data class CityTravelSpotUiModel(
+data class ExploreCollectionDetailUiModel(
     val id: Long,
     val title: String,
-    @DrawableRes val imageRes: Int,
+    val placeCount: Int,
+    val spots: List<ExploreCollectionSpotUiModel>,
+)
+
+data class ExploreCollectionSpotUiModel(
+    val id: Long,
+    val title: String,
+    val imageUrl: String,
 )
 
 /*

@@ -7,7 +7,7 @@ fun ExploreEntryScreen(
     introFinished: Boolean,
     onIntroFinished: () -> Unit,
     onIntroTourSpotClick: (Long) -> Unit,
-    onCityTravelClick: (Long) -> Unit,
+    onCollectionClick: (Long) -> Unit,
     onTourSpotClick: (Long) -> Unit,
     onSearchClick: () -> Unit,
     onProfileClick: () -> Unit,
@@ -15,7 +15,7 @@ fun ExploreEntryScreen(
 ) {
     if (introFinished) {
         ExploreScreen(
-            onCityTravelClick = onCityTravelClick,
+            onCollectionClick = onCollectionClick,
             onTourSpotClick = onTourSpotClick,
             onSearchClick = onSearchClick,
             onProfileClick = onProfileClick,

@@ -46,16 +46,10 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 
-data class ThemeTravelItem(
-    val id: Long,
-    val title: String,
-    val places: Int,
-    val imageRes: Int,
-)
 
 @Composable
 fun ExploreScreen(
-    onCityTravelClick: (Long) -> Unit = {},
+    onCollectionClick: (Long) -> Unit = {},
     onTourSpotClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -65,17 +59,6 @@ fun ExploreScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val themeTravelItems =
-        remember {
-            listOf(
-                ThemeTravelItem(
-                    id = 2L,
-                    title = "여름에 꼭 봐야할 부산 명소",
-                    places = 6,
-                    imageRes = R.drawable.bg_busan_demo,
-                ),
-            )
-        }
 
     Column(
         modifier =
@@ -131,27 +114,70 @@ fun ExploreScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         ExploreSectionTitle(
-            title = "지역별 맞춤 여행지",
-            modifier = Modifier.padding(horizontal = 22.dp),
+            title =
+                "투어 컬렉션 모음",
+            modifier =
+                Modifier.padding(
+                    horizontal = 22.dp,
+                ),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(
+            modifier =
+                Modifier.height(
+                    16.dp,
+                ),
+        )
 
-        Column(
-            modifier = Modifier.padding(horizontal = 22.dp),
-            verticalArrangement = Arrangement.spacedBy(17.dp),
+        when (
+            val collections =
+                state.collections
         ) {
-            themeTravelItems.forEach { item ->
-                PlaceCard(
-                    title = item.title,
-                    places = item.places,
-                    imageRes = item.imageRes,
-                    onClick = {
-                        if (item.id == 2L) {
-                            onCityTravelClick(item.id)
-                        }
+            ExploreCollectionsUiState.Loading -> {
+                ExploreSectionLoading(
+                    height = 280.dp,
+                )
+            }
+
+            is ExploreCollectionsUiState.Error -> {
+                ExploreSectionError(
+                    message =
+                        collections.message,
+                    onRetryClick = {
+                        viewModel.processIntent(
+                            ExploreHomeIntent.FetchCollections,
+                        )
                     },
                 )
+            }
+
+            is ExploreCollectionsUiState.Success -> {
+                Column(
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 22.dp,
+                        ),
+                    verticalArrangement =
+                        Arrangement.spacedBy(
+                            17.dp,
+                        ),
+                ) {
+                    collections.collections.forEach { collection ->
+                        PlaceCard(
+                            title =
+                                collection.title,
+                            places =
+                                collection.placeCount,
+                            imageUrl =
+                                collection.thumbnailUrl,
+                            onClick = {
+                                onCollectionClick(
+                                    collection.id,
+                                )
+                            },
+                        )
+                    }
+                }
             }
         }
 

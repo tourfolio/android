@@ -104,3 +104,29 @@ data class ExploreNearbySpotDto(
     val name: String,
     val imageUrl: String,
 )
+
+/*
+ * 투어 컬렉션 모음 - 컬렉션 목록
+ */
+data class ExploreCollectionDto(
+    val collectionId: Long,
+    val title: String,
+    val thumbnailUrl: String,
+    val placeCount: Int,
+)
+
+/*
+ * 투어 컬렉션 모음 - 컬렉션 상세
+ */
+data class ExploreCollectionDetailDto(
+    val collectionId: Long,
+    val title: String,
+    val placeCount: Int,
+    val spots: List<ExploreCollectionSpotDto>,
+)
+
+data class ExploreCollectionSpotDto(
+    val spotId: Long,
+    val name: String,
+    val imageUrl: String?,
+)

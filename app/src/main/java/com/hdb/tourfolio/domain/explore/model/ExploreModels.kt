@@ -94,17 +94,22 @@ data class ExploreNearbySpot(
     val imageUrl: String,
 )
 
-data class CityTravelDetail(
-    val id: Long,
-    val categoryTitle: String,
+data class ExploreCollection(
+    val collectionId: Long,
     val title: String,
+    val thumbnailUrl: String,
     val placeCount: Int,
-    val cityImageKey: String,
-    val spots: List<CityTravelSpot>,
 )
 
-data class CityTravelSpot(
-    val id: Long,
+data class ExploreCollectionDetail(
+    val collectionId: Long,
     val title: String,
-    val imageKey: String,
+    val placeCount: Int,
+    val spots: List<ExploreCollectionSpot>,
+)
+
+data class ExploreCollectionSpot(
+    val spotId: Long,
+    val name: String,
+    val imageUrl: String?,
 )

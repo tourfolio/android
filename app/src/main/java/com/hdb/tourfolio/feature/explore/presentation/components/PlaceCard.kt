@@ -2,7 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.presentation.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -63,12 +63,28 @@ private class PlaceCardCutoutShape(
         layoutDirection: LayoutDirection,
         density: Density,
     ): Outline {
-        val cornerRadiusPx = with(density) { cornerRadiusDp.dp.toPx() }
-        val cutoutRadiusPx = with(density) { (buttonRadiusDp + cutoutGapDp).dp.toPx() }
+        val cornerRadiusPx =
+            with(density) {
+                cornerRadiusDp.dp.toPx()
+            }
+
+        val cutoutRadiusPx =
+            with(density) {
+                (buttonRadiusDp + cutoutGapDp).dp.toPx()
+            }
+
         val cutoutCenter =
             Offset(
-                x = size.width - with(density) { (buttonEndInsetDp + buttonRadiusDp).dp.toPx() },
-                y = size.height - with(density) { (buttonRadiusDp - buttonVerticalOffsetDp).dp.toPx() },
+                x =
+                    size.width -
+                            with(density) {
+                                (buttonEndInsetDp + buttonRadiusDp).dp.toPx()
+                            },
+                y =
+                    size.height -
+                            with(density) {
+                                (buttonRadiusDp - buttonVerticalOffsetDp).dp.toPx()
+                            },
             )
 
         val roundedRect =
@@ -76,8 +92,15 @@ private class PlaceCardCutoutShape(
                 addOutline(
                     Outline.Rounded(
                         RoundRect(
-                            rect = Rect(Offset.Zero, size),
-                            cornerRadius = CornerRadius(cornerRadiusPx),
+                            rect =
+                                Rect(
+                                    Offset.Zero,
+                                    size,
+                                ),
+                            cornerRadius =
+                                CornerRadius(
+                                    cornerRadiusPx,
+                                ),
                         ),
                     ),
                 )
@@ -85,27 +108,53 @@ private class PlaceCardCutoutShape(
 
         val cutout =
             Path().apply {
-                addOval(Rect(center = cutoutCenter, radius = cutoutRadiusPx))
+                addOval(
+                    Rect(
+                        center =
+                            cutoutCenter,
+                        radius =
+                            cutoutRadiusPx,
+                    ),
+                )
             }
 
         val bottomEndCorner =
             Path().apply {
                 addRect(
                     Rect(
-                        left = cutoutCenter.x,
-                        top = cutoutCenter.y,
-                        right = size.width,
-                        bottom = size.height,
+                        left =
+                            cutoutCenter.x,
+                        top =
+                            cutoutCenter.y,
+                        right =
+                            size.width,
+                        bottom =
+                            size.height,
                     ),
                 )
             }
-        val completeCutout = Path()
-        completeCutout.op(cutout, bottomEndCorner, PathOperation.Union)
 
-        val result = Path()
-        result.op(roundedRect, completeCutout, PathOperation.Difference)
+        val completeCutout =
+            Path().apply {
+                op(
+                    cutout,
+                    bottomEndCorner,
+                    PathOperation.Union,
+                )
+            }
 
-        return Outline.Generic(result)
+        val result =
+            Path().apply {
+                op(
+                    roundedRect,
+                    completeCutout,
+                    PathOperation.Difference,
+                )
+            }
+
+        return Outline.Generic(
+            result,
+        )
     }
 }
 
@@ -113,32 +162,51 @@ private class PlaceCardCutoutShape(
 fun PlaceCard(
     title: String,
     places: Int,
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
-    val cardShape = PlaceCardCutoutShape()
+    val cardShape =
+        PlaceCardCutoutShape()
 
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(PlaceCardHeight)
-                .clickable(onClick = onClick),
+                .height(
+                    PlaceCardHeight,
+                )
+                .clickable(
+                    onClick =
+                        onClick,
+                ),
     ) {
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .clip(cardShape),
+                    .clip(
+                        cardShape,
+                    ),
         ) {
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = title,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
+            /*
+             * API thumbnailUrl 이미지
+             */
+            AsyncImage(
+                model =
+                    imageUrl,
+                contentDescription =
+                    title,
+                modifier =
+                    Modifier.fillMaxSize(),
+                contentScale =
+                    ContentScale.Crop,
             )
 
+            /*
+             * 좌 → 우 그라데이션
+             * 텍스트 가독성 확보
+             */
             Box(
                 modifier =
                     Modifier
@@ -148,14 +216,23 @@ fun PlaceCard(
                                 Brush.horizontalGradient(
                                     colors =
                                         listOf(
-                                            Color.Black.copy(alpha = 0.56f),
-                                            Color.Black.copy(alpha = 0.28f),
-                                            Color.Black.copy(alpha = 0.06f),
+                                            Color.Black.copy(
+                                                alpha = 0.56f,
+                                            ),
+                                            Color.Black.copy(
+                                                alpha = 0.28f,
+                                            ),
+                                            Color.Black.copy(
+                                                alpha = 0.06f,
+                                            ),
                                         ),
                                 ),
                         ),
             )
 
+            /*
+             * 아래쪽 그라데이션
+             */
             Box(
                 modifier =
                     Modifier
@@ -167,17 +244,27 @@ fun PlaceCard(
                                         listOf(
                                             Color.Transparent,
                                             Color.Transparent,
-                                            Color.Black.copy(alpha = 0.45f),
+                                            Color.Black.copy(
+                                                alpha = 0.45f,
+                                            ),
                                         ),
                                 ),
                         ),
             )
 
+            /*
+             * 제목 + 관광지 개수
+             */
             Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement =
+                    Arrangement.spacedBy(
+                        6.dp,
+                    ),
                 modifier =
                     Modifier
-                        .align(Alignment.BottomStart)
+                        .align(
+                            Alignment.BottomStart,
+                        )
                         .padding(
                             start = 16.dp,
                             end = 76.dp,
@@ -185,61 +272,109 @@ fun PlaceCard(
                         ),
             ) {
                 Text(
-                    text = title,
+                    text =
+                        title,
                     style =
-                        LocalAppTypography.current.bodyLarge.bold.copy(
-                            color = Natural100,
-                        ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                        LocalAppTypography
+                            .current
+                            .bodyLarge
+                            .bold
+                            .copy(
+                                color =
+                                    Natural100,
+                            ),
+                    maxLines =
+                        1,
+                    overflow =
+                        TextOverflow.Ellipsis,
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement =
+                        Arrangement.spacedBy(
+                            5.dp,
+                        ),
+                    verticalAlignment =
+                        Alignment.CenterVertically,
                 ) {
                     Image(
                         painter =
                             painterResource(
-                                id = R.drawable.ic_location,
+                                id =
+                                    R.drawable.ic_location,
                             ),
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
+                        contentDescription =
+                            null,
+                        modifier =
+                            Modifier.size(
+                                22.dp,
+                            ),
                     )
 
                     Text(
-                        text = "$places places",
+                        text =
+                            "$places places",
                         style =
-                            LocalAppTypography.current.bodyLarge.medium.copy(
-                                color = Natural100.copy(alpha = 0.94f),
-                            ),
-                        maxLines = 1,
+                            LocalAppTypography
+                                .current
+                                .bodyLarge
+                                .medium
+                                .copy(
+                                    color =
+                                        Natural100.copy(
+                                            alpha = 0.94f,
+                                        ),
+                                ),
+                        maxLines =
+                            1,
                     )
                 }
             }
         }
 
+        /*
+         * 우측 하단 상세 이동 버튼
+         */
         Box(
             modifier =
                 Modifier
-                    .align(Alignment.BottomEnd)
-                    .offset(
-                        x = -PlaceCardButtonEndInset,
-                        y = PlaceCardButtonVerticalOffset,
+                    .align(
+                        Alignment.BottomEnd,
                     )
-                    .size(PlaceCardButtonSize)
-                    .clip(androidx.compose.foundation.shape.CircleShape)
-                    .background(Primary)
-                    .clickable(onClick = onClick),
-            contentAlignment = Alignment.Center,
+                    .offset(
+                        x =
+                            -PlaceCardButtonEndInset,
+                        y =
+                            PlaceCardButtonVerticalOffset,
+                    )
+                    .size(
+                        PlaceCardButtonSize,
+                    )
+                    .clip(
+                        androidx.compose.foundation.shape.CircleShape,
+                    )
+                    .background(
+                        Primary,
+                    )
+                    .clickable(
+                        onClick =
+                            onClick,
+                    ),
+            contentAlignment =
+                Alignment.Center,
         ) {
             Image(
                 painter =
                     painterResource(
-                        id = R.drawable.ic_chevron_right_white,
+                        id =
+                            R.drawable.ic_chevron_right_white,
                     ),
-                contentDescription = "상세 보기",
-                modifier = Modifier.size(16.dp),
+                contentDescription =
+                    "상세 보기",
+                modifier =
+                    Modifier.size(
+                        16.dp,
+                    ),
             )
         }
     }
@@ -254,9 +389,12 @@ fun PlaceCard(
 private fun PlaceCardPreview() {
     TourfolioTheme {
         PlaceCard(
-            title = "서울로 떠나는 역사탐방",
-            places = 10,
-            imageRes = R.drawable.bg_seoul_demo,
+            title =
+                "대한민국 유네스코 세계문화유산",
+            places =
+                26,
+            imageUrl =
+                "",
             modifier =
                 Modifier.padding(
                     horizontal = 16.dp,

@@ -1,11 +1,10 @@
 package com.hdb.tourfolio.feature.explore.presentation.model
 
-import androidx.annotation.DrawableRes
-import com.hdb.tourfolio.R
-import com.hdb.tourfolio.domain.explore.model.CityTravelDetail
-import com.hdb.tourfolio.domain.explore.model.CityTravelSpot
 import com.hdb.tourfolio.domain.explore.model.ExploreAttractionPoint
 import com.hdb.tourfolio.domain.explore.model.ExploreCard
+import com.hdb.tourfolio.domain.explore.model.ExploreCollection
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionDetail
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionSpot
 import com.hdb.tourfolio.domain.explore.model.ExploreHubTrendingSpot
 import com.hdb.tourfolio.domain.explore.model.ExploreMainCard
 import com.hdb.tourfolio.domain.explore.model.ExploreSearchSpot
@@ -83,30 +82,28 @@ private fun ExploreAttractionPoint.toUiModel(): ExploreAttractionPointUiModel =
         iconUrl = iconUrl,
     )
 
-fun CityTravelDetail.toUiModel(): CityTravelDetailUiModel =
-    CityTravelDetailUiModel(
-        id = id,
-        categoryTitle = categoryTitle,
+fun ExploreCollection.toUiModel(): ExploreCollectionUiModel =
+    ExploreCollectionUiModel(
+        id = collectionId,
+        title = title,
+        thumbnailUrl = thumbnailUrl,
+        placeCount = placeCount,
+    )
+
+fun ExploreCollectionDetail.toUiModel(): ExploreCollectionDetailUiModel =
+    ExploreCollectionDetailUiModel(
+        id = collectionId,
         title = title,
         placeCount = placeCount,
-        cityImageRes = cityImageKey.toDrawableRes(),
-        spots = spots.map { it.toUiModel() },
+        spots =
+            spots.map { spot ->
+                spot.toUiModel()
+            },
     )
 
-private fun CityTravelSpot.toUiModel(): CityTravelSpotUiModel =
-    CityTravelSpotUiModel(
-        id = id,
-        title = title,
-        imageRes = imageKey.toDrawableRes(),
+private fun ExploreCollectionSpot.toUiModel(): ExploreCollectionSpotUiModel =
+    ExploreCollectionSpotUiModel(
+        id = spotId,
+        title = name,
+        imageUrl = imageUrl.orEmpty(),
     )
-
-/*
- * 도시별 추천여행이 정적 데이터소스 기반이라 이미지 리소스 키가 제한적이다.
- * 실제 API 연동 시 imageUrl 기반 AsyncImage로 교체될 자리표시자 매핑.
- */
-@DrawableRes
-private fun String.toDrawableRes(): Int =
-    when (this) {
-        "bg_huinnyeoul_demo" -> R.drawable.bg_huinnyeoul_demo
-        else -> R.drawable.bg_busan_demo
-    }
