@@ -2,6 +2,8 @@ package com.hdb.tourfolio.data.explore.remote
 
 import com.hdb.tourfolio.data.common.network.Authenticated
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreCardDto
+import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDetailDto
+import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreHubDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreMainCardDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreSearchDto
@@ -45,4 +47,14 @@ interface ExploreApiService {
     suspend fun getSpotDetail(
         @Path("spotId") spotId: Long,
     ): ExploreSpotDetailDto
+
+    @Authenticated
+    @GET("api/v1/explore/collections")
+    suspend fun getCollections(): List<ExploreCollectionDto>
+
+    @Authenticated
+    @GET("api/v1/explore/collections/{collectionId}")
+    suspend fun getCollectionDetail(
+        @Path("collectionId") collectionId: Long,
+    ): ExploreCollectionDetailDto
 }

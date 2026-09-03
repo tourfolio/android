@@ -28,7 +28,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.hdb.tourfolio.feature.card.presentation.CardScreen
-import com.hdb.tourfolio.feature.explore.presentation.CityTravelDetailScreen
+import com.hdb.tourfolio.feature.explore.presentation.CollectionDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
@@ -146,10 +146,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                             ),
                         )
                     },
-                    onCityTravelClick = { travelId ->
+                    onCollectionClick = { collectionId ->
                         navController.navigate(
-                            Screen.CityTravelDetail.createRoute(
-                                travelId = travelId,
+                            Screen.CollectionDetail.createRoute(
+                                collectionId =
+                                collectionId,
                             ),
                         )
                     },
@@ -270,35 +271,45 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             /*
-             * 도시별 추천여행 상세 화면
+             * 투어 컬렉션 상세
              */
             composable(
-                route = Screen.CityTravelDetail.route,
+                route =
+                    Screen.CollectionDetail.route,
                 arguments =
                     listOf(
-                        navArgument(Screen.CityTravelDetail.ARG_TRAVEL_ID) {
-                            type = NavType.LongType
+                        navArgument(
+                            Screen.CollectionDetail.ARG_COLLECTION_ID,
+                        ) {
+                            type =
+                                NavType.LongType
                         },
                     ),
             ) { backStackEntry ->
-                val travelId =
-                    backStackEntry.arguments
-                        ?.getLong(Screen.CityTravelDetail.ARG_TRAVEL_ID)
+
+                val collectionId =
+                    backStackEntry
+                        .arguments
+                        ?.getLong(
+                            Screen.CollectionDetail.ARG_COLLECTION_ID,
+                        )
                         ?: return@composable
 
-                CityTravelDetailScreen(
-                    travelId = travelId,
+                CollectionDetailScreen(
+                    collectionId =
+                    collectionId,
                     onBackClick = {
                         navController.popBackStack()
                     },
-                    onShareClick = {
-                        // 추후 연결
-                    },
                     onSpotClick = { spotId ->
                         navController.navigate(
-                            Screen.ExploreDetail.createRoute(tourSpotId = spotId),
+                            Screen.ExploreDetail.createRoute(
+                                tourSpotId =
+                                spotId,
+                                fromIntro =
+                                false,
+                            ),
                         )
-                        // 추후 의논 후 제거 혹은 구현
                     },
                 )
             }

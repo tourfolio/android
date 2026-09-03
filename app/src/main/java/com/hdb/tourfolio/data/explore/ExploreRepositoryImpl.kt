@@ -1,11 +1,11 @@
 package com.hdb.tourfolio.data.explore
 
-import com.hdb.tourfolio.data.explore.local.CityTravelStaticDataSource
 import com.hdb.tourfolio.data.explore.mapper.toDomain
 import com.hdb.tourfolio.data.explore.mapper.toDomainOrNull
 import com.hdb.tourfolio.data.explore.remote.ExploreApiService
-import com.hdb.tourfolio.domain.explore.model.CityTravelDetail
 import com.hdb.tourfolio.domain.explore.model.ExploreCard
+import com.hdb.tourfolio.domain.explore.model.ExploreCollection
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionDetail
 import com.hdb.tourfolio.domain.explore.model.ExploreHub
 import com.hdb.tourfolio.domain.explore.model.ExploreMainCard
 import com.hdb.tourfolio.domain.explore.model.ExploreSearchResult
@@ -19,7 +19,6 @@ class ExploreRepositoryImpl
     @Inject
     constructor(
         private val exploreApiService: ExploreApiService,
-        private val cityTravelStaticDataSource: CityTravelStaticDataSource,
     ) : ExploreRepository {
         override suspend fun getMainCards(): List<ExploreMainCard> =
             exploreApiService
@@ -44,5 +43,17 @@ class ExploreRepositoryImpl
 
         override suspend fun getSpotDetail(spotId: Long): ExploreSpotDetail = exploreApiService.getSpotDetail(spotId).toDomain()
 
-        override suspend fun getCityTravelDetail(travelId: Long): CityTravelDetail? = cityTravelStaticDataSource.getDetail(travelId)
+        override suspend fun getCollections(): List<ExploreCollection> =
+            exploreApiService
+                .getCollections()
+                .map { collection ->
+                    collection.toDomain()
+                }
+
+        override suspend fun getCollectionDetail(collectionId: Long): ExploreCollectionDetail =
+            exploreApiService
+                .getCollectionDetail(
+                    collectionId = collectionId,
+                )
+                .toDomain()
     }

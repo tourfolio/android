@@ -1,7 +1,8 @@
 package com.hdb.tourfolio.domain.explore.repository
 
-import com.hdb.tourfolio.domain.explore.model.CityTravelDetail
 import com.hdb.tourfolio.domain.explore.model.ExploreCard
+import com.hdb.tourfolio.domain.explore.model.ExploreCollection
+import com.hdb.tourfolio.domain.explore.model.ExploreCollectionDetail
 import com.hdb.tourfolio.domain.explore.model.ExploreHub
 import com.hdb.tourfolio.domain.explore.model.ExploreMainCard
 import com.hdb.tourfolio.domain.explore.model.ExploreSearchResult
@@ -25,5 +26,7 @@ interface ExploreRepository {
 
     suspend fun getSpotDetail(spotId: Long): ExploreSpotDetail
 
-    suspend fun getCityTravelDetail(travelId: Long): CityTravelDetail?
+    suspend fun getCollections(): List<ExploreCollection>
+
+    suspend fun getCollectionDetail(collectionId: Long): ExploreCollectionDetail
 }

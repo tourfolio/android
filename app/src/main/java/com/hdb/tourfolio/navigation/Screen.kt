@@ -21,11 +21,14 @@ sealed class Screen(val route: String) {
 
     data object Notification : Screen("notification")
 
-    data object CityTravelDetail :
-        Screen("city_travel_detail/{travelId}") {
-        const val ARG_TRAVEL_ID = "travelId"
+    data object CollectionDetail :
+        Screen(
+            "collection_detail/{collectionId}",
+        ) {
+        const val ARG_COLLECTION_ID =
+            "collectionId"
 
-        fun createRoute(travelId: Long): String = "city_travel_detail/$travelId"
+        fun createRoute(collectionId: Long): String = "collection_detail/$collectionId"
     }
 
     data object ExploreDetail :

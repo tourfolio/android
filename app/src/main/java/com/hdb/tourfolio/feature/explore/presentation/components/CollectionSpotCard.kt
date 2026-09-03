@@ -2,8 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.presentation.components
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,15 +17,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 
 @Composable
-fun CityTravelSpotCard(
+fun CollectionSpotCard(
     title: String,
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -35,15 +33,27 @@ fun CityTravelSpotCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .aspectRatio(0.92f)
-                .clip(RoundedCornerShape(12.dp))
-                .clickable(onClick = onClick),
+                .aspectRatio(
+                    0.92f,
+                )
+                .clip(
+                    RoundedCornerShape(
+                        10.dp,
+                    ),
+                )
+                .clickable(
+                    onClick = onClick,
+                ),
     ) {
-        Image(
-            painter = painterResource(id = imageRes),
-            contentDescription = title,
-            modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Crop,
+        AsyncImage(
+            model =
+            imageUrl,
+            contentDescription =
+            title,
+            modifier =
+                Modifier.matchParentSize(),
+            contentScale =
+                ContentScale.Crop,
         )
 
         Box(
@@ -57,24 +67,34 @@ fun CityTravelSpotCard(
                                     listOf(
                                         Color.Transparent,
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.68f),
+                                        Color.Black.copy(
+                                            alpha = 0.72f,
+                                        ),
                                     ),
                             ),
                     ),
         )
 
         Text(
-            text = title,
+            text =
+            title,
             style =
-                LocalAppTypography.current.titleMedium.bold.copy(
-                    color = Natural100,
-                ),
+                LocalAppTypography
+                    .current
+                    .titleSmall
+                    .bold
+                    .copy(
+                        color =
+                        Natural100,
+                    ),
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
+                    .align(
+                        Alignment.BottomStart,
+                    )
                     .padding(
-                        horizontal = 18.dp,
-                        vertical = 16.dp,
+                        horizontal = 16.dp,
+                        vertical = 14.dp,
                     ),
         )
     }
