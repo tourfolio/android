@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -46,7 +45,6 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 
-
 @Composable
 fun ExploreScreen(
     onCollectionClick: (Long) -> Unit = {},
@@ -58,7 +56,6 @@ fun ExploreScreen(
     viewModel: ExploreHomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
 
     Column(
         modifier =

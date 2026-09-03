@@ -150,7 +150,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navController.navigate(
                             Screen.CollectionDetail.createRoute(
                                 collectionId =
-                                    collectionId,
+                                collectionId,
                             ),
                         )
                     },
@@ -297,7 +297,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
                 CollectionDetailScreen(
                     collectionId =
-                        collectionId,
+                    collectionId,
                     onBackClick = {
                         navController.popBackStack()
                     },
@@ -305,9 +305,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         navController.navigate(
                             Screen.ExploreDetail.createRoute(
                                 tourSpotId =
-                                    spotId,
+                                spotId,
                                 fromIntro =
-                                    false,
+                                false,
                             ),
                         )
                     },

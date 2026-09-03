@@ -47,9 +47,9 @@ fun CollectionSpotCard(
     ) {
         AsyncImage(
             model =
-                imageUrl,
+            imageUrl,
             contentDescription =
-                title,
+            title,
             modifier =
                 Modifier.matchParentSize(),
             contentScale =
@@ -77,7 +77,7 @@ fun CollectionSpotCard(
 
         Text(
             text =
-                title,
+            title,
             style =
                 LocalAppTypography
                     .current
@@ -85,7 +85,7 @@ fun CollectionSpotCard(
                     .bold
                     .copy(
                         color =
-                            Natural100,
+                        Natural100,
                     ),
             modifier =
                 Modifier

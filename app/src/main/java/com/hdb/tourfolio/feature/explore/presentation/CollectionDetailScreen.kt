@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -51,8 +50,8 @@ fun CollectionDetailScreen(
         hiltViewModel(),
 ) {
     val state by
-    viewModel.state
-        .collectAsStateWithLifecycle()
+        viewModel.state
+            .collectAsStateWithLifecycle()
 
     LaunchedEffect(
         collectionId,
@@ -60,7 +59,7 @@ fun CollectionDetailScreen(
         viewModel.processIntent(
             CollectionDetailIntent.FetchCollectionDetail(
                 collectionId =
-                    collectionId,
+                collectionId,
             ),
         )
     }
@@ -72,7 +71,7 @@ fun CollectionDetailScreen(
         CollectionDetailUiState.Loading -> {
             CollectionDetailLoading(
                 modifier =
-                    modifier,
+                modifier,
             )
         }
 
@@ -81,9 +80,9 @@ fun CollectionDetailScreen(
                 message =
                     detailState.message,
                 onBackClick =
-                    onBackClick,
+                onBackClick,
                 modifier =
-                    modifier,
+                modifier,
             )
         }
 
@@ -92,11 +91,11 @@ fun CollectionDetailScreen(
                 detail =
                     detailState.detail,
                 onBackClick =
-                    onBackClick,
+                onBackClick,
                 onSpotClick =
-                    onSpotClick,
+                onSpotClick,
                 modifier =
-                    modifier,
+                modifier,
             )
         }
     }
@@ -124,7 +123,7 @@ private fun CollectionDetailContent(
             title =
                 detail.title,
             onBackClick =
-                onBackClick,
+            onBackClick,
         )
 
         LazyVerticalGrid(
@@ -223,7 +222,7 @@ private fun CollectionPlaceCount(
                         R.drawable.ic_location,
                 ),
             contentDescription =
-                null,
+            null,
             modifier =
                 Modifier.size(
                     26.dp,
@@ -240,16 +239,14 @@ private fun CollectionPlaceCount(
                     .medium
                     .copy(
                         color =
-                            Natural60,
+                        Natural60,
                     ),
         )
     }
 }
 
 @Composable
-private fun CollectionDetailLoading(
-    modifier: Modifier = Modifier,
-) {
+private fun CollectionDetailLoading(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier
@@ -262,7 +259,7 @@ private fun CollectionDetailLoading(
     ) {
         CircularProgressIndicator(
             color =
-                Primary,
+            Primary,
         )
     }
 }
@@ -289,7 +286,7 @@ private fun CollectionDetailError(
         ) {
             Text(
                 text =
-                    message,
+                message,
                 style =
                     LocalAppTypography
                         .current
@@ -297,7 +294,7 @@ private fun CollectionDetailError(
                         .bold
                         .copy(
                             color =
-                                Natural10,
+                            Natural10,
                         ),
             )
 
@@ -310,7 +307,7 @@ private fun CollectionDetailError(
 
             TextButton(
                 onClick =
-                    onBackClick,
+                onBackClick,
             ) {
                 Text(
                     text =
@@ -322,7 +319,7 @@ private fun CollectionDetailError(
                             .bold
                             .copy(
                                 color =
-                                    Primary,
+                                Primary,
                             ),
                 )
             }

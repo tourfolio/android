@@ -77,14 +77,14 @@ private class PlaceCardCutoutShape(
             Offset(
                 x =
                     size.width -
-                            with(density) {
-                                (buttonEndInsetDp + buttonRadiusDp).dp.toPx()
-                            },
+                        with(density) {
+                            (buttonEndInsetDp + buttonRadiusDp).dp.toPx()
+                        },
                 y =
                     size.height -
-                            with(density) {
-                                (buttonRadiusDp - buttonVerticalOffsetDp).dp.toPx()
-                            },
+                        with(density) {
+                            (buttonRadiusDp - buttonVerticalOffsetDp).dp.toPx()
+                        },
             )
 
         val roundedRect =
@@ -111,9 +111,9 @@ private class PlaceCardCutoutShape(
                 addOval(
                     Rect(
                         center =
-                            cutoutCenter,
+                        cutoutCenter,
                         radius =
-                            cutoutRadiusPx,
+                        cutoutRadiusPx,
                     ),
                 )
             }
@@ -178,7 +178,7 @@ fun PlaceCard(
                 )
                 .clickable(
                     onClick =
-                        onClick,
+                    onClick,
                 ),
     ) {
         Box(
@@ -194,9 +194,9 @@ fun PlaceCard(
              */
             AsyncImage(
                 model =
-                    imageUrl,
+                imageUrl,
                 contentDescription =
-                    title,
+                title,
                 modifier =
                     Modifier.fillMaxSize(),
                 contentScale =
@@ -273,7 +273,7 @@ fun PlaceCard(
             ) {
                 Text(
                     text =
-                        title,
+                    title,
                     style =
                         LocalAppTypography
                             .current
@@ -281,10 +281,10 @@ fun PlaceCard(
                             .bold
                             .copy(
                                 color =
-                                    Natural100,
+                                Natural100,
                             ),
                     maxLines =
-                        1,
+                    1,
                     overflow =
                         TextOverflow.Ellipsis,
                 )
@@ -304,7 +304,7 @@ fun PlaceCard(
                                     R.drawable.ic_location,
                             ),
                         contentDescription =
-                            null,
+                        null,
                         modifier =
                             Modifier.size(
                                 22.dp,
@@ -326,7 +326,7 @@ fun PlaceCard(
                                         ),
                                 ),
                         maxLines =
-                            1,
+                        1,
                     )
                 }
             }
@@ -345,7 +345,7 @@ fun PlaceCard(
                         x =
                             -PlaceCardButtonEndInset,
                         y =
-                            PlaceCardButtonVerticalOffset,
+                        PlaceCardButtonVerticalOffset,
                     )
                     .size(
                         PlaceCardButtonSize,
@@ -358,7 +358,7 @@ fun PlaceCard(
                     )
                     .clickable(
                         onClick =
-                            onClick,
+                        onClick,
                     ),
             contentAlignment =
                 Alignment.Center,
@@ -392,7 +392,7 @@ private fun PlaceCardPreview() {
             title =
                 "대한민국 유네스코 세계문화유산",
             places =
-                26,
+            26,
             imageUrl =
                 "",
             modifier =

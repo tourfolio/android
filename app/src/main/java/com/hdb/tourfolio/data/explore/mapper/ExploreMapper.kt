@@ -160,7 +160,6 @@ private fun ExploreCollectionSpotDto.toDomain(): ExploreCollectionSpot =
         imageUrl = imageUrl.orEmpty(),
     )
 
-
 /*
  * 서버에서 전달되는 태그 정규화
  * ["역사, 궁궐, 국보"] -> ["역사", "궁궐", "국보"]

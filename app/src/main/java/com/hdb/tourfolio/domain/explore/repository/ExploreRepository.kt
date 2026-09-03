@@ -28,7 +28,5 @@ interface ExploreRepository {
 
     suspend fun getCollections(): List<ExploreCollection>
 
-    suspend fun getCollectionDetail(
-        collectionId: Long,
-    ): ExploreCollectionDetail
+    suspend fun getCollectionDetail(collectionId: Long): ExploreCollectionDetail
 }

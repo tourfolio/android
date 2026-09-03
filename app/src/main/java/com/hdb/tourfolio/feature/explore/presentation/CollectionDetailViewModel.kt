@@ -38,61 +38,56 @@ sealed interface CollectionDetailEffect : MviEffect
 
 @HiltViewModel
 class CollectionDetailViewModel
-@Inject
-constructor(
-    private val getExploreCollectionDetailUseCase:
-    GetExploreCollectionDetailUseCase,
-) : MviViewModel<
-        CollectionDetailIntent,
-        CollectionDetailState,
-        CollectionDetailEffect,
-        >(
-    CollectionDetailState(),
-) {
-    override suspend fun handleIntent(
-        intent: CollectionDetailIntent,
-    ) {
-        when (intent) {
-            is CollectionDetailIntent.FetchCollectionDetail ->
-                fetchCollectionDetail(
-                    collectionId =
-                        intent.collectionId,
-                )
-        }
-    }
-
-    private suspend fun fetchCollectionDetail(
-        collectionId: Long,
-    ) {
-        setState {
-            copy(
-                detail =
-                    CollectionDetailUiState.Loading,
-            )
+    @Inject
+    constructor(
+        private val getExploreCollectionDetailUseCase: GetExploreCollectionDetailUseCase,
+    ) : MviViewModel<
+            CollectionDetailIntent,
+            CollectionDetailState,
+            CollectionDetailEffect,
+            >(
+            CollectionDetailState(),
+        ) {
+        override suspend fun handleIntent(intent: CollectionDetailIntent) {
+            when (intent) {
+                is CollectionDetailIntent.FetchCollectionDetail ->
+                    fetchCollectionDetail(
+                        collectionId =
+                            intent.collectionId,
+                    )
+            }
         }
 
-        val result =
-            try {
-                CollectionDetailUiState.Success(
+        private suspend fun fetchCollectionDetail(collectionId: Long) {
+            setState {
+                copy(
                     detail =
-                        getExploreCollectionDetailUseCase(
-                            collectionId,
-                        ).toUiModel(),
-                )
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                CollectionDetailUiState.Error(
-                    message =
-                        e.message
-                            ?: "컬렉션 정보를 불러오지 못했습니다.",
+                        CollectionDetailUiState.Loading,
                 )
             }
 
-        setState {
-            copy(
-                detail = result,
-            )
+            val result =
+                try {
+                    CollectionDetailUiState.Success(
+                        detail =
+                            getExploreCollectionDetailUseCase(
+                                collectionId,
+                            ).toUiModel(),
+                    )
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    CollectionDetailUiState.Error(
+                        message =
+                            e.message
+                                ?: "컬렉션 정보를 불러오지 못했습니다.",
+                    )
+                }
+
+            setState {
+                copy(
+                    detail = result,
+                )
+            }
         }
     }
-}

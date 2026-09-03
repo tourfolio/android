@@ -50,9 +50,7 @@ class ExploreRepositoryImpl
                     collection.toDomain()
                 }
 
-        override suspend fun getCollectionDetail(
-            collectionId: Long,
-        ): ExploreCollectionDetail =
+        override suspend fun getCollectionDetail(collectionId: Long): ExploreCollectionDetail =
             exploreApiService
                 .getCollectionDetail(
                     collectionId = collectionId,

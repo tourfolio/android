@@ -28,10 +28,7 @@ sealed class Screen(val route: String) {
         const val ARG_COLLECTION_ID =
             "collectionId"
 
-        fun createRoute(
-            collectionId: Long,
-        ): String =
-            "collection_detail/$collectionId"
+        fun createRoute(collectionId: Long): String = "collection_detail/$collectionId"
     }
 
     data object ExploreDetail :
