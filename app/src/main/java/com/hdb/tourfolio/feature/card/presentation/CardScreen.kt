@@ -111,8 +111,8 @@ fun CardScreen(
     fun refetchCollection() {
         viewModel.processIntent(
             CardIntent.FetchCollection(
-                region = filterState.region?.displayName,
-                theme = filterState.theme?.displayName,
+                region = filterState.region?.name,
+                theme = filterState.theme?.name,
                 rarity = filterState.rarity?.name,
             ),
         )
@@ -188,6 +188,8 @@ fun CardScreen(
             rarity = acquireUiState.rarity,
             acquiredAt = acquireUiState.acquiredAt,
             cardId = acquireUiState.cardId,
+            frontImageRes = cardImageResources(acquireUiState.cardId).first,
+            backImageRes = cardImageResources(acquireUiState.cardId).second,
             onCollectionClick = {
                 selectedCardId = null
                 showLocationVerificationScreen = false

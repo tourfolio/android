@@ -73,6 +73,17 @@ fun TourCard(
             )
         }
 
+//        if (item.isAcquired && item.acquiredDate != null) {
+//            Text(
+//                text = "획득 ${item.acquiredDate}",
+//                style = LocalAppTypography.current.bodySmall.bold,
+//                color = Color.White,
+//                modifier =
+//                    Modifier.align(Alignment.TopStart)
+//                        .background(Color.Black.copy(alpha = 0.6f))
+//                        .padding(horizontal = 8.dp, vertical = 4.dp),
+//            )
+//        }
         if (!item.isAcquired) {
             Box(
                 modifier =

@@ -24,6 +24,7 @@ data class CardListItemUiModel(
     val isAcquired: Boolean,
     val imageUrl: String? = null,
     @DrawableRes val imageRes: Int? = null,
+    @DrawableRes val backImageRes: Int? = null,
 )
 
 data class CardDetailUiModel(
@@ -42,6 +43,8 @@ data class CardDetailUiModel(
      */
     @DrawableRes
     val imageRes: Int? = null,
+    @DrawableRes
+    val backImageRes: Int? = null,
     /*
      * 상세 API 추가 정보
      */

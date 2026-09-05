@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -29,6 +30,11 @@ class SessionLocalDataSource
             dataStore.data
                 .map { prefs -> prefs[SESSION_KEY]?.let { gson.fromJson(it, AuthResponseDto::class.java) } }
                 .stateIn(scope, SharingStarted.Eagerly, null)
+
+        suspend fun getUserId(): Long? =
+            dataStore.data.first()[SESSION_KEY]
+                ?.let { gson.fromJson(it, AuthResponseDto::class.java).id }
+                ?.takeIf { it > 0 }
 
         suspend fun setSession(session: AuthResponseDto) {
             dataStore.edit { it[SESSION_KEY] = gson.toJson(session) }

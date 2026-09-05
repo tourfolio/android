@@ -38,7 +38,7 @@ class AuthRepositoryImpl
         ): User = authApiService.signup(SignupRequestDto(email, password, nickname)).toDomain()
 
         override suspend fun requireLoggedInUserId(): Long =
-            sessionLocalDataSource.currentSession.value?.id ?: throw NotAuthenticatedException()
+            sessionLocalDataSource.getUserId() ?: throw NotAuthenticatedException()
 
         override suspend fun logout() {
             sessionLocalDataSource.clear()

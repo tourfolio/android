@@ -5,12 +5,17 @@ package com.hdb.tourfolio.feature.card.presentation.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -28,6 +33,8 @@ fun ExpandedImageScreen(
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showBack by remember(card.id) { mutableStateOf(false) }
+    val displayedImageRes = if (showBack) card.backImageRes ?: card.imageRes else card.imageRes
     Box(
         modifier =
             modifier
@@ -52,11 +59,11 @@ fun ExpandedImageScreen(
                         ),
                 contentScale = ContentScale.Fit,
             )
-        } else if (card.imageRes != null) {
+        } else if (displayedImageRes != null) {
             Image(
                 painter =
                     painterResource(
-                        id = card.imageRes,
+                        id = displayedImageRes,
                     ),
                 contentDescription = card.title,
                 modifier =
@@ -65,7 +72,17 @@ fun ExpandedImageScreen(
                         .padding(
                             horizontal = 18.dp,
                             vertical = 70.dp,
-                        ),
+                        )
+                        .clickable(
+                            enabled = card.backImageRes != null,
+                            indication = null,
+                            interactionSource =
+                                remember {
+                                    MutableInteractionSource()
+                                },
+                        ) {
+                            showBack = !showBack
+                        },
                 contentScale = ContentScale.Fit,
             )
         }
