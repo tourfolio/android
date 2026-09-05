@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,23 +26,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.domain.portfolio.model.Portfolio
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioItem
+import com.hdb.tourfolio.feature.point.presentation.PointHistoryBottomSheet
 import com.hdb.tourfolio.feature.trade.presentation.components.FilterDropdown
 import com.hdb.tourfolio.feature.trade.presentation.components.PriceChangeType
 import com.hdb.tourfolio.feature.trade.presentation.components.TourStockCard
+import com.hdb.tourfolio.ui.components.HoldingPointCard
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural50
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
-import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import java.text.NumberFormat
@@ -121,6 +120,10 @@ private fun HoldingsList(
 ) {
     var selectedSortOption by rememberSaveable {
         mutableStateOf("수익률")
+    }
+
+    var showPointHistory by rememberSaveable {
+        mutableStateOf(false)
     }
 
     val sortOptions =
@@ -222,6 +225,7 @@ private fun HoldingsList(
         item {
             HoldingPointCard(
                 point = holdingPoint,
+                onClick = { showPointHistory = true },
             )
         }
 
@@ -265,6 +269,12 @@ private fun HoldingsList(
                 )
             }
         }
+    }
+
+    if (showPointHistory) {
+        PointHistoryBottomSheet(
+            onDismissRequest = { showPointHistory = false },
+        )
     }
 }
 
@@ -461,38 +471,6 @@ private fun SummaryProfitRow(
                 color = rateColor,
             )
         }
-    }
-}
-
-@Composable
-private fun HoldingPointCard(
-    point: Long,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(12.dp))
-                .background(Primary99)
-                .padding(
-                    horizontal = 22.dp,
-                    vertical = 20.dp,
-                ),
-    ) {
-        Text(
-            text = "보유 포인트",
-            style = LocalAppTypography.current.bodyLarge.medium,
-            color = Natural60,
-        )
-
-        Spacer(modifier = Modifier.height(7.dp))
-
-        Text(
-            text = "${formatNumber(point)}P",
-            style = LocalAppTypography.current.titleSmall.bold,
-            color = Natural10,
-        )
     }
 }
 
