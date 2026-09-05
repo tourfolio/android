@@ -92,6 +92,7 @@ fun MonthlyAttendanceScreen(
         CommonBackHeader(
             title = "출석 체크",
             onBackClick = onBackClick,
+            iconSize = 20.dp,
         )
 
         Column(

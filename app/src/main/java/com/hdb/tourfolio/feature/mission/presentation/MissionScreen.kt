@@ -201,6 +201,7 @@ private fun MissionScreenContent(
                     onTabSelected = { tab ->
                         selectedTab = tab
                     },
+                    inProgressCount = overview.missions.count { mission -> !mission.isCompleted },
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
