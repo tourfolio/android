@@ -10,10 +10,11 @@ class AuthResponseDtoTest {
 
     @Test
     fun loginUserIdSurvivesSessionSerialization() {
-        val response = gson.fromJson(
-            """{"userId":42,"email":"test@example.com","nickname":"test","token":"token","createdAt":"2026-09-05"}""",
-            AuthResponseDto::class.java,
-        )
+        val response =
+            gson.fromJson(
+                """{"userId":42,"email":"test@example.com","nickname":"test","token":"token","createdAt":"2026-09-05"}""",
+                AuthResponseDto::class.java,
+            )
 
         assertEquals(42L, response.id)
         val restored = gson.fromJson(gson.toJson(response), AuthResponseDto::class.java)
