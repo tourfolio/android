@@ -31,10 +31,10 @@ class SessionLocalDataSource
                 .map { prefs -> prefs[SESSION_KEY]?.let { gson.fromJson(it, AuthResponseDto::class.java) } }
                 .stateIn(scope, SharingStarted.Eagerly, null)
 
-        suspend fun getUserId(): Long? =
-            dataStore.data.first()[SESSION_KEY]
-                ?.let { gson.fromJson(it, AuthResponseDto::class.java).id }
-                ?.takeIf { it > 0 }
+        suspend fun getSession(): AuthResponseDto? =
+            dataStore.data.first()[SESSION_KEY]?.let { gson.fromJson(it, AuthResponseDto::class.java) }
+
+        suspend fun getUserId(): Long? = getSession()?.id?.takeIf { it > 0 }
 
         suspend fun setSession(session: AuthResponseDto) {
             dataStore.edit { it[SESSION_KEY] = gson.toJson(session) }

@@ -57,6 +57,7 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 @Composable
 fun CardScreen(
@@ -143,7 +144,12 @@ fun CardScreen(
 
         currentLocationJob =
             coroutineScope.launch {
-                val currentLocation = getCurrentPreciseLocation(context = context)
+                val currentLocation =
+                    try {
+                        withTimeoutOrNull(30_000L) { getCurrentPreciseLocation(context = context) }
+                    } catch (_: SecurityException) {
+                        null
+                    }
 
                 if (currentLocation == null) {
                     locationErrorMessage = "현재 위치를 확인할 수 없습니다.\nGPS가 켜져 있는지 확인해주세요."

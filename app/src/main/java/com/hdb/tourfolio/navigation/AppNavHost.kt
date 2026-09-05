@@ -491,6 +491,6 @@ fun QuestScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = "업적")
+        Text(text = "업적 기능은 준비 중입니다.")
     }
 }
