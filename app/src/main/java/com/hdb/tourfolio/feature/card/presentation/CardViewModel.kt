@@ -1,10 +1,12 @@
 package com.hdb.tourfolio.feature.card.presentation
 
 import androidx.lifecycle.viewModelScope
+import com.hdb.tourfolio.R
 import com.hdb.tourfolio.core.mvi.MviEffect
 import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
+import com.hdb.tourfolio.domain.auth.repository.AuthRepository
 import com.hdb.tourfolio.domain.card.model.Card
 import com.hdb.tourfolio.domain.card.model.CardDetail
 import com.hdb.tourfolio.domain.card.usecase.CardAcquireResult
@@ -18,6 +20,8 @@ import com.hdb.tourfolio.feature.card.presentation.model.CardListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -111,6 +115,7 @@ sealed interface CardEffect : MviEffect
 class CardViewModel
     @Inject
     constructor(
+        private val authRepository: AuthRepository,
         private val getCardCollectionUseCase: GetCardCollectionUseCase,
         private val getCardDetailUseCase: GetCardDetailUseCase,
         private val verifyLocationAndAcquireCardUseCase: VerifyLocationAndAcquireCardUseCase,
@@ -119,9 +124,16 @@ class CardViewModel
          * 재시도하거나 취소할 때 이전 요청의 결과가 뒤늦게 들어오는 것을 방지
          */
         private var acquireJob: Job? = null
+        private var collectionFilter = CardIntent.FetchCollection()
 
         init {
-            processIntent(CardIntent.FetchCollection())
+            viewModelScope.launch {
+                authRepository.observeCurrentUser().map { it?.id }.distinctUntilChanged().collect {
+                    clearAcquireState()
+                    setState { CardState() }
+                    fetchCollection(collectionFilter.region, collectionFilter.theme, collectionFilter.rarity)
+                }
+            }
         }
 
         override suspend fun handleIntent(intent: CardIntent) {
@@ -140,6 +152,7 @@ class CardViewModel
             theme: String?,
             rarity: String?,
         ) {
+            collectionFilter = CardIntent.FetchCollection(region, theme, rarity)
             setState { copy(collection = CardCollectionUiState.Loading) }
             val result =
                 try {
@@ -233,25 +246,27 @@ private fun Card.toUiModel(): CardListItemUiModel =
     CardListItemUiModel(
         id = cardId,
         title = spotName,
-        regionType = RegionType.entries.firstOrNull { it.displayName == region } ?: RegionType.SEOUL,
-        themeType = ThemeType.entries.firstOrNull { it.displayName == theme } ?: ThemeType.CULTURE,
+        regionType = region.toRegionType(),
+        themeType = theme.toThemeType(),
         rarity = rarity,
-        acquiredDate = null,
+        acquiredDate = acquiredAt,
         isAcquired = isOwned,
         imageUrl = imageUrl,
-        imageRes = null,
+        imageRes = cardImageResources(cardId).first,
+        backImageRes = cardImageResources(cardId).second,
     )
 
 private fun CardDetail.toUiModel(): CardDetailUiModel =
     CardDetailUiModel(
         id = cardId,
         title = name,
-        themeType = ThemeType.entries.firstOrNull { it.displayName == theme } ?: ThemeType.CULTURE,
+        themeType = theme.toThemeType(),
         rarity = rarity,
         acquiredDate = acquiredAt,
         isAcquired = isOwned,
         imageUrl = imageUrl,
-        imageRes = null,
+        imageRes = cardImageResources(cardId).first,
+        backImageRes = cardImageResources(cardId).second,
         address = address,
         glowColorCode = glowColorCode.orEmpty(),
         cardNumber = cardNumber,
@@ -259,3 +274,29 @@ private fun CardDetail.toUiModel(): CardDetailUiModel =
         acquisitionPath = acquisitionPath,
         message = message.orEmpty(),
     )
+
+internal fun cardImageResources(cardId: Long): Pair<Int, Int> =
+    when (cardId) {
+        1L -> R.drawable.card_gyeongbokgung to R.drawable.card_gyeongbokgung_back
+        2L -> R.drawable.card_gyeongju to R.drawable.card_gyeongju_back
+        3L -> R.drawable.card_saha to R.drawable.card_saha_back
+        4L -> R.drawable.card_seongsan to R.drawable.card_seongsan_back
+        5L -> R.drawable.card_suyeong to R.drawable.card_suyeong_back
+        6L -> R.drawable.card_yongsan to R.drawable.card_yongsan_back
+        else -> error("Card image is not registered: $cardId")
+    }
+
+private fun String.toThemeType(): ThemeType =
+    when (this) {
+        "역사" -> ThemeType.HISTORY
+        "자연" -> ThemeType.NATURE
+        else -> ThemeType.CULTURE
+    }
+
+private fun String.toRegionType(): RegionType =
+    when (this) {
+        "부산" -> RegionType.BUSAN
+        "경북" -> RegionType.GYEONGBUK
+        "제주" -> RegionType.JEJU
+        else -> RegionType.SEOUL
+    }

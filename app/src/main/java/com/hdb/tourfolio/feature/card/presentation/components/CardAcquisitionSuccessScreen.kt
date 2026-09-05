@@ -2,6 +2,8 @@
 
 package com.hdb.tourfolio.feature.card.presentation.components
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,8 +18,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +35,6 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural20
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
-import com.hdb.tourfolio.ui.theme.Primary80
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 @Composable
@@ -35,10 +43,13 @@ fun CardAcquisitionSuccessScreen(
     rarity: String,
     acquiredAt: String,
     cardId: Long,
+    @DrawableRes frontImageRes: Int,
+    @DrawableRes backImageRes: Int,
     onCollectionClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showBack by remember(cardId) { mutableStateOf(false) }
     Column(
         modifier =
             modifier
@@ -62,30 +73,16 @@ fun CardAcquisitionSuccessScreen(
         /*
          * TODO : 실제 카드 이미지 교체
          */
-        Box(
+        Image(
+            painter = painterResource(if (showBack) backImageRes else frontImageRes),
+            contentDescription = if (showBack) "$cardName 카드 뒷면" else "$cardName 카드 앞면",
             modifier =
                 Modifier
                     .width(285.dp)
                     .height(400.dp)
-                    .background(
-                        color =
-                        Primary80,
-                        shape =
-                            RoundedCornerShape(
-                                22.dp,
-                            ),
-                    )
-                    .border(
-                        width = 2.dp,
-                        color =
-                            Primary.copy(
-                                alpha = 0.8f,
-                            ),
-                        shape =
-                            RoundedCornerShape(
-                                22.dp,
-                            ),
-                    ),
+                    .clip(RoundedCornerShape(22.dp))
+                    .clickable { showBack = !showBack },
+            contentScale = ContentScale.Fit,
         )
 
         Spacer(
@@ -297,6 +294,8 @@ private fun CardAcquisitionSuccessScreenPreview() {
             rarity = "LEGEND",
             acquiredAt = "2026.08.11",
             cardId = 3L,
+            frontImageRes = com.hdb.tourfolio.R.drawable.card_saha,
+            backImageRes = com.hdb.tourfolio.R.drawable.card_saha_back,
             onCollectionClick = {},
             onCloseClick = {},
         )

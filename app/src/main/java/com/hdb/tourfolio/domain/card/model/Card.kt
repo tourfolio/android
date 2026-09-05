@@ -8,6 +8,7 @@ data class Card(
     val theme: String,
     val region: String,
     val isOwned: Boolean,
+    val acquiredAt: String? = null,
 )
 
 data class CardCollection(

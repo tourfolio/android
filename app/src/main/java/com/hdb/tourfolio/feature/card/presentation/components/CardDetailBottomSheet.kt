@@ -23,6 +23,10 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -130,7 +134,7 @@ fun CardDetailBottomSheet(
                     modifier =
                         Modifier
                             .width(188.dp)
-                            .height(263.dp),
+                            .height(276.dp),
                 )
 
                 CardDetailInformation(
@@ -193,12 +197,17 @@ private fun CardDetailImage(
     onExpandImageClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showBack by remember(card.id) { mutableStateOf(false) }
+    val displayedImageRes = if (showBack) card.backImageRes ?: card.imageRes else card.imageRes
     Box(
         modifier =
             modifier
                 .clip(
                     RoundedCornerShape(10.dp),
-                ),
+                )
+                .clickable(enabled = card.isAcquired && card.backImageRes != null) {
+                    showBack = !showBack
+                },
     ) {
         if (!card.imageUrl.isNullOrBlank()) {
             AsyncImage(
@@ -209,11 +218,11 @@ private fun CardDetailImage(
                 contentScale =
                     ContentScale.Crop,
             )
-        } else if (card.imageRes != null) {
+        } else if (displayedImageRes != null) {
             Image(
                 painter =
                     painterResource(
-                        id = card.imageRes,
+                        id = displayedImageRes,
                     ),
                 contentDescription =
                     card.title,

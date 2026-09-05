@@ -1,6 +1,7 @@
 package com.hdb.tourfolio.data.common.network
 
 import com.hdb.tourfolio.data.auth.local.SessionLocalDataSource
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import retrofit2.Invocation
@@ -22,7 +23,7 @@ class AuthInterceptor
 
             if (!requiresAuth) return chain.proceed(request)
 
-            val token = sessionLocalDataSource.currentSession.value?.token ?: return chain.proceed(request)
+            val token = runBlocking { sessionLocalDataSource.getSession()?.token } ?: return chain.proceed(request)
 
             val authorizedRequest =
                 request
