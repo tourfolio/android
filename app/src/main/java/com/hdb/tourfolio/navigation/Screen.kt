@@ -13,7 +13,9 @@ sealed class Screen(val route: String) {
 
     data object Home : Screen("home")
 
-    data object Quest : Screen("quest")
+    data object Mission : Screen("mission")
+
+    data object MonthlyAttendance : Screen("monthly_attendance")
 
     data object Card : Screen("card")
 
@@ -70,6 +72,6 @@ val bottomNavItems =
         BottomNavItem(Screen.Explore, "탐색", R.drawable.ic_explore_filled, R.drawable.ic_explore_outlined),
         BottomNavItem(Screen.Trade, "투자", R.drawable.ic_trade_filled, R.drawable.ic_trade_outlined),
         BottomNavItem(Screen.Home, "홈", R.drawable.ic_home_filled, R.drawable.ic_home_outlined),
-        BottomNavItem(Screen.Quest, "업적", R.drawable.ic_quest_filled, R.drawable.ic_quest_outlined),
+        BottomNavItem(Screen.Mission, "업적", R.drawable.ic_mission_filled, R.drawable.ic_mission_outlined),
         BottomNavItem(Screen.Card, "수집", R.drawable.ic_card_filled, R.drawable.ic_card_outlined),
     )

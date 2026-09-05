@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
@@ -24,6 +25,7 @@ fun CommonBackHeader(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    iconSize: Dp = 24.dp,
 ) {
     Row(
         modifier =
@@ -57,7 +59,7 @@ fun CommonBackHeader(
                     "뒤로 가기",
                 modifier =
                     Modifier.size(
-                        24.dp,
+                        iconSize,
                     ),
             )
         }
