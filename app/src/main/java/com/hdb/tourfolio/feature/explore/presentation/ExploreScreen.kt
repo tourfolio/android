@@ -70,13 +70,12 @@ fun ExploreScreen(
             onNotificationClick = onNotificationClick,
             modifier =
                 Modifier.padding(
-                    start = 22.dp,
-                    top = 20.dp,
-                    end = 22.dp,
+                    horizontal = 20.dp,
+                    vertical = 18.dp,
                 ),
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         SearchBar(
             value = "",

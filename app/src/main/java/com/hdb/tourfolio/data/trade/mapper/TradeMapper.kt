@@ -19,4 +19,5 @@ fun TradeResponseDto.toDomain(): TradeResult =
         price = price,
         totalAmount = totalAmount,
         executedAt = executedAt,
+        realizedProfit = realizedProfit,
     )

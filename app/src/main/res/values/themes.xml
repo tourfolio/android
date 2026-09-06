@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.Tourfolio" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Tourfolio.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@android:color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="windowSplashScreenAnimationDuration">0</item>
+        <item name="postSplashScreenTheme">@style/Theme.Tourfolio</item>
+    </style>
 </resources>

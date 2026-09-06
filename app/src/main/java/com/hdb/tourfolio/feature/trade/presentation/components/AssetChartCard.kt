@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +42,7 @@ import com.hdb.tourfolio.ui.theme.Natural99
 import com.hdb.tourfolio.ui.theme.Red
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 /**
@@ -213,16 +215,35 @@ private fun AssetLineChart(
     }
 }
 
+private const val MAX_AXIS_LABEL_COUNT = 6
+
+/*
+ * 데이터 포인트가 많아지면(1달 이상) 라벨을 전부 표시하면 겹치므로,
+ * 그래프 선(전체 데이터)은 그대로 두고 하단 날짜 라벨만 최대 6개로 균등 샘플링해서 보여준다.
+ */
+private fun <T> List<T>.evenlySampled(maxCount: Int): List<T> {
+    if (size <= maxCount) return this
+
+    return (0 until maxCount)
+        .map { index -> this[(index * (size - 1) / (maxCount - 1).toFloat()).roundToInt()] }
+        .distinct()
+}
+
 @Composable
 private fun ChartAxisLabels(
     labels: List<String>,
     modifier: Modifier = Modifier,
 ) {
+    val visibleLabels =
+        remember(labels) {
+            labels.evenlySampled(MAX_AXIS_LABEL_COUNT)
+        }
+
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        labels.forEach { label ->
+        visibleLabels.forEach { label ->
             Text(
                 text = label,
                 style = LocalAppTypography.current.labelLarge.medium,
@@ -233,7 +254,7 @@ private fun ChartAxisLabels(
 }
 
 @Composable
-private fun <T : PeriodOption> PeriodTabRow(
+fun <T : PeriodOption> PeriodTabRow(
     periods: List<T>,
     selectedPeriod: T,
     onPeriodSelected: (T) -> Unit,

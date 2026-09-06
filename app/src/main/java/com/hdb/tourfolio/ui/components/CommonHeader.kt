@@ -65,33 +65,45 @@ fun CommonHeader(
         when (type) {
             CommonHeaderType.DEFAULT -> {
                 Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(22.dp),
                     verticalAlignment =
                         Alignment.CenterVertically,
-                    horizontalArrangement =
-                        Arrangement.spacedBy(
-                            4.dp,
-                        ),
                 ) {
-                    CommonHeaderIconButton(
-                        iconRes =
-                            R.drawable.ic_user_black,
-                        contentDescription =
-                            "내 정보",
-                        onClick =
-                        onProfileClick,
-                        tint =
-                        contentColor,
+                    Image(
+                        painter =
+                            painterResource(
+                                id = R.drawable.ic_user_black,
+                            ),
+                        contentDescription = "내 정보",
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    onProfileClick()
+                                },
+                        colorFilter =
+                            ColorFilter.tint(
+                                contentColor,
+                            ),
                     )
 
-                    CommonHeaderIconButton(
-                        iconRes =
-                            R.drawable.ic_bell_black,
-                        contentDescription =
-                            "알림",
-                        onClick =
-                        onNotificationClick,
-                        tint =
-                        contentColor,
+                    Image(
+                        painter =
+                            painterResource(
+                                id = R.drawable.ic_bell_black,
+                            ),
+                        contentDescription = "알림",
+                        modifier =
+                            Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    onNotificationClick()
+                                },
+                        colorFilter =
+                            ColorFilter.tint(
+                                contentColor,
+                            ),
                     )
                 }
             }

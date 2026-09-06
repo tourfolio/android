@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.trade.presentation.tabs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,10 +34,13 @@ import com.hdb.tourfolio.domain.portfolio.model.PortfolioSummary
 import com.hdb.tourfolio.domain.stock.model.Stock
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetChartCard
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetPoint
+import com.hdb.tourfolio.feature.trade.presentation.components.PeriodTabRow
 import com.hdb.tourfolio.feature.trade.presentation.components.RankedStockCard
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural20
 import com.hdb.tourfolio.ui.theme.Natural50
+import com.hdb.tourfolio.ui.theme.Natural99
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import java.time.LocalDate
@@ -112,6 +116,9 @@ private fun HomeTabContent(
                 is PortfolioSummaryUiState.Error -> {
                     PortfolioError(
                         message = portfolioSummaryUiState.message,
+                        periods = PortfolioPeriod.entries,
+                        selectedPeriod = selectedPeriod,
+                        onPeriodSelected = onPeriodSelected,
                         onRetryClick = { onPeriodSelected(selectedPeriod) },
                     )
                 }
@@ -120,7 +127,7 @@ private fun HomeTabContent(
                     val summary = portfolioSummaryUiState.summary
                     val assetHistory =
                         remember(summary.assetHistory) {
-                            summary.assetHistory.takeLast(6).map { it.toAssetPoint() }
+                            summary.assetHistory.map { it.toAssetPoint() }
                         }
 
                     AssetChartCard(
@@ -192,39 +199,65 @@ private fun PortfolioLoading(modifier: Modifier = Modifier) {
 @Composable
 private fun PortfolioError(
     message: String,
+    periods: List<PortfolioPeriod>,
+    selectedPeriod: PortfolioPeriod,
+    onPeriodSelected: (PortfolioPeriod) -> Unit,
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(320.dp),
-        contentAlignment = Alignment.Center,
+                .clip(RoundedCornerShape(20.dp))
+                .background(Natural99)
+                .padding(20.dp),
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Text(
+            text = "총 평가금액",
+            style = LocalAppTypography.current.bodySmall.medium,
+            color = Natural10,
+            maxLines = 1,
+        )
+
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(260.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = "총 평가금액을 불러오지 못했습니다.",
-                style = LocalAppTypography.current.bodyLarge.bold,
-                color = Natural20,
-            )
-
-            Text(
-                text = message,
-                style = LocalAppTypography.current.bodySmall.medium,
-                color = Natural50,
-            )
-
-            TextButton(onClick = onRetryClick) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
-                    text = "다시 시도",
-                    style = LocalAppTypography.current.bodySmall.bold,
-                    color = Primary,
+                    text = "총 평가금액을 불러오지 못했습니다.",
+                    style = LocalAppTypography.current.bodyLarge.bold,
+                    color = Natural20,
                 )
+
+                Text(
+                    text = message,
+                    style = LocalAppTypography.current.bodySmall.medium,
+                    color = Natural50,
+                )
+
+                TextButton(onClick = onRetryClick) {
+                    Text(
+                        text = "다시 시도",
+                        style = LocalAppTypography.current.bodySmall.bold,
+                        color = Primary,
+                    )
+                }
             }
         }
+
+        PeriodTabRow(
+            periods = periods,
+            selectedPeriod = selectedPeriod,
+            onPeriodSelected = onPeriodSelected,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -310,15 +343,15 @@ private fun RankedStockSection(
 private fun mockRankedStocks(rising: Boolean): List<Stock> =
     if (rising) {
         listOf(
-            Stock(1L, "성산일출봉", "제주", 1, 15_200L, 13_350L, 13.85, "2026-07-30T21:56:41.981Z", "제주", "제주 서귀포시 성산읍"),
-            Stock(2L, "해운대", "부산", 1, 9_800L, 8_880L, 10.36, "2026-07-30T21:56:41.981Z", "부산", "부산 해운대구"),
-            Stock(3L, "불국사", "경북", 1, 21_400L, 19_750L, 8.35, "2026-07-30T21:56:41.981Z", "경북", "경북 경주시 진현동"),
+            Stock(1L, "성산일출봉", "제주", 1, 15_200L, 13_350L, 13.85, "2026-07-30T21:56:41.981Z", "제주", "제주 서귀포시 성산읍", 100L, 0.5, 0.5, 0.5),
+            Stock(2L, "해운대", "부산", 1, 9_800L, 8_880L, 10.36, "2026-07-30T21:56:41.981Z", "부산", "부산 해운대구", 100L, 0.5, 0.5, 0.5),
+            Stock(3L, "불국사", "경북", 1, 21_400L, 19_750L, 8.35, "2026-07-30T21:56:41.981Z", "경북", "경북 경주시 진현동", 100L, 0.5, 0.5, 0.5),
         )
     } else {
         listOf(
-            Stock(4L, "남산타워", "서울", 1, 7_300L, 7_940L, -8.06, "2026-07-30T21:56:41.981Z", "서울", "서울 용산구"),
-            Stock(5L, "경복궁", "서울", 1, 18_900L, 20_020L, -5.59, "2026-07-30T21:56:41.981Z", "서울", "서울 종로구"),
-            Stock(6L, "안압지", "경북", 1, 12_050L, 12_630L, -4.59, "2026-07-30T21:56:41.981Z", "경북", "경북 경주시"),
+            Stock(4L, "남산타워", "서울", 1, 7_300L, 7_940L, -8.06, "2026-07-30T21:56:41.981Z", "서울", "서울 용산구", 100L, 0.5, 0.5, 0.5),
+            Stock(5L, "경복궁", "서울", 1, 18_900L, 20_020L, -5.59, "2026-07-30T21:56:41.981Z", "서울", "서울 종로구", 100L, 0.5, 0.5, 0.5),
+            Stock(6L, "안압지", "경북", 1, 12_050L, 12_630L, -4.59, "2026-07-30T21:56:41.981Z", "경북", "경북 경주시", 100L, 0.5, 0.5, 0.5),
         )
     }
 

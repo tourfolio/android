@@ -17,6 +17,10 @@ fun StockDto.toDomain(): Stock =
         lastUpdated = lastUpdated,
         regionName = regionName,
         address = address,
+        todayTradeVolume = todayTradeVolume,
+        visitorForecast = visitorForecast,
+        demandIntensity = demandIntensity,
+        resourceDemand = resourceDemand,
     )
 
 fun StockChartPointDto.toDomain(): StockChartPoint =

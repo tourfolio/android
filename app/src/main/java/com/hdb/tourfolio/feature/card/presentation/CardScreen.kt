@@ -313,15 +313,20 @@ fun CardScreen(
             Column(
                 modifier = modifier.fillMaxSize().background(Natural100),
             ) {
-                Column(
-                    modifier = Modifier.padding(start = 22.dp, top = 20.dp, end = 22.dp),
-                ) {
-                    CommonHeader(
-                        onProfileClick = onProfileClick,
-                        onNotificationClick = onNotificationClick,
-                    )
+                CommonHeader(
+                    onProfileClick = onProfileClick,
+                    onNotificationClick = onNotificationClick,
+                    modifier =
+                        Modifier.padding(
+                            horizontal = 20.dp,
+                            vertical = 18.dp,
+                        ),
+                )
 
-                    Spacer(modifier = Modifier.height(28.dp))
+                Column(
+                    modifier = Modifier.padding(start = 22.dp, end = 22.dp),
+                ) {
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     OwnedCardStatus(
                         ownedCardCount = summary.ownedCount,

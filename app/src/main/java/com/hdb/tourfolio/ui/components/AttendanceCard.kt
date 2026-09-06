@@ -45,6 +45,7 @@ enum class AttendanceDayState {
     CHECKED,
     MISSED,
     PENDING,
+    BEFORE_SIGNUP,
 }
 
 data class AttendanceDay(
@@ -135,8 +136,8 @@ fun AttendanceCard(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
-                        .clip(RoundedCornerShape(percent = 50))
+                        .height(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(if (checkInEnabled) Primary else Natural90)
                         .clickable(
                             enabled = checkInEnabled,
@@ -173,6 +174,7 @@ private fun AttendanceDayItem(
                             AttendanceDayState.CHECKED -> Primary
                             AttendanceDayState.MISSED -> Natural95
                             AttendanceDayState.PENDING -> Natural100
+                            AttendanceDayState.BEFORE_SIGNUP -> Natural95
                         },
                     )
                     .then(
@@ -204,6 +206,8 @@ private fun AttendanceDayItem(
                 }
 
                 AttendanceDayState.PENDING -> {}
+
+                AttendanceDayState.BEFORE_SIGNUP -> {}
             }
         }
 

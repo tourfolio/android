@@ -5,6 +5,12 @@ import androidx.annotation.DrawableRes
 import com.hdb.tourfolio.R
 
 sealed class Screen(val route: String) {
+    data object Splash : Screen("splash")
+
+    data object Login : Screen("login")
+
+    data object Signup : Screen("signup")
+
     data object Explore : Screen("explore")
 
     data object ExploreSearch : Screen("explore_search")

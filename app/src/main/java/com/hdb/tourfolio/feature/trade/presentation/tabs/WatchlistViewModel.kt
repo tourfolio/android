@@ -44,10 +44,6 @@ class TradeWatchlistViewModel
         private val getWatchlistUseCase: GetWatchlistUseCase,
         private val toggleWatchlistUseCase: ToggleWatchlistUseCase,
     ) : MviViewModel<TradeWatchlistIntent, TradeWatchlistState, TradeWatchlistEffect>(TradeWatchlistState()) {
-        init {
-            processIntent(TradeWatchlistIntent.FetchWatchlist)
-        }
-
         override suspend fun handleIntent(intent: TradeWatchlistIntent) {
             when (intent) {
                 TradeWatchlistIntent.FetchWatchlist -> fetchWatchlist()

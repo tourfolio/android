@@ -5,6 +5,7 @@ import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
+import com.hdb.tourfolio.domain.mission.model.WeeklyAttendanceStatus
 import com.hdb.tourfolio.domain.mission.usecase.CheckAttendanceUseCase
 import com.hdb.tourfolio.domain.mission.usecase.GetMissionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -199,8 +200,8 @@ private fun MissionOverview.withAttendanceChecked(newBalance: Long): MissionOver
     val todayIndex = LocalDate.now().dayOfWeek.value - 1
 
     val updatedAttendance =
-        weeklyAttendance.mapIndexed { index, attended ->
-            attended || index == todayIndex
+        weeklyAttendance.mapIndexed { index, status ->
+            if (index == todayIndex) WeeklyAttendanceStatus.ATTENDED else status
         }
 
     return copy(

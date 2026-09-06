@@ -5,6 +5,7 @@ import com.hdb.tourfolio.BuildConfig
 import com.hdb.tourfolio.data.auth.remote.AuthApiService
 import com.hdb.tourfolio.data.card.remote.CardApiService
 import com.hdb.tourfolio.data.common.network.AuthInterceptor
+import com.hdb.tourfolio.data.common.network.RetryInterceptor
 import com.hdb.tourfolio.data.explore.remote.ExploreApiService
 import com.hdb.tourfolio.data.home.remote.HomeApiService
 import com.hdb.tourfolio.data.mission.remote.MissionApiService
@@ -43,6 +44,7 @@ object NetworkModule {
             }
 
         return OkHttpClient.Builder()
+            .addInterceptor(RetryInterceptor())
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .build()

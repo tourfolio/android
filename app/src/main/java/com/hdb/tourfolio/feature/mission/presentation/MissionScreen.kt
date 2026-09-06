@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.domain.mission.model.Mission
 import com.hdb.tourfolio.domain.mission.model.MissionCategory
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
+import com.hdb.tourfolio.domain.mission.model.WeeklyAttendanceStatus
 import com.hdb.tourfolio.feature.mission.presentation.components.MissionListItem
 import com.hdb.tourfolio.feature.mission.presentation.components.MissionTabBar
 import com.hdb.tourfolio.feature.point.presentation.PointHistoryBottomSheet
@@ -166,7 +167,7 @@ private fun MissionScreenContent(
             onNotificationClick = onNotificationClick,
             modifier =
                 Modifier.padding(
-                    horizontal = 22.dp,
+                    horizontal = 20.dp,
                     vertical = 18.dp,
                 ),
         )
@@ -344,19 +345,21 @@ private fun MissionError(
 private val ATTENDANCE_DAY_LABELS = listOf("월", "화", "수", "목", "금", "토", "일")
 
 /*
- * weeklyAttendance 는 월요일부터 일요일까지의 출석 여부(7개)
- * 오늘 이전의 미출석은 MISSED, 오늘 이후(오늘 포함)의 미출석은 PENDING 으로 표시
+ * weeklyAttendance 는 월요일부터 일요일까지의 출석 상태(7개)를 서버가 그대로 내려줌
+ * 단, 오늘은 출석 전이어도 MISSED(X)로 보여주지 않고 아직 오지 않은 날처럼 표시
  */
-private fun buildAttendanceDays(weeklyAttendance: List<Boolean>): List<AttendanceDay> {
+private fun buildAttendanceDays(weeklyAttendance: List<WeeklyAttendanceStatus>): List<AttendanceDay> {
     val todayIndex = LocalDate.now().dayOfWeek.value - 1
 
     return ATTENDANCE_DAY_LABELS.mapIndexed { index, label ->
-        val attended = weeklyAttendance.getOrNull(index) == true
+        val status = weeklyAttendance.getOrNull(index)
 
         val dayState =
             when {
-                attended -> AttendanceDayState.CHECKED
-                index < todayIndex -> AttendanceDayState.MISSED
+                status == WeeklyAttendanceStatus.MISSED && index == todayIndex -> AttendanceDayState.PENDING
+                status == WeeklyAttendanceStatus.ATTENDED -> AttendanceDayState.CHECKED
+                status == WeeklyAttendanceStatus.MISSED -> AttendanceDayState.MISSED
+                status == WeeklyAttendanceStatus.BEFORE_SIGNUP -> AttendanceDayState.BEFORE_SIGNUP
                 else -> AttendanceDayState.PENDING
             }
 
@@ -379,7 +382,16 @@ private fun MissionScreenPreview() {
             overview =
                 MissionOverview(
                     balance = 50_000L,
-                    weeklyAttendance = listOf(true, true, true, false, false, true, false),
+                    weeklyAttendance =
+                        listOf(
+                            WeeklyAttendanceStatus.ATTENDED,
+                            WeeklyAttendanceStatus.ATTENDED,
+                            WeeklyAttendanceStatus.ATTENDED,
+                            WeeklyAttendanceStatus.MISSED,
+                            WeeklyAttendanceStatus.FUTURE,
+                            WeeklyAttendanceStatus.FUTURE,
+                            WeeklyAttendanceStatus.FUTURE,
+                        ),
                     attendedToday = false,
                     inProgressCount = 3,
                     completedCount = 1,

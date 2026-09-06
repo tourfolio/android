@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.hdb.tourfolio.feature.auth.presentation.AuthOverlay
 import com.hdb.tourfolio.feature.trade.presentation.components.TradeHeader
 import com.hdb.tourfolio.feature.trade.presentation.components.TradeTabBar
 import com.hdb.tourfolio.feature.trade.presentation.tabs.HoldingsTab
@@ -28,14 +26,11 @@ fun TradeScreen(
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     onStockClick: (Long, String, Long?, Long?) -> Unit = { _, _, _, _ -> },
 ) {
     var selectedTab by rememberSaveable {
         mutableStateOf(TradeTab.HOME)
-    }
-
-    var showAuthScreen by remember {
-        mutableStateOf(false)
     }
 
     Column(
@@ -47,54 +42,43 @@ fun TradeScreen(
         TradeHeader(
             onSearchClick = onSearchClick,
             onNotificationClick = onNotificationClick,
-            onProfileClick = {
-                showAuthScreen = true
+            onProfileClick = onProfileClick,
+        )
+
+        TradeTabBar(
+            selectedTab = selectedTab,
+            onTabSelected = { tab ->
+                selectedTab = tab
             },
         )
 
-        if (showAuthScreen) {
-            AuthOverlay(
-                onBackClick = {
-                    showAuthScreen = false
-                },
-                modifier = Modifier.weight(1f),
-            )
-        } else {
-            TradeTabBar(
-                selectedTab = selectedTab,
-                onTabSelected = { tab ->
-                    selectedTab = tab
-                },
-            )
+        when (selectedTab) {
+            TradeTab.HOME -> {
+                HomeTab(
+                    modifier = Modifier.weight(1f),
+                    onStockClick = onStockClick,
+                )
+            }
 
-            when (selectedTab) {
-                TradeTab.HOME -> {
-                    HomeTab(
-                        modifier = Modifier.weight(1f),
-                        onStockClick = onStockClick,
-                    )
-                }
+            TradeTab.EXPLORE -> {
+                TradeExploreTab(
+                    modifier = Modifier.weight(1f),
+                    onStockClick = onStockClick,
+                )
+            }
 
-                TradeTab.EXPLORE -> {
-                    TradeExploreTab(
-                        modifier = Modifier.weight(1f),
-                        onStockClick = onStockClick,
-                    )
-                }
+            TradeTab.HOLDINGS -> {
+                HoldingsTab(
+                    modifier = Modifier.weight(1f),
+                    onStockClick = onStockClick,
+                )
+            }
 
-                TradeTab.HOLDINGS -> {
-                    HoldingsTab(
-                        modifier = Modifier.weight(1f),
-                        onStockClick = onStockClick,
-                    )
-                }
-
-                TradeTab.WATCHLIST -> {
-                    WatchlistTab(
-                        modifier = Modifier.weight(1f),
-                        onStockClick = onStockClick,
-                    )
-                }
+            TradeTab.WATCHLIST -> {
+                WatchlistTab(
+                    modifier = Modifier.weight(1f),
+                    onStockClick = onStockClick,
+                )
             }
         }
     }

@@ -2,18 +2,14 @@
 
 package com.hdb.tourfolio.feature.auth.presentation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,17 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hdb.tourfolio.R
-import com.hdb.tourfolio.domain.auth.model.User
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural60
@@ -40,51 +31,53 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
-private val KakaoYellow = Color(0xFFFEE500)
-
 @Composable
-fun AuthOverlay(
+fun SignupScreen(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onSignupClick: () -> Unit = {},
-    onKakaoLoginClick: () -> Unit = {},
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
 
-    AuthOverlayContent(
+    SignupScreenContent(
         modifier = modifier,
         email = email,
         onEmailChange = { email = it },
         password = password,
         onPasswordChange = { password = it },
-        uiState = uiState.loginState,
-        onLoginClick = {
-            viewModel.processIntent(AuthIntent.Login(email, password))
+        nickname = nickname,
+        onNicknameChange = { nickname = it },
+        uiState = uiState.signupState,
+        onBackClick = onBackClick,
+        onSignupClick = {
+            viewModel.processIntent(AuthIntent.Signup(email, password, nickname))
         },
-        onSignupClick = onSignupClick,
-        onKakaoLoginClick = onKakaoLoginClick,
     )
 }
 
 @Composable
-private fun AuthOverlayContent(
+private fun SignupScreenContent(
     email: String,
     onEmailChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
+    nickname: String,
+    onNicknameChange: (String) -> Unit,
     uiState: AuthRequestState,
-    onLoginClick: () -> Unit,
+    onBackClick: () -> Unit,
     onSignupClick: () -> Unit,
-    onKakaoLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
-        Spacer(modifier = Modifier.weight(3f))
+        SignupHeader(onBackClick = onBackClick)
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Tourfolio",
@@ -102,10 +95,10 @@ private fun AuthOverlayContent(
             modifier = Modifier.padding(horizontal = 20.dp),
         ) {
             AuthLabeledField(
-                label = "아이디",
+                label = "이메일",
                 value = email,
                 onValueChange = onEmailChange,
-                placeholder = "아이디를 입력해주세요.",
+                placeholder = "이메일을 입력해주세요.",
                 keyboardType = KeyboardType.Email,
             )
 
@@ -118,112 +111,92 @@ private fun AuthOverlayContent(
                 placeholder = "비밀번호를 입력해주세요.",
             )
 
+            Spacer(modifier = Modifier.height(14.dp))
+
+            AuthLabeledField(
+                label = "닉네임",
+                value = nickname,
+                onValueChange = onNicknameChange,
+                placeholder = "닉네임을 입력해주세요.",
+                keyboardType = KeyboardType.Text,
+            )
+
             Spacer(modifier = Modifier.height(28.dp))
 
             AuthButton(
-                label = "로그인",
+                label = "회원가입",
                 containerColor = Primary,
-                onClick = onLoginClick,
+                onClick = onSignupClick,
                 height = 44.dp,
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AuthResult(
+                uiState = uiState,
+                successMessage = { "${it.nickname}님, 회원가입이 완료되었습니다." },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "회원가입",
+                text = "로그인 화면으로 돌아가기",
                 style = LocalAppTypography.current.bodySmall.medium,
                 color = Natural60,
                 textAlign = TextAlign.Center,
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .clickable(onClick = onSignupClick),
+                        .clickable(onClick = onBackClick),
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "또는",
-                style = LocalAppTypography.current.bodySmall.medium,
-                color = Natural60,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            KakaoLoginButton(
-                onClick = onKakaoLoginClick,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            AuthResult(uiState = uiState)
         }
-
-        Spacer(modifier = Modifier.weight(2f))
     }
 }
 
 @Composable
-private fun KakaoLoginButton(
-    onClick: () -> Unit,
+private fun SignupHeader(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Row(
         modifier =
             modifier
-                .height(44.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(KakaoYellow)
-                .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_kakao_placeholder),
-            contentDescription = null,
+        Text(
+            text = "←",
+            style = LocalAppTypography.current.titleMedium.bold,
+            color = Natural10,
             modifier =
                 Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = 16.dp)
-                    .size(20.dp),
-        )
-
-        Text(
-            text = "카카오톡으로 로그인",
-            style = LocalAppTypography.current.titleSmall.bold,
-            color = Natural10,
+                    .clickable(onClick = onBackClick)
+                    .padding(end = 12.dp),
         )
     }
 }
 
 @Preview(
-    name = "Auth Overlay Preview",
+    name = "Signup Screen Preview",
     showBackground = true,
     widthDp = 412,
     heightDp = 800,
 )
 @Composable
-private fun AuthOverlayPreview() {
+private fun SignupScreenPreview() {
     TourfolioTheme(dynamicColor = false) {
-        AuthOverlayContent(
+        SignupScreenContent(
             email = "user@example.com",
             onEmailChange = {},
             password = "",
             onPasswordChange = {},
-            uiState =
-                AuthRequestState.Success(
-                    User(
-                        id = 1L,
-                        email = "user@example.com",
-                        nickname = "투어폴리오유저",
-                    ),
-                ),
-            onLoginClick = {},
+            nickname = "투어폴리오유저",
+            onNicknameChange = {},
+            uiState = AuthRequestState.Idle,
+            onBackClick = {},
             onSignupClick = {},
-            onKakaoLoginClick = {},
         )
     }
 }
