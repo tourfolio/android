@@ -42,6 +42,7 @@ import com.hdb.tourfolio.feature.mypage.presentation.MyPageScreen
 import com.hdb.tourfolio.feature.notification.presentation.NotificationScreen
 import com.hdb.tourfolio.feature.splash.presentation.SplashScreen
 import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
+import com.hdb.tourfolio.feature.trade.presentation.detail.RegionalIndexDetailScreen
 import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
@@ -411,6 +412,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 )
             }
 
+            composable(Screen.RegionalIndexDetail.route) {
+                RegionalIndexDetailScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                )
+            }
+
             composable(
                 route = Screen.Home.route,
             ) {
@@ -551,33 +560,32 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onBackClick = {
                         navController.popBackStack()
                     },
-                    // 인증화면 구현 후 해제
-//                    onLogoutSuccess = {
-//                        navController.navigate(
-//                            Screen.Auth.route,
-//                        ) {
-//                            popUpTo(
-//                                navController.graph.id,
-//                            ) {
-//                                inclusive = true
-//                            }
-//
-//                            launchSingleTop = true
-//                        }
-//                    },
-//                    onDeleteAccountSuccess = {
-//                        navController.navigate(
-//                            Screen.Auth.route,
-//                        ) {
-//                            popUpTo(
-//                                navController.graph.id,
-//                            ) {
-//                                inclusive = true
-//                            }
-//
-//                            launchSingleTop = true
-//                        }
-//                    },
+                    onLogoutSuccess = {
+                        navController.navigate(
+                            Screen.Login.route,
+                        ) {
+                            popUpTo(
+                                navController.graph.id,
+                            ) {
+                                inclusive = true
+                            }
+
+                            launchSingleTop = true
+                        }
+                    },
+                    onDeleteAccountSuccess = {
+                        navController.navigate(
+                            Screen.Login.route,
+                        ) {
+                            popUpTo(
+                                navController.graph.id,
+                            ) {
+                                inclusive = true
+                            }
+
+                            launchSingleTop = true
+                        }
+                    },
                 )
             }
 

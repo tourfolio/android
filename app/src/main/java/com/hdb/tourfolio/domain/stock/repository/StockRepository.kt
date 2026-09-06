@@ -1,5 +1,6 @@
 package com.hdb.tourfolio.domain.stock.repository
 
+import com.hdb.tourfolio.domain.stock.model.RegionalIndex
 import com.hdb.tourfolio.domain.stock.model.Stock
 import com.hdb.tourfolio.domain.stock.model.StockChartPoint
 
@@ -20,4 +21,6 @@ interface StockRepository {
         spotId: Long,
         period: String = "1W",
     ): List<StockChartPoint>
+
+    suspend fun getRegionalIndex(): List<RegionalIndex>
 }

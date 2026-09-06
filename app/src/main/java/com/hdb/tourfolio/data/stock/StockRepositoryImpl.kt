@@ -2,6 +2,7 @@ package com.hdb.tourfolio.data.stock
 
 import com.hdb.tourfolio.data.stock.mapper.toDomain
 import com.hdb.tourfolio.data.stock.remote.StockApiService
+import com.hdb.tourfolio.domain.stock.model.RegionalIndex
 import com.hdb.tourfolio.domain.stock.model.Stock
 import com.hdb.tourfolio.domain.stock.model.StockChartPoint
 import com.hdb.tourfolio.domain.stock.repository.StockRepository
@@ -38,4 +39,6 @@ class StockRepositoryImpl
             spotId: Long,
             period: String,
         ): List<StockChartPoint> = stockApiService.getStockChart(spotId = spotId, period = period).map { it.toDomain() }
+
+        override suspend fun getRegionalIndex(): List<RegionalIndex> = stockApiService.getRegionalIndex().map { it.toDomain() }
     }

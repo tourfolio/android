@@ -23,6 +23,8 @@ sealed class Screen(val route: String) {
 
     data object MonthlyAttendance : Screen("monthly_attendance")
 
+    data object RegionalIndexDetail : Screen("regional_index_detail")
+
     data object Card : Screen("card")
 
     data object MyPage : Screen("my_page")

@@ -6,7 +6,9 @@ import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioSummary
 import com.hdb.tourfolio.domain.portfolio.usecase.GetPortfolioSummaryUseCase
+import com.hdb.tourfolio.domain.stock.model.RegionalIndex
 import com.hdb.tourfolio.domain.stock.model.Stock
+import com.hdb.tourfolio.domain.stock.usecase.GetRegionalIndexUseCase
 import com.hdb.tourfolio.domain.stock.usecase.GetTopGainersUseCase
 import com.hdb.tourfolio.domain.stock.usecase.GetTopLosersUseCase
 import com.hdb.tourfolio.feature.trade.presentation.components.PeriodOption
@@ -41,6 +43,18 @@ sealed interface PortfolioSummaryUiState {
     ) : PortfolioSummaryUiState
 }
 
+sealed interface RegionalIndexUiState {
+    data object Loading : RegionalIndexUiState
+
+    data class Success(
+        val items: List<RegionalIndex>,
+    ) : RegionalIndexUiState
+
+    data class Error(
+        val message: String,
+    ) : RegionalIndexUiState
+}
+
 /**
  * api/portfolio/summary의 period 파라미터(1W/1M/3M/1Y/ALL)와 1:1 대응한다.
  * 종목 상세의 AssetPeriod(1W/3M/1Y/5Y/ALL)와 지원 기간이 달라 별도 enum으로 분리했다.
@@ -73,6 +87,8 @@ sealed interface TradeHomeIntent : MviIntent {
 
     data object RetryRankedStocks : TradeHomeIntent
 
+    data object RetryRegionalIndex : TradeHomeIntent
+
     data class SelectPeriod(
         val period: PortfolioPeriod,
     ) : TradeHomeIntent
@@ -81,12 +97,16 @@ sealed interface TradeHomeIntent : MviIntent {
 data class TradeHomeState(
     val rankedStocks: RankedStocksUiState = RankedStocksUiState.Loading,
     val portfolioSummary: PortfolioSummaryUiState = PortfolioSummaryUiState.Loading,
+    val regionalIndex: RegionalIndexUiState = RegionalIndexUiState.Loading,
     val selectedPeriod: PortfolioPeriod = PortfolioPeriod.WEEK,
     val isRefreshing: Boolean = false,
 ) : MviState {
     /** 최초 병렬 로딩이 아직 하나도 안 끝난 상태 — 이때만 화면 중앙에 로딩 스피너 하나를 보여준다. */
     val isInitialLoading: Boolean
-        get() = rankedStocks is RankedStocksUiState.Loading && portfolioSummary is PortfolioSummaryUiState.Loading
+        get() =
+            rankedStocks is RankedStocksUiState.Loading &&
+                portfolioSummary is PortfolioSummaryUiState.Loading &&
+                regionalIndex is RegionalIndexUiState.Loading
 }
 
 sealed interface TradeHomeEffect : MviEffect
@@ -98,6 +118,7 @@ class TradeHomeViewModel
         private val getTopGainersUseCase: GetTopGainersUseCase,
         private val getTopLosersUseCase: GetTopLosersUseCase,
         private val getPortfolioSummaryUseCase: GetPortfolioSummaryUseCase,
+        private val getRegionalIndexUseCase: GetRegionalIndexUseCase,
     ) : MviViewModel<TradeHomeIntent, TradeHomeState, TradeHomeEffect>(TradeHomeState()) {
         init {
             processIntent(TradeHomeIntent.FetchHome)
@@ -108,6 +129,7 @@ class TradeHomeViewModel
                 TradeHomeIntent.FetchHome -> fetchHome()
                 TradeHomeIntent.Refresh -> refresh()
                 TradeHomeIntent.RetryRankedStocks -> fetchRankedStocks()
+                TradeHomeIntent.RetryRegionalIndex -> fetchRegionalIndex()
                 is TradeHomeIntent.SelectPeriod -> fetchPortfolioSummary(intent.period)
             }
         }
@@ -117,37 +139,52 @@ class TradeHomeViewModel
                 copy(
                     rankedStocks = RankedStocksUiState.Loading,
                     portfolioSummary = PortfolioSummaryUiState.Loading,
+                    regionalIndex = RegionalIndexUiState.Loading,
                 )
             }
 
-            val (rankedStocksResult, portfolioSummaryResult) = loadHome(currentState.selectedPeriod)
-            setState { copy(rankedStocks = rankedStocksResult, portfolioSummary = portfolioSummaryResult) }
+            val (rankedStocksResult, portfolioSummaryResult, regionalIndexResult) = loadHome(currentState.selectedPeriod)
+            setState {
+                copy(
+                    rankedStocks = rankedStocksResult,
+                    portfolioSummary = portfolioSummaryResult,
+                    regionalIndex = regionalIndexResult,
+                )
+            }
         }
 
         private suspend fun refresh() {
             setState { copy(isRefreshing = true) }
 
-            val (rankedStocksResult, portfolioSummaryResult) = loadHome(currentState.selectedPeriod)
+            val (rankedStocksResult, portfolioSummaryResult, regionalIndexResult) = loadHome(currentState.selectedPeriod)
             setState {
                 copy(
                     rankedStocks = rankedStocksResult,
                     portfolioSummary = portfolioSummaryResult,
+                    regionalIndex = regionalIndexResult,
                     isRefreshing = false,
                 )
             }
         }
 
-        private suspend fun loadHome(period: PortfolioPeriod): Pair<RankedStocksUiState, PortfolioSummaryUiState> =
+        private suspend fun loadHome(period: PortfolioPeriod): Triple<RankedStocksUiState, PortfolioSummaryUiState, RegionalIndexUiState> =
             coroutineScope {
                 val rankedStocksDeferred = async { loadRankedStocks() }
                 val portfolioSummaryDeferred = async { loadPortfolioSummary(period) }
-                rankedStocksDeferred.await() to portfolioSummaryDeferred.await()
+                val regionalIndexDeferred = async { loadRegionalIndex() }
+                Triple(rankedStocksDeferred.await(), portfolioSummaryDeferred.await(), regionalIndexDeferred.await())
             }
 
         private suspend fun fetchRankedStocks() {
             setState { copy(rankedStocks = RankedStocksUiState.Loading) }
             val result = loadRankedStocks()
             setState { copy(rankedStocks = result) }
+        }
+
+        private suspend fun fetchRegionalIndex() {
+            setState { copy(regionalIndex = RegionalIndexUiState.Loading) }
+            val result = loadRegionalIndex()
+            setState { copy(regionalIndex = result) }
         }
 
         private suspend fun fetchPortfolioSummary(period: PortfolioPeriod) {
@@ -179,5 +216,14 @@ class TradeHomeViewModel
                 throw e
             } catch (e: Exception) {
                 PortfolioSummaryUiState.Error(e.message ?: "알 수 없는 오류가 발생했습니다.")
+            }
+
+        private suspend fun loadRegionalIndex(): RegionalIndexUiState =
+            try {
+                RegionalIndexUiState.Success(getRegionalIndexUseCase())
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                RegionalIndexUiState.Error(e.message ?: "알 수 없는 오류가 발생했습니다.")
             }
     }

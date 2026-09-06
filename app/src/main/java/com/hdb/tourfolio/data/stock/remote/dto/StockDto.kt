@@ -21,3 +21,9 @@ data class StockChartPointDto(
     val date: String,
     val price: Long,
 )
+
+data class RegionalIndexDto(
+    val region: String,
+    val averageChangeRate: Double,
+    val spotCount: Int,
+)

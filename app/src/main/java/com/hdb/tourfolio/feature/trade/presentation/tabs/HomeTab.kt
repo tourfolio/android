@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,17 +34,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioAssetHistoryPoint
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioSummary
+import com.hdb.tourfolio.domain.stock.model.RegionalIndex
 import com.hdb.tourfolio.domain.stock.model.Stock
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetChartCard
 import com.hdb.tourfolio.feature.trade.presentation.components.AssetPoint
 import com.hdb.tourfolio.feature.trade.presentation.components.PeriodTabRow
 import com.hdb.tourfolio.feature.trade.presentation.components.RankedStockCard
+import com.hdb.tourfolio.ui.theme.Blue
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural20
 import com.hdb.tourfolio.ui.theme.Natural50
 import com.hdb.tourfolio.ui.theme.Natural99
 import com.hdb.tourfolio.ui.theme.Primary
+import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -60,10 +66,12 @@ fun HomeTab(
         isRefreshing = state.isRefreshing,
         rankedStocksUiState = state.rankedStocks,
         portfolioSummaryUiState = state.portfolioSummary,
+        regionalIndexUiState = state.regionalIndex,
         selectedPeriod = state.selectedPeriod,
         onStockClick = onStockClick,
         onRefresh = { viewModel.processIntent(TradeHomeIntent.Refresh) },
         onRetryRankedStocksClick = { viewModel.processIntent(TradeHomeIntent.RetryRankedStocks) },
+        onRetryRegionalIndexClick = { viewModel.processIntent(TradeHomeIntent.RetryRegionalIndex) },
         onPeriodSelected = { period -> viewModel.processIntent(TradeHomeIntent.SelectPeriod(period)) },
     )
 }
@@ -75,10 +83,12 @@ private fun HomeTabContent(
     isRefreshing: Boolean,
     rankedStocksUiState: RankedStocksUiState,
     portfolioSummaryUiState: PortfolioSummaryUiState,
+    regionalIndexUiState: RegionalIndexUiState,
     selectedPeriod: PortfolioPeriod,
     onStockClick: (Long, String, Long?, Long?) -> Unit,
     onRefresh: () -> Unit,
     onRetryRankedStocksClick: () -> Unit,
+    onRetryRegionalIndexClick: () -> Unit,
     onPeriodSelected: (PortfolioPeriod) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,6 +149,27 @@ private fun HomeTabContent(
                         periods = PortfolioPeriod.entries,
                         selectedPeriod = selectedPeriod,
                         onPeriodSelected = onPeriodSelected,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            when (regionalIndexUiState) {
+                is RegionalIndexUiState.Loading -> {
+                    RegionalIndexLoading()
+                }
+
+                is RegionalIndexUiState.Error -> {
+                    RegionalIndexError(
+                        message = regionalIndexUiState.message,
+                        onRetryClick = onRetryRegionalIndexClick,
+                    )
+                }
+
+                is RegionalIndexUiState.Success -> {
+                    RegionalIndexSection(
+                        items = regionalIndexUiState.items,
                     )
                 }
             }
@@ -262,6 +293,112 @@ private fun PortfolioError(
 }
 
 @Composable
+private fun RegionalIndexLoading(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxWidth().height(100.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(color = Primary)
+    }
+}
+
+@Composable
+private fun RegionalIndexError(
+    message: String,
+    onRetryClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = "오늘의 주요 지수를 불러오지 못했습니다.",
+            style = LocalAppTypography.current.bodyLarge.bold,
+            color = Natural20,
+        )
+
+        Text(
+            text = message,
+            style = LocalAppTypography.current.bodySmall.medium,
+            color = Natural50,
+        )
+
+        TextButton(onClick = onRetryClick) {
+            Text(
+                text = "다시 시도",
+                style = LocalAppTypography.current.bodySmall.bold,
+                color = Primary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RegionalIndexSection(
+    items: List<RegionalIndex>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = "오늘의 주요 지수",
+            style = LocalAppTypography.current.titleSmall.bold,
+            color = Natural20,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(items = items, key = { it.region }) { item ->
+                RegionalIndexTile(item = item)
+            }
+        }
+    }
+}
+
+@Composable
+private fun RegionalIndexTile(
+    item: RegionalIndex,
+    modifier: Modifier = Modifier,
+) {
+    val changeColor =
+        when {
+            item.averageChangeRate > 0 -> Red
+            item.averageChangeRate < 0 -> Blue
+            else -> Natural50
+        }
+
+    Column(
+        modifier =
+            modifier
+                .width(84.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(Natural99)
+                .padding(horizontal = 14.dp, vertical = 14.dp),
+    ) {
+        Text(
+            text = item.region,
+            style = LocalAppTypography.current.bodySmall.bold,
+            color = Natural10,
+            maxLines = 1,
+        )
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Text(
+            text = "%+.2f%%".format(item.averageChangeRate),
+            style = LocalAppTypography.current.labelLarge.bold,
+            color = changeColor,
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
 private fun RankedStocksLoading(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxWidth().height(120.dp),
@@ -371,6 +508,14 @@ private fun mockPortfolioSummary(): PortfolioSummary =
             ),
     )
 
+private fun mockRegionalIndex(): List<RegionalIndex> =
+    listOf(
+        RegionalIndex(region = "서울", averageChangeRate = 1.24, spotCount = 12),
+        RegionalIndex(region = "부산", averageChangeRate = -0.85, spotCount = 8),
+        RegionalIndex(region = "경주", averageChangeRate = 0.42, spotCount = 5),
+        RegionalIndex(region = "제주", averageChangeRate = -1.10, spotCount = 6),
+    )
+
 @Preview(
     name = "Home Tab Preview",
     showBackground = true,
@@ -389,10 +534,12 @@ private fun HomeTabPreview() {
                     topLosers = mockRankedStocks(rising = false),
                 ),
             portfolioSummaryUiState = PortfolioSummaryUiState.Success(mockPortfolioSummary()),
+            regionalIndexUiState = RegionalIndexUiState.Success(mockRegionalIndex()),
             selectedPeriod = PortfolioPeriod.WEEK,
             onStockClick = { _, _, _, _ -> },
             onRefresh = {},
             onRetryRankedStocksClick = {},
+            onRetryRegionalIndexClick = {},
             onPeriodSelected = {},
         )
     }
