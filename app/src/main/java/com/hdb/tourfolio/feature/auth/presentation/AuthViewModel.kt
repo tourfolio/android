@@ -7,6 +7,7 @@ import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
 import com.hdb.tourfolio.domain.auth.model.User
 import com.hdb.tourfolio.domain.auth.usecase.LoginUseCase
+import com.hdb.tourfolio.domain.auth.usecase.LoginWithKakaoUseCase
 import com.hdb.tourfolio.domain.auth.usecase.ObserveCurrentUserUseCase
 import com.hdb.tourfolio.domain.auth.usecase.SignupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +40,14 @@ sealed interface AuthIntent : MviIntent {
         val password: String,
         val nickname: String,
     ) : AuthIntent
+
+    data class LoginWithKakao(
+        val code: String,
+    ) : AuthIntent
+
+    data class KakaoLoginFailed(
+        val message: String,
+    ) : AuthIntent
 }
 
 data class AuthState(
@@ -55,6 +64,7 @@ class AuthViewModel
     constructor(
         private val loginUseCase: LoginUseCase,
         private val signupUseCase: SignupUseCase,
+        private val loginWithKakaoUseCase: LoginWithKakaoUseCase,
         observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     ) : MviViewModel<AuthIntent, AuthState, AuthEffect>(AuthState()) {
         init {
@@ -69,6 +79,8 @@ class AuthViewModel
             when (intent) {
                 is AuthIntent.Login -> login(intent.email, intent.password)
                 is AuthIntent.Signup -> signup(intent.email, intent.password, intent.nickname)
+                is AuthIntent.LoginWithKakao -> loginWithKakao(intent.code)
+                is AuthIntent.KakaoLoginFailed -> setState { copy(loginState = AuthRequestState.Error(intent.message)) }
             }
         }
 
@@ -84,6 +96,19 @@ class AuthViewModel
                     throw e
                 } catch (e: Exception) {
                     AuthRequestState.Error(e.message ?: "로그인에 실패했습니다.")
+                }
+            setState { copy(loginState = result) }
+        }
+
+        private suspend fun loginWithKakao(code: String) {
+            setState { copy(loginState = AuthRequestState.Loading) }
+            val result =
+                try {
+                    AuthRequestState.Success(loginWithKakaoUseCase(code))
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    AuthRequestState.Error(e.message ?: "카카오 로그인에 실패했습니다.")
                 }
             setState { copy(loginState = result) }
         }

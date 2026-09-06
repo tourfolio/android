@@ -17,6 +17,8 @@ interface AuthRepository {
         nickname: String,
     ): User
 
+    suspend fun loginWithKakao(code: String): User
+
     suspend fun requireLoggedInUserId(): Long
 
     suspend fun logout()

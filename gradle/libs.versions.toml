@@ -21,6 +21,7 @@ datastore = "1.1.4"
 ktlint = "12.1.0"
 media3 = "1.5.1"
 splashscreen = "1.0.1"
+kakao = "2.25.0"
 
 
 [libraries]
@@ -78,6 +79,9 @@ media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "medi
 
 # SplashScreen (control system cold-start splash)
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+
+# Kakao Login
+kakao-user = { group = "com.kakao.sdk", name = "v2-user", version.ref = "kakao" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -3,6 +3,7 @@ package com.hdb.tourfolio.data.auth
 import com.hdb.tourfolio.data.auth.local.SessionLocalDataSource
 import com.hdb.tourfolio.data.auth.mapper.toDomain
 import com.hdb.tourfolio.data.auth.remote.AuthApiService
+import com.hdb.tourfolio.data.auth.remote.dto.KakaoLoginRequestDto
 import com.hdb.tourfolio.data.auth.remote.dto.LoginRequestDto
 import com.hdb.tourfolio.data.auth.remote.dto.SignupRequestDto
 import com.hdb.tourfolio.domain.auth.model.NotAuthenticatedException
@@ -36,6 +37,12 @@ class AuthRepositoryImpl
             password: String,
             nickname: String,
         ): User = authApiService.signup(SignupRequestDto(email, password, nickname)).toDomain()
+
+        override suspend fun loginWithKakao(code: String): User {
+            val response = authApiService.loginWithKakao(KakaoLoginRequestDto(code))
+            sessionLocalDataSource.setSession(response)
+            return response.toDomain()
+        }
 
         override suspend fun requireLoggedInUserId(): Long = sessionLocalDataSource.getUserId() ?: throw NotAuthenticatedException()
 

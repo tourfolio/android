@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,9 @@ import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
+import com.kakao.sdk.auth.AuthCodeClient
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 
 private val KakaoYellow = Color(0xFFFEE500)
 
@@ -46,10 +50,10 @@ private val KakaoYellow = Color(0xFFFEE500)
 fun AuthOverlay(
     modifier: Modifier = Modifier,
     onSignupClick: () -> Unit = {},
-    onKakaoLoginClick: () -> Unit = {},
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -65,7 +69,35 @@ fun AuthOverlay(
             viewModel.processIntent(AuthIntent.Login(email, password))
         },
         onSignupClick = onSignupClick,
-        onKakaoLoginClick = onKakaoLoginClick,
+        onKakaoLoginClick = {
+            /*
+             * 백엔드가 액세스 토큰이 아닌 인가 코드(code)를 받으므로 UserApiClient(토큰 반환)가 아니라
+             * AuthCodeClient(인가 코드 반환)를 사용한다.
+             */
+            val callback: (String?, Throwable?) -> Unit = { code, error ->
+                when {
+                    code != null -> {
+                        viewModel.processIntent(AuthIntent.LoginWithKakao(code))
+                    }
+
+                    error is ClientError && error.reason == ClientErrorCause.Cancelled -> {
+                        // 사용자가 로그인 창을 직접 닫은 경우 - 에러로 표시하지 않는다.
+                    }
+
+                    else -> {
+                        viewModel.processIntent(
+                            AuthIntent.KakaoLoginFailed(error?.message ?: "카카오 로그인에 실패했습니다."),
+                        )
+                    }
+                }
+            }
+
+            if (AuthCodeClient.instance.isKakaoTalkLoginAvailable(context)) {
+                AuthCodeClient.instance.authorizeWithKakaoTalk(context, callback = callback)
+            } else {
+                AuthCodeClient.instance.authorizeWithKakaoAccount(context, callback = callback)
+            }
+        },
     )
 }
 
@@ -182,7 +214,7 @@ private fun KakaoLoginButton(
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_kakao_placeholder),
+            painter = painterResource(id = R.drawable.ic_kakao),
             contentDescription = null,
             modifier =
                 Modifier
