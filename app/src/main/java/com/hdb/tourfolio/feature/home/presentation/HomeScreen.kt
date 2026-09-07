@@ -165,7 +165,7 @@ private fun HomeContent(
                                     Alignment.TopCenter,
                                 )
                                 .padding(
-                                    horizontal = 22.dp,
+                                    horizontal = 20.dp,
                                     vertical = 18.dp,
                                 ),
                     )

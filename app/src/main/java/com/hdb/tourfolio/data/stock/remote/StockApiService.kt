@@ -1,5 +1,6 @@
 package com.hdb.tourfolio.data.stock.remote
 
+import com.hdb.tourfolio.data.stock.remote.dto.RegionalIndexDto
 import com.hdb.tourfolio.data.stock.remote.dto.StockChartPointDto
 import com.hdb.tourfolio.data.stock.remote.dto.StockDto
 import retrofit2.http.GET
@@ -27,4 +28,7 @@ interface StockApiService {
         @Path("spotId") spotId: Long,
         @Query("period") period: String = "1W",
     ): List<StockChartPointDto>
+
+    @GET("api/stocks/regional-index")
+    suspend fun getRegionalIndex(): List<RegionalIndexDto>
 }

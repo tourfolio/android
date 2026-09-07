@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,19 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
 }
+
+/*
+ * 카카오 네이티브 앱 키 - 저장소에 커밋하지 않고 루트의 kakao.properties(gitignore 처리됨)에서 읽는다.
+ * 키가 없으면 로컬 빌드가 깨지지 않도록 빈 문자열로 대체한다 (카카오 로그인 시도 시에만 실패).
+ */
+val kakaoProperties =
+    Properties().apply {
+        val kakaoPropertiesFile = rootProject.file("kakao.properties")
+        if (kakaoPropertiesFile.exists()) {
+            load(kakaoPropertiesFile.inputStream())
+        }
+    }
+val kakaoNativeAppKey: String = kakaoProperties.getProperty("KAKAO_NATIVE_APP_KEY", "")
 
 android {
     namespace = "com.hdb.tourfolio"
@@ -18,10 +33,13 @@ android {
         applicationId = "com.hdb.tourfolio"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
+        versionCode = 4
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoNativeAppKey\"")
+        manifestPlaceholders["kakaoNativeAppKey"] = kakaoNativeAppKey
     }
 
     buildTypes {
@@ -91,4 +109,14 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // Media3 (splash video playback)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
+
+    // SplashScreen
+    implementation(libs.androidx.splashscreen)
+
+    // Kakao Login
+    implementation(libs.kakao.user)
 }

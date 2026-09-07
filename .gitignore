@@ -18,3 +18,9 @@ local.properties
 *.jks
 *.keystore
 keystore.properties
+kakao.properties
+
+# 디자인 참고 이미지 스크래치 폴더 (프로젝트 루트, 앱 리소스 아님)
+/res
+# 릴리즈 빌드 산출물 (aab/apk)
+/app/release

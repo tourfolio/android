@@ -17,4 +17,5 @@ data class TradeResponseDto(
     val totalAmount: Long,
     val executedAt: String,
     val createdAt: String,
+    val realizedProfit: Long?,
 )

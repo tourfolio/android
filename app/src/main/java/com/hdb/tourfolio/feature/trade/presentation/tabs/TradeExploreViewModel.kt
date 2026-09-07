@@ -63,9 +63,8 @@ data class TradeExploreState(
     val selectedSortOption: TradeExploreSortOption = TradeExploreSortOption.CHANGE_RATE,
 ) : MviState {
     /*
-     * region은 서버 쿼리 파라미터로 필터링됨(fetchStocks 참고). 카테고리(역사/자연/문화)는
-     * GET /api/stocks 응답에 아직 없어 필터링에는 사용하지 않는다.
-     * TODO(backend): GET /api/stocks에 theme 쿼리 파라미터 추가 필요
+     * region/category(tags)는 서버 쿼리 파라미터로 필터링됨(fetchStocks 참고).
+     * 여기서는 정렬만 클라이언트에서 다시 적용한다.
      */
     val filteredStocks: List<Stock>
         get() {
@@ -107,7 +106,10 @@ class TradeExploreViewModel
                     fetchStocks()
                 }
 
-                is TradeExploreIntent.SelectCategory -> setState { copy(selectedCategory = intent.category) }
+                is TradeExploreIntent.SelectCategory -> {
+                    setState { copy(selectedCategory = intent.category) }
+                    fetchStocks()
+                }
 
                 is TradeExploreIntent.SelectSortOption -> {
                     setState { copy(selectedSortOption = intent.option) }
@@ -119,11 +121,17 @@ class TradeExploreViewModel
         private suspend fun fetchStocks() {
             setState { copy(stocksResult = ExploreStocksUiState.Loading) }
             val region = if (currentState.selectedRegion == TradeExploreState.ALL_FILTER) "ALL" else currentState.selectedRegion
+            val tags =
+                if (currentState.selectedCategory == TradeExploreState.ALL_FILTER) {
+                    null
+                } else {
+                    listOf(currentState.selectedCategory)
+                }
             val sortBy = currentState.selectedSortOption.toApiSortByOrNull() ?: "changeRate"
             val result =
                 try {
                     ExploreStocksUiState.Success(
-                        getStocksUseCase(region = region, sortBy = sortBy, sortOrder = "DESC"),
+                        getStocksUseCase(region = region, tags = tags, sortBy = sortBy, sortOrder = "DESC"),
                     )
                 } catch (e: CancellationException) {
                     throw e

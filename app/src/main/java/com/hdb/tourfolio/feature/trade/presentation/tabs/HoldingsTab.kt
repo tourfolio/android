@@ -187,10 +187,11 @@ private fun HoldingsList(
         }
 
     /*
-     * 임시 데이터 - 월간 수익 API 연동 전까지 사용
+     * TODO(backend): 월간 수익 API 연동 전까지 쓰는 placeholder. 다른 값과 구분하기 쉽도록 1234로 고정해둔다.
      */
-    val monthlyProfit = 240_000L
-    val monthlyProfitRate = 2.15
+    val monthlyProfit = 1_234L
+    val monthlyProfitRate = 1_234.0
+
     val holdingPoint = portfolio.cashBalance
 
     LazyColumn(

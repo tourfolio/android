@@ -9,12 +9,13 @@ import com.hdb.tourfolio.domain.mission.model.AttendanceCheckResult
 import com.hdb.tourfolio.domain.mission.model.Mission
 import com.hdb.tourfolio.domain.mission.model.MissionCategory
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
+import com.hdb.tourfolio.domain.mission.model.WeeklyAttendanceStatus
 import java.time.LocalDate
 
 fun MissionResponseDto.toDomain(): MissionOverview =
     MissionOverview(
         balance = balance,
-        weeklyAttendance = weeklyAttendance,
+        weeklyAttendance = weeklyAttendance.map { WeeklyAttendanceStatus.from(it) },
         attendedToday = attendedToday,
         inProgressCount = inProgressCount,
         completedCount = completedCount,

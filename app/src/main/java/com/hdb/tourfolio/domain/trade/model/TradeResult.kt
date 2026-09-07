@@ -8,4 +8,5 @@ data class TradeResult(
     val price: Long,
     val totalAmount: Long,
     val executedAt: String,
+    val realizedProfit: Long?,
 )

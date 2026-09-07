@@ -63,6 +63,7 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
+import kotlin.math.roundToInt
 
 @Composable
 fun StockDetailScreen(
@@ -100,6 +101,7 @@ fun StockDetailScreen(
         isLiked = state.isLiked,
         onLikeClick = { viewModel.processIntent(StockDetailIntent.ToggleLike(spotId = stockId)) },
         holding = state.holding,
+        cashBalance = state.cashBalance,
         modifier = modifier,
     )
 }
@@ -121,6 +123,7 @@ private fun StockDetailContent(
     isLiked: Boolean,
     onLikeClick: () -> Unit,
     holding: PortfolioItem?,
+    cashBalance: Long,
     modifier: Modifier = Modifier,
 ) {
     var showSellSheet by remember {
@@ -144,9 +147,18 @@ private fun StockDetailContent(
     val changeRate =
         stock?.changeRate ?: if (prevDayPrice != 0L) changeAmount * 100.0 / prevDayPrice else 0.0
 
-    val offeringChangeRate = remember(currentPrice) { mockOfferingChangeRate(currentPrice) }
-    val todayVolume = remember(stockId) { mockTodayVolume(stockId) }
-    val tourDataIndicators = remember(stockId) { mockTourDataIndicators(stockId) }
+    val offeringChangeRate =
+        remember(currentPrice) {
+            if (PLACEHOLDER_OFFERING_PRICE != 0L) {
+                (currentPrice - PLACEHOLDER_OFFERING_PRICE) * 100.0 / PLACEHOLDER_OFFERING_PRICE
+            } else {
+                0.0
+            }
+        }
+    val todayVolume = stock?.todayTradeVolume?.toInt() ?: 0
+    val demandIntensity = remember(stock?.demandIntensity) { (stock?.demandIntensity ?: 0.0).toFilledCount() }
+    val visitorForecast = remember(stock?.visitorForecast) { (stock?.visitorForecast ?: 0.0).toFilledCount() }
+    val resourceDemand = remember(stock?.resourceDemand) { (stock?.resourceDemand ?: 0.0).toFilledCount() }
 
     Column(
         modifier =
@@ -182,7 +194,7 @@ private fun StockDetailContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             DetailInfoGrid(
-                offeringPrice = MOCK_OFFERING_PRICE,
+                offeringPrice = PLACEHOLDER_OFFERING_PRICE,
                 offeringChangeRate = offeringChangeRate,
                 prevDayPrice = prevDayPrice,
                 todayVolume = todayVolume,
@@ -215,9 +227,9 @@ private fun StockDetailContent(
             Spacer(modifier = Modifier.height(12.dp))
 
             TourDataSection(
-                demandIntensity = tourDataIndicators.demandIntensity,
-                visitorForecast = tourDataIndicators.visitorForecast,
-                resourceDemand = tourDataIndicators.resourceDemand,
+                demandIntensity = demandIntensity,
+                visitorForecast = visitorForecast,
+                resourceDemand = resourceDemand,
             )
         }
 
@@ -263,7 +275,7 @@ private fun StockDetailContent(
             buttonColor = Primary,
             currentPrice = currentPrice,
             avgPrice = holding?.averagePurchasePrice ?: 0L,
-            maxQuantity = holding?.quantity ?: 0,
+            maxQuantity = if (currentPrice > 0) (cashBalance / currentPrice).toInt() else 0,
             tradeUiState = tradeUiState,
             onDismiss = {
                 showBuySheet = false
@@ -275,6 +287,12 @@ private fun StockDetailContent(
         )
     }
 }
+
+/*
+ * TODO(backend): 공모가 API 연동 전까지 쓰는 placeholder. 다른 값과 구분하기 쉽도록 1234로 고정해둔다.
+ * 실제 공모가가 연동되면 이 값만 교체하면 대비(%)는 그대로 계산된다.
+ */
+private const val PLACEHOLDER_OFFERING_PRICE = 1_234L
 
 @Composable
 private fun DetailInfoGrid(
@@ -490,12 +508,17 @@ private fun TourDataSection(
     }
 }
 
+/*
+ * 0.0~1.0 사이의 지표 값을 5칸짜리 도트미터의 채워진 칸 수로 환산한다.
+ */
+private fun Double.toFilledCount(totalCount: Int = 5): Int = (this * totalCount).roundToInt().coerceIn(0, totalCount)
+
 @Composable
 private fun TourDataCard(
     label: String,
     filledCount: Int,
     modifier: Modifier = Modifier,
-    totalCount: Int = 10,
+    totalCount: Int = 5,
 ) {
     Row(
         modifier =
@@ -983,6 +1006,7 @@ private fun StockDetailScreenPreview() {
             onLikeClick = {},
             onBackClick = {},
             holding = null,
+            cashBalance = 34_000L,
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.hdb.tourfolio.data.auth.remote
 
 import com.hdb.tourfolio.data.auth.remote.dto.AuthResponseDto
+import com.hdb.tourfolio.data.auth.remote.dto.KakaoLoginRequestDto
 import com.hdb.tourfolio.data.auth.remote.dto.LoginRequestDto
 import com.hdb.tourfolio.data.auth.remote.dto.SignupRequestDto
 import retrofit2.http.Body
@@ -15,5 +16,10 @@ interface AuthApiService {
     @POST("api/v1/auth/login")
     suspend fun login(
         @Body request: LoginRequestDto,
+    ): AuthResponseDto
+
+    @POST("api/v1/auth/kakao")
+    suspend fun loginWithKakao(
+        @Body request: KakaoLoginRequestDto,
     ): AuthResponseDto
 }

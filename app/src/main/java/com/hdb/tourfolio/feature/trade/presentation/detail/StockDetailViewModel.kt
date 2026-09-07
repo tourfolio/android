@@ -5,7 +5,9 @@ import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioItem
+import com.hdb.tourfolio.domain.portfolio.usecase.GetCashBalanceUseCase
 import com.hdb.tourfolio.domain.portfolio.usecase.GetPortfolioItemUseCase
+import com.hdb.tourfolio.domain.portfolio.usecase.RefreshPortfolioUseCase
 import com.hdb.tourfolio.domain.stock.model.Stock
 import com.hdb.tourfolio.domain.stock.model.StockChartPoint
 import com.hdb.tourfolio.domain.stock.usecase.GetStockChartUseCase
@@ -68,6 +70,7 @@ data class StockDetailState(
     val tradeState: TradeUiState = TradeUiState.Idle,
     val isLiked: Boolean = false,
     val holding: PortfolioItem? = null,
+    val cashBalance: Long = 0L,
     val selectedPeriod: AssetPeriod = AssetPeriod.WEEK,
     val chartHistory: List<AssetPoint> = emptyList(),
 ) : MviState
@@ -82,6 +85,8 @@ class StockDetailViewModel
         private val getOrCreateWatchlistStatusUseCase: GetOrCreateWatchlistStatusUseCase,
         private val toggleWatchlistUseCase: ToggleWatchlistUseCase,
         private val getPortfolioItemUseCase: GetPortfolioItemUseCase,
+        private val getCashBalanceUseCase: GetCashBalanceUseCase,
+        private val refreshPortfolioUseCase: RefreshPortfolioUseCase,
         private val getStocksUseCase: GetStocksUseCase,
         private val getStockChartUseCase: GetStockChartUseCase,
     ) : MviViewModel<StockDetailIntent, StockDetailState, StockDetailEffect>(StockDetailState()) {
@@ -103,6 +108,7 @@ class StockDetailViewModel
                 launch { loadStock(spotId, keyword) }
                 launch { loadWatchlistStatus(spotId) }
                 launch { loadHolding(spotId) }
+                launch { loadCashBalance() }
                 launch { loadChart(spotId, currentState.selectedPeriod) }
             }
         }
@@ -164,6 +170,18 @@ class StockDetailViewModel
             setState { copy(holding = holding) }
         }
 
+        private suspend fun loadCashBalance() {
+            val cashBalance =
+                try {
+                    getCashBalanceUseCase()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    currentState.cashBalance
+                }
+            setState { copy(cashBalance = cashBalance) }
+        }
+
         private suspend fun trade(
             spotId: Long,
             type: TradeType,
@@ -181,7 +199,15 @@ class StockDetailViewModel
             setState { copy(tradeState = result) }
 
             if (result is TradeUiState.Success) {
+                try {
+                    refreshPortfolioUseCase()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // 거래는 이미 완료됐으므로 보유 현황 갱신 실패는 무시한다.
+                }
                 loadHolding(spotId)
+                loadCashBalance()
             }
         }
 
