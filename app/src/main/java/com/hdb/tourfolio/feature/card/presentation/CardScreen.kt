@@ -450,6 +450,9 @@ fun CardScreen(
         LocationDialogType.PERMISSION_REQUEST -> {
             LocationPermissionDialog(
                 onDismissRequest = { locationDialogType = null },
+                onLocationPermissionGranted = {
+                    viewModel.processIntent(CardIntent.LocationPermissionGranted)
+                },
                 onPreciseLocationGranted = {
                     locationDialogType = null
                     startLocationVerification()

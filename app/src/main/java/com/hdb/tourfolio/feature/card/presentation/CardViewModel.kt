@@ -1,5 +1,6 @@
 package com.hdb.tourfolio.feature.card.presentation
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.core.mvi.MviEffect
@@ -15,6 +16,7 @@ import com.hdb.tourfolio.domain.card.usecase.GetCardDetailUseCase
 import com.hdb.tourfolio.domain.card.usecase.VerifyLocationAndAcquireCardUseCase
 import com.hdb.tourfolio.domain.common.model.RegionType
 import com.hdb.tourfolio.domain.common.model.ThemeType
+import com.hdb.tourfolio.domain.notification.usecase.CreateLocationPermissionNotificationUseCase
 import com.hdb.tourfolio.feature.card.presentation.model.CardDetailUiModel
 import com.hdb.tourfolio.feature.card.presentation.model.CardListItemUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -101,6 +103,8 @@ sealed interface CardIntent : MviIntent {
     ) : CardIntent
 
     data object ClearAcquireState : CardIntent
+
+    data object LocationPermissionGranted : CardIntent
 }
 
 data class CardState(
@@ -119,6 +123,7 @@ class CardViewModel
         private val getCardCollectionUseCase: GetCardCollectionUseCase,
         private val getCardDetailUseCase: GetCardDetailUseCase,
         private val verifyLocationAndAcquireCardUseCase: VerifyLocationAndAcquireCardUseCase,
+        private val createLocationPermissionNotificationUseCase: CreateLocationPermissionNotificationUseCase,
     ) : MviViewModel<CardIntent, CardState, CardEffect>(CardState()) {
         /*
          * 재시도하거나 취소할 때 이전 요청의 결과가 뒤늦게 들어오는 것을 방지
@@ -144,6 +149,19 @@ class CardViewModel
                 is CardIntent.VerifyLocationAndAcquire ->
                     verifyLocationAndAcquire(intent.cardId, intent.userLatitude, intent.userLongitude)
                 CardIntent.ClearAcquireState -> clearAcquireState()
+                CardIntent.LocationPermissionGranted -> createLocationPermissionNotification()
+            }
+        }
+
+        private fun createLocationPermissionNotification() {
+            viewModelScope.launch {
+                try {
+                    createLocationPermissionNotificationUseCase()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Log.w("CardViewModel", "위치 권한 허용 알림을 생성하지 못했습니다.", e)
+                }
             }
         }
 

@@ -94,6 +94,7 @@ fun LocationPermissionDialog(
     onDismissRequest: () -> Unit,
     onPreciseLocationGranted: () -> Unit,
     onPreciseLocationDenied: () -> Unit = {},
+    onLocationPermissionGranted: () -> Unit = {},
 ) {
     val context =
         LocalContext.current
@@ -107,6 +108,10 @@ fun LocationPermissionDialog(
                 permissions[
                     Manifest.permission.ACCESS_FINE_LOCATION,
                 ] == true
+
+            if (fineLocationGranted || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                onLocationPermissionGranted()
+            }
 
             if (fineLocationGranted) {
                 onPreciseLocationGranted()

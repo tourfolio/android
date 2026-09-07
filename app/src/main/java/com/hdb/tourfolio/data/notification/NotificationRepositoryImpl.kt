@@ -17,4 +17,9 @@ class NotificationRepositoryImpl
             notificationApiService
                 .getNotifications()
                 .toDomain()
+
+        override suspend fun createLocationPermissionNotification() {
+            notificationApiService
+                .createLocationPermissionNotification()
+        }
     }

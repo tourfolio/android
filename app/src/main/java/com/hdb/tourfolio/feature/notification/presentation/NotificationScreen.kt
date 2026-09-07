@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.domain.notification.model.Notification
 import com.hdb.tourfolio.feature.notification.presentation.utils.formatNotificationDate
 import com.hdb.tourfolio.feature.notification.presentation.utils.getNotificationIconRes
+import com.hdb.tourfolio.feature.notification.presentation.utils.getNotificationTypeLabel
 import com.hdb.tourfolio.ui.components.CommonBackHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -235,7 +236,7 @@ private fun NotificationItem(
                                 id = iconRes,
                             ),
                         contentDescription =
-                            notification.type,
+                            getNotificationTypeLabel(notification.type),
                         modifier =
                             Modifier.size(
                                 16.dp,
@@ -245,7 +246,7 @@ private fun NotificationItem(
 
                 Text(
                     text =
-                        notification.type,
+                        getNotificationTypeLabel(notification.type),
                     style =
                         LocalAppTypography
                             .current

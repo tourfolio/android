@@ -5,12 +5,22 @@ import com.hdb.tourfolio.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+fun getNotificationTypeLabel(type: String): String =
+    when (type) {
+        "ATTENDANCE_POINT", "ATTENDANCE_STREAK" -> "출석체크"
+        "CARD_ACQUIRED" -> "카드"
+        "MISSION_COMPLETE" -> "포인트"
+        "STOCK_TRADE" -> "주식"
+        "LOCATION_PERMISSION" -> "위치"
+        else -> type
+    }
+
 /*
  * 알림 타입에 맞는 아이콘 반환
  */
 @DrawableRes
 fun getNotificationIconRes(type: String): Int? =
-    when (type) {
+    when (getNotificationTypeLabel(type)) {
         "카드" ->
             R.drawable.ic_card_green
 
