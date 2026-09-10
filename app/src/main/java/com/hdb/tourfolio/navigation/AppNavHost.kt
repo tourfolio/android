@@ -398,11 +398,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
             composable(Screen.Trade.route) {
                 TradeScreen(
-                    onSearchClick = {
-                        // 추후 검색 화면 연결
-                    },
                     onNotificationClick = {
-                        // 추후 알림 화면 연결
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
                     },
                     onProfileClick = {
                         navController.navigate(
