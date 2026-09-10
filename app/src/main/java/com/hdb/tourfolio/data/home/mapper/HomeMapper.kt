@@ -26,6 +26,7 @@ private fun HomePortfolioDto.toDomain(): HomePortfolio =
         todayProfit = todayProfit,
         todayProfitRate = todayProfitRate,
         totalProfitRate = totalProfitRate,
+        pointBalance = pointBalance,
         stockCount = stockCount,
     )
 
@@ -34,6 +35,7 @@ private fun HomeRecommendedSpotDto.toDomain(): HomeRecommendedSpot =
         id = spotId,
         title = name,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         description = description,
         tags = tags,
     )

@@ -39,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
+import coil.compose.AsyncImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -193,8 +193,7 @@ fun PlaceCard(
              * API thumbnailUrl 이미지
              */
             AsyncImage(
-                model =
-                imageUrl,
+                model = imageUrl,
                 contentDescription =
                 title,
                 modifier =
@@ -216,15 +215,9 @@ fun PlaceCard(
                                 Brush.horizontalGradient(
                                     colors =
                                         listOf(
-                                            Color.Black.copy(
-                                                alpha = 0.56f,
-                                            ),
-                                            Color.Black.copy(
-                                                alpha = 0.28f,
-                                            ),
-                                            Color.Black.copy(
-                                                alpha = 0.06f,
-                                            ),
+                                            Color.Black.copy(alpha = 0.56f),
+                                            Color.Black.copy(alpha = 0.28f),
+                                            Color.Black.copy(alpha = 0.06f),
                                         ),
                                 ),
                         ),
@@ -244,9 +237,7 @@ fun PlaceCard(
                                         listOf(
                                             Color.Transparent,
                                             Color.Transparent,
-                                            Color.Black.copy(
-                                                alpha = 0.45f,
-                                            ),
+                                            Color.Black.copy(alpha = 0.45f),
                                         ),
                                 ),
                         ),
@@ -281,7 +272,7 @@ fun PlaceCard(
                             .bold
                             .copy(
                                 color =
-                                Natural100,
+                                    Natural100,
                             ),
                     maxLines =
                     1,

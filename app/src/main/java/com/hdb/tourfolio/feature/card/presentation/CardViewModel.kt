@@ -16,6 +16,7 @@ import com.hdb.tourfolio.domain.card.usecase.GetCardDetailUseCase
 import com.hdb.tourfolio.domain.card.usecase.VerifyLocationAndAcquireCardUseCase
 import com.hdb.tourfolio.domain.common.model.RegionType
 import com.hdb.tourfolio.domain.common.model.ThemeType
+import com.hdb.tourfolio.domain.notification.usecase.CreateCardAcquiredNotificationUseCase
 import com.hdb.tourfolio.domain.notification.usecase.CreateLocationPermissionNotificationUseCase
 import com.hdb.tourfolio.feature.card.presentation.model.CardDetailUiModel
 import com.hdb.tourfolio.feature.card.presentation.model.CardListItemUiModel
@@ -123,6 +124,7 @@ class CardViewModel
         private val getCardCollectionUseCase: GetCardCollectionUseCase,
         private val getCardDetailUseCase: GetCardDetailUseCase,
         private val verifyLocationAndAcquireCardUseCase: VerifyLocationAndAcquireCardUseCase,
+        private val createCardAcquiredNotificationUseCase: CreateCardAcquiredNotificationUseCase,
         private val createLocationPermissionNotificationUseCase: CreateLocationPermissionNotificationUseCase,
     ) : MviViewModel<CardIntent, CardState, CardEffect>(CardState()) {
         /*
@@ -232,13 +234,15 @@ class CardViewModel
                                         distanceMeters = acquireResult.distanceMeters.toFloat(),
                                     )
 
-                                is CardAcquireResult.Acquired ->
+                                is CardAcquireResult.Acquired -> {
+                                    createCardAcquiredNotification(acquireResult.acquisition.cardName)
                                     CardAcquireUiState.Success(
                                         cardId = acquireResult.acquisition.cardId,
                                         cardName = acquireResult.acquisition.cardName,
                                         rarity = acquireResult.acquisition.rarity.name,
                                         acquiredAt = acquireResult.acquisition.acquiredAt,
                                     )
+                                }
                             }
                         } catch (e: CancellationException) {
                             throw e
@@ -257,6 +261,16 @@ class CardViewModel
             acquireJob?.cancel()
             acquireJob = null
             setState { copy(acquire = CardAcquireUiState.Idle) }
+        }
+
+        private suspend fun createCardAcquiredNotification(cardName: String) {
+            try {
+                createCardAcquiredNotificationUseCase(cardName)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w("CardViewModel", "카드 획득 알림을 생성하지 못했습니다.", e)
+            }
         }
     }
 

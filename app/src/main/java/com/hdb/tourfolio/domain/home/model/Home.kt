@@ -11,6 +11,7 @@ data class HomePortfolio(
     val todayProfit: Long,
     val todayProfitRate: Double,
     val totalProfitRate: Double,
+    val pointBalance: Long,
     val stockCount: Int,
 )
 
@@ -24,6 +25,7 @@ data class HomeRecommendedSpot(
     val id: Long,
     val title: String,
     val imageUrl: String,
+    val hasImage: Boolean,
     val description: String,
     val tags: List<String>,
 )

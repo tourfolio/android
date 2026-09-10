@@ -35,6 +35,7 @@ import com.hdb.tourfolio.feature.explore.presentation.components.TourSpotCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomeCardCollectionCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomePortfolioCard
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.feature.home.presentation.components.PointBalanceCard
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -261,6 +262,27 @@ private fun HomeContent(
         }
 
         /*
+         * 보유 포인트
+         */
+        item {
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
+
+            PointBalanceCard(
+                pointBalance =
+                    portfolio.pointBalance,
+                modifier =
+                    Modifier.padding(
+                        horizontal = 22.dp,
+                    ),
+            )
+        }
+
+        /*
          * 임시 축제/공지 이미지
          */
         item {
@@ -392,6 +414,7 @@ private fun HomeContent(
                             spot.tags,
                         imageUrl =
                             spot.imageUrl,
+                        hasImage = spot.hasImage,
                         onClick =
                         onTourSpotClick,
                         modifier =

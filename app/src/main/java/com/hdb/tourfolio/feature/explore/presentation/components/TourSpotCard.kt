@@ -26,7 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -39,6 +39,7 @@ fun TourSpotCard(
     content: String,
     tags: List<String>,
     imageUrl: String,
+    hasImage: Boolean,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -60,9 +61,9 @@ fun TourSpotCard(
                     )
                 },
     ) {
-        AsyncImage(
-            model =
-            imageUrl,
+        SpotImage(
+            hasImage = hasImage,
+            model = imageUrl,
             contentDescription =
             title,
             modifier =
@@ -81,12 +82,8 @@ fun TourSpotCard(
                                 colors =
                                     listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(
-                                            alpha = 0.12f,
-                                        ),
-                                        Color.Black.copy(
-                                            alpha = 0.72f,
-                                        ),
+                                        Color.Black.copy(alpha = if (hasImage) 0.12f else 0f),
+                                        Color.Black.copy(alpha = if (hasImage) 0.72f else 0f),
                                     ),
                             ),
                     ),
@@ -113,7 +110,7 @@ fun TourSpotCard(
                         .bold
                         .copy(
                             color =
-                            Natural100,
+                                if (hasImage) Natural100 else Color.Gray,
                         ),
                 maxLines =
                 1,
@@ -138,7 +135,7 @@ fun TourSpotCard(
                         .medium
                         .copy(
                             color =
-                                Natural100.copy(
+                                (if (hasImage) Natural100 else Color.Gray).copy(
                                     alpha = 0.88f,
                                 ),
                         ),
@@ -235,6 +232,7 @@ private fun TourSpotTag(
 private fun TourSpotCardPreview() {
     TourfolioTheme {
         TourSpotCard(
+            hasImage = true,
             id = 1L,
             title = "경복궁",
             content = "조선 왕조의 법궁이자 대한민국을 대표하는 궁궐입니다.",

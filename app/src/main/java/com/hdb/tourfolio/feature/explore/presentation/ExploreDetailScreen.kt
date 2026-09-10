@@ -45,10 +45,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreAttractionPointUiModel
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreSpotDetailUiModel
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -140,6 +140,7 @@ private fun ExploreDetailContent(
         TourSpotHero(
             title = detail.title,
             imageUrl = detail.imageUrl,
+            hasImage = detail.hasImage,
             onBackClick = onBackClick,
             onShareClick = onShareClick,
         )
@@ -272,6 +273,7 @@ private fun ExploreDetailContent(
 private fun TourSpotHero(
     title: String,
     imageUrl: String,
+    hasImage: Boolean,
     onBackClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -279,7 +281,8 @@ private fun TourSpotHero(
     Box(
         modifier = modifier.fillMaxWidth().height(430.dp),
     ) {
-        AsyncImage(
+        SpotImage(
+            hasImage = hasImage,
             model = imageUrl,
             contentDescription = title,
             modifier = Modifier.fillMaxSize(),
@@ -294,7 +297,7 @@ private fun TourSpotHero(
                     .background(
                         brush =
                             Brush.verticalGradient(
-                                colors = listOf(Color.Black.copy(alpha = 0.28f), Color.Transparent),
+                                colors = listOf(Color.Black.copy(alpha = if (hasImage) 0.28f else 0f), Color.Transparent),
                             ),
                     ),
         )
@@ -314,6 +317,7 @@ private fun TourSpotHero(
                 contentDescription = "뒤로 가기",
                 onClick = onBackClick,
                 rotationDegrees = 180f,
+                tint = if (hasImage) Color.White else Color.Gray,
             )
         }
     }
@@ -326,6 +330,7 @@ private fun DetailHeaderButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     rotationDegrees: Float = 0f,
+    tint: Color = Color.White,
 ) {
     Box(
         modifier = modifier.size(44.dp).clickable(onClick = onClick),
@@ -335,6 +340,7 @@ private fun DetailHeaderButton(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
             modifier = Modifier.size(26.dp).rotate(rotationDegrees),
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(tint),
         )
     }
 }

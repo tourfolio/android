@@ -19,6 +19,7 @@ fun ExploreMainCard.toUiModel(): ExploreMainCardUiModel =
         location = location,
         address = address,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         themeType = themeType,
         tags = tags,
     )
@@ -32,6 +33,7 @@ fun ExploreCard.toUiModel(): ExploreCardUiModel =
         themeTag = themeTag,
         tier = tier,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         description = description,
         mapX = mapX,
         mapY = mapY,
@@ -46,6 +48,7 @@ fun ExploreHubTrendingSpot.toUiModel(): ExploreHubTrendingSpotUiModel =
         location = location,
         popularityRank = popularityRank,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         address = address,
     )
 
@@ -56,6 +59,7 @@ fun ExploreSearchSpot.toUiModel(): ExploreSearchSpotUiModel =
         location = location,
         address = address,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         tags = tags,
     )
 
@@ -64,6 +68,7 @@ fun ExploreSpotDetail.toUiModel(): ExploreSpotDetailUiModel =
         id = spotId,
         title = name,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         address = address,
         tags = tags,
         description = description,
@@ -106,4 +111,5 @@ private fun ExploreCollectionSpot.toUiModel(): ExploreCollectionSpotUiModel =
         id = spotId,
         title = name,
         imageUrl = imageUrl.orEmpty(),
+        hasImage = hasImage,
     )

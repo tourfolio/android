@@ -189,6 +189,7 @@ private fun CollectionDetailContent(
                         spot.title,
                     imageUrl =
                         spot.imageUrl,
+                    hasImage = spot.hasImage,
                     onClick = {
                         onSpotClick(
                             spot.id,

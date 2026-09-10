@@ -10,6 +10,7 @@ data class HomePortfolioDto(
     val todayProfit: Long,
     val todayProfitRate: Double,
     val totalProfitRate: Double,
+    val pointBalance: Long,
     val stockCount: Int,
 )
 
@@ -17,6 +18,7 @@ data class HomeRecommendedSpotDto(
     val spotId: Long,
     val name: String,
     val imageUrl: String,
+    val hasImage: Boolean,
     val description: String,
     val tags: List<String>,
 )

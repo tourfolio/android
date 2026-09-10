@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
@@ -34,6 +34,7 @@ fun RegionCard(
     title: String,
     regionName: String,
     imageUrl: String,
+    hasImage: Boolean,
     onClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -57,9 +58,9 @@ fun RegionCard(
                     )
                 },
     ) {
-        AsyncImage(
-            model =
-            imageUrl,
+        SpotImage(
+            hasImage = hasImage,
+            model = imageUrl,
             contentDescription =
             title,
             modifier =
@@ -78,9 +79,7 @@ fun RegionCard(
                                 colors =
                                     listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(
-                                            alpha = 0.65f,
-                                        ),
+                                        Color.Black.copy(alpha = if (hasImage) 0.65f else 0f),
                                     ),
                             ),
                     ),
@@ -108,7 +107,7 @@ fun RegionCard(
                         .bold
                         .copy(
                             color =
-                            Natural100,
+                                if (hasImage) Natural100 else Color.Gray,
                         ),
                 maxLines =
                 1,
@@ -133,7 +132,7 @@ fun RegionCard(
                         .medium
                         .copy(
                             color =
-                                Natural100.copy(
+                                (if (hasImage) Natural100 else Color.Gray).copy(
                                     alpha = 0.85f,
                                 ),
                         ),
@@ -156,6 +155,7 @@ fun RegionCard(
 private fun RegionCardPreview() {
     TourfolioTheme {
         RegionCard(
+            hasImage = true,
             id = 1L,
             title = "경복궁",
             regionName = "서울",

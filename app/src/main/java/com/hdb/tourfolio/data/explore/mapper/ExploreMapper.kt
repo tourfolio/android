@@ -40,6 +40,7 @@ fun ExploreMainCardDto.toDomainOrNull(): ExploreMainCard? {
         location = location,
         address = address,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         themeType = themeType,
         tags = normalizeServerTags(tags),
         totalCount = totalCount,
@@ -56,6 +57,7 @@ fun ExploreCardDto.toDomain(): ExploreCard =
         themeTag = themeTag,
         tier = tier,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         description = description.orEmpty(),
         mapX = mapX,
         mapY = mapY,
@@ -72,6 +74,7 @@ fun ExploreHubDto.toDomain(): ExploreHub =
                     title = theme.title,
                     placeCount = theme.placeCount,
                     imageUrl = theme.imageUrl,
+                    hasImage = theme.hasImage,
                 )
             },
         trendingSpots =
@@ -82,6 +85,7 @@ fun ExploreHubDto.toDomain(): ExploreHub =
                     location = spot.location,
                     popularityRank = spot.popularityRank,
                     imageUrl = spot.imageUrl,
+                    hasImage = spot.hasImage,
                     address = spot.address,
                 )
             },
@@ -100,6 +104,7 @@ fun ExploreSearchSpotDto.toDomain(): ExploreSearchSpot =
         location = location,
         address = address,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         tags = normalizeServerTags(tags),
     )
 
@@ -108,6 +113,7 @@ fun ExploreSpotDetailDto.toDomain(): ExploreSpotDetail =
         spotId = spotId,
         name = name,
         imageUrl = imageUrl,
+        hasImage = hasImage,
         address = address,
         tags = normalizeServerTags(tags),
         description = description.orEmpty(),
@@ -123,6 +129,7 @@ fun ExploreSpotDetailDto.toDomain(): ExploreSpotDetail =
                     spotId = spot.spotId,
                     name = spot.name,
                     imageUrl = spot.imageUrl,
+                    hasImage = spot.hasImage,
                 )
             },
     )
@@ -158,6 +165,7 @@ private fun ExploreCollectionSpotDto.toDomain(): ExploreCollectionSpot =
         spotId = spotId,
         name = name,
         imageUrl = imageUrl.orEmpty(),
+        hasImage = hasImage,
     )
 
 /*

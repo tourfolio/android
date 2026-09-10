@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 
@@ -26,6 +26,7 @@ import com.hdb.tourfolio.ui.theme.Natural100
 fun CollectionSpotCard(
     title: String,
     imageUrl: String,
+    hasImage: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,9 +46,9 @@ fun CollectionSpotCard(
                     onClick = onClick,
                 ),
     ) {
-        AsyncImage(
-            model =
-            imageUrl,
+        SpotImage(
+            hasImage = hasImage,
+            model = imageUrl,
             contentDescription =
             title,
             modifier =
@@ -67,9 +68,7 @@ fun CollectionSpotCard(
                                     listOf(
                                         Color.Transparent,
                                         Color.Transparent,
-                                        Color.Black.copy(
-                                            alpha = 0.72f,
-                                        ),
+                                        Color.Black.copy(alpha = if (hasImage) 0.72f else 0f),
                                     ),
                             ),
                     ),
@@ -85,7 +84,7 @@ fun CollectionSpotCard(
                     .bold
                     .copy(
                         color =
-                        Natural100,
+                            if (hasImage) Natural100 else Color.Gray,
                     ),
             modifier =
                 Modifier

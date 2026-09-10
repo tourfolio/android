@@ -27,11 +27,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.feature.explore.presentation.components.CarouselContent
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreMainCardUiModel
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.components.CommonHeaderType
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -189,7 +189,8 @@ private fun ExploreCarouselPage(
     Box(
         modifier = modifier.fillMaxSize().clickable(onClick = onClick),
     ) {
-        AsyncImage(
+        SpotImage(
+            hasImage = item.hasImage,
             model = item.imageUrl,
             contentDescription = item.title,
             modifier = Modifier.fillMaxSize(),
@@ -197,6 +198,7 @@ private fun ExploreCarouselPage(
         )
 
         CarouselContent(
+            hasImage = item.hasImage,
             title = item.title,
             content = item.subTitle,
             place = item.location,

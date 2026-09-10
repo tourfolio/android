@@ -33,8 +33,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreCardUiModel
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -160,9 +160,9 @@ private fun TourSpotCarouselCard(
                     onClick,
                 ),
     ) {
-        AsyncImage(
-            model =
-                item.imageUrl,
+        SpotImage(
+            hasImage = item.hasImage,
+            model = item.imageUrl,
             contentDescription =
                 item.title,
             modifier =
@@ -182,9 +182,7 @@ private fun TourSpotCarouselCard(
                                     listOf(
                                         Color.Transparent,
                                         Color.Transparent,
-                                        Color.Black.copy(
-                                            alpha = 0.72f,
-                                        ),
+                                        Color.Black.copy(alpha = if (item.hasImage) 0.72f else 0f),
                                     ),
                             ),
                     ),
@@ -234,7 +232,7 @@ private fun TourSpotCarouselCard(
                             .bold
                             .copy(
                                 color =
-                                Natural100,
+                                    if (item.hasImage) Natural100 else Color.Gray,
                             ),
                 )
             }
@@ -256,7 +254,7 @@ private fun TourSpotCarouselCard(
                         .bold
                         .copy(
                             color =
-                            Natural100,
+                                if (item.hasImage) Natural100 else Color.Gray,
                         ),
                 maxLines =
                 1,

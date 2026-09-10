@@ -12,6 +12,7 @@ fun getNotificationTypeLabel(type: String): String =
         "MISSION_COMPLETE" -> "포인트"
         "STOCK_TRADE" -> "주식"
         "LOCATION_PERMISSION" -> "위치"
+        "SIGNUP_BONUS" -> "회원가입"
         else -> type
     }
 
@@ -35,6 +36,9 @@ fun getNotificationIconRes(type: String): Int? =
 
         "위치" ->
             R.drawable.ic_location
+
+        "회원가입" ->
+            R.drawable.ic_point
 
         else ->
             null

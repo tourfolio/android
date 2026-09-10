@@ -43,6 +43,7 @@ import com.hdb.tourfolio.ui.theme.TourfolioTheme
 @Composable
 fun CarouselContent(
     title: String,
+    hasImage: Boolean,
     content: String,
     place: String,
     tags: List<String>,
@@ -61,8 +62,8 @@ fun CarouselContent(
                                 colors =
                                     listOf(
                                         Color.Transparent,
-                                        Color.Black.copy(alpha = 0.5f),
-                                        Color.Black.copy(alpha = 0.9f),
+                                        Color.Black.copy(alpha = if (hasImage) 0.5f else 0f),
+                                        Color.Black.copy(alpha = if (hasImage) 0.9f else 0f),
                                     ),
                             ),
                     ),
@@ -78,7 +79,7 @@ fun CarouselContent(
         ) {
             Text(
                 text = title,
-                style = LocalAppTypography.current.headlineLarge.bold.copy(color = Natural100),
+                style = LocalAppTypography.current.headlineLarge.bold.copy(color = if (hasImage) Natural100 else Color.Gray),
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -88,7 +89,7 @@ fun CarouselContent(
                 text = content,
                 style =
                     LocalAppTypography.current.bodyLarge.medium.copy(
-                        color = Natural90,
+                        color = if (hasImage) Natural90 else Color.Gray,
                         letterSpacing = 0.1.sp,
                     ),
             )
@@ -110,7 +111,7 @@ fun CarouselContent(
                     text = place,
                     style =
                         LocalAppTypography.current.bodySmall.medium.copy(
-                            color = Natural90,
+                            color = if (hasImage) Natural90 else Color.Gray,
                         ),
                 )
             }
@@ -128,6 +129,7 @@ fun CarouselContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             CarouselIndicator(
+                hasImage = hasImage,
                 currentIndex = currentIndex,
                 totalCount = totalCount,
             )
@@ -166,6 +168,7 @@ private fun CarouselTag(
 
 @Composable
 private fun CarouselIndicator(
+    hasImage: Boolean,
     currentIndex: Int,
     totalCount: Int,
     modifier: Modifier = Modifier,
@@ -192,9 +195,9 @@ private fun CarouselIndicator(
                         .clip(CircleShape)
                         .background(
                             if (isSelected) {
-                                Natural100
+                                if (hasImage) Natural100 else Color.Gray
                             } else {
-                                Natural100.copy(alpha = 0.4f)
+                                (if (hasImage) Natural100 else Color.Gray).copy(alpha = 0.4f)
                             },
                         ),
             )
@@ -213,6 +216,7 @@ private fun CarouselIndicator(
 private fun CarouselContentPreview() {
     TourfolioTheme {
         CarouselContent(
+            hasImage = true,
             title = "경복궁",
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
