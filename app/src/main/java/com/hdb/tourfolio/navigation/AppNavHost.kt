@@ -424,6 +424,18 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 route = Screen.Home.route,
             ) {
                 HomeScreen(
+                    onPortfolioClick = {
+                        navController.navigate(Screen.Trade.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onCardCollectionClick = {
+                        navController.navigate(Screen.Card.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
                     onProfileClick = {
                         navController.navigate(
                             Screen.MyPage.route,

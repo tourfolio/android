@@ -1,6 +1,5 @@
 package com.hdb.tourfolio.data.home.mapper
 
-import com.hdb.tourfolio.data.home.remote.dto.HomeCardCollectionDto
 import com.hdb.tourfolio.data.home.remote.dto.HomePortfolioDto
 import com.hdb.tourfolio.data.home.remote.dto.HomeRecommendedSpotDto
 import com.hdb.tourfolio.data.home.remote.dto.HomeResponseDto
@@ -9,12 +8,12 @@ import com.hdb.tourfolio.domain.home.model.HomeCardCollection
 import com.hdb.tourfolio.domain.home.model.HomePortfolio
 import com.hdb.tourfolio.domain.home.model.HomeRecommendedSpot
 
-fun HomeResponseDto.toDomain(): Home =
+fun HomeResponseDto.toDomain(cardCollection: HomeCardCollection): Home =
     Home(
         portfolio =
             portfolio.toDomain(),
         cardCollection =
-            cardCollection.toDomain(),
+            cardCollection,
         recommendedSpots =
             recommendedSpots.map { spot ->
                 spot.toDomain()
@@ -28,13 +27,6 @@ private fun HomePortfolioDto.toDomain(): HomePortfolio =
         todayProfitRate = todayProfitRate,
         totalProfitRate = totalProfitRate,
         stockCount = stockCount,
-    )
-
-private fun HomeCardCollectionDto.toDomain(): HomeCardCollection =
-    HomeCardCollection(
-        ownedCount = ownedCount,
-        totalCount = totalCount,
-        collectionRate = collectionRate,
     )
 
 private fun HomeRecommendedSpotDto.toDomain(): HomeRecommendedSpot =

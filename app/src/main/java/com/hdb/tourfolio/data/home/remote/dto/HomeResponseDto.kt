@@ -2,7 +2,6 @@ package com.hdb.tourfolio.data.home.remote.dto
 
 data class HomeResponseDto(
     val portfolio: HomePortfolioDto,
-    val cardCollection: HomeCardCollectionDto,
     val recommendedSpots: List<HomeRecommendedSpotDto>,
 )
 
@@ -12,12 +11,6 @@ data class HomePortfolioDto(
     val todayProfitRate: Double,
     val totalProfitRate: Double,
     val stockCount: Int,
-)
-
-data class HomeCardCollectionDto(
-    val ownedCount: Int,
-    val totalCount: Int,
-    val collectionRate: Double,
 )
 
 data class HomeRecommendedSpotDto(

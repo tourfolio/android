@@ -71,7 +71,7 @@ fun HomeCardCollectionCard(
                         R.drawable.img_home_card_collection,
                 ),
             contentDescription =
-                "포토 카드 수집",
+                "관광지 카드 수집",
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -90,7 +90,7 @@ fun HomeCardCollectionCard(
         )
 
         Text(
-            text = "포토 카드 수집",
+            text = "관광지 카드 수집",
             style =
                 LocalAppTypography
                     .current
