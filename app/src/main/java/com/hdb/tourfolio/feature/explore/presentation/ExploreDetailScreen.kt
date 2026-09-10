@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -122,6 +123,12 @@ private fun ExploreDetailContent(
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val websiteUrl = detail.website.trim()
+    val isWebsiteLink =
+        websiteUrl.startsWith("https://", ignoreCase = true) ||
+            websiteUrl.startsWith("http://", ignoreCase = true)
+
     Column(
         modifier =
             modifier
@@ -192,11 +199,17 @@ private fun ExploreDetailContent(
             TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소") {
                 Text(
                     text = detail.website,
+                    modifier =
+                        if (isWebsiteLink) {
+                            Modifier.clickable { uriHandler.openUri(websiteUrl) }
+                        } else {
+                            Modifier
+                        },
                     style =
                         LocalAppTypography.current.bodyLarge.medium.copy(
                             color = Natural60,
                             textDecoration =
-                                if (detail.website.startsWith(prefix = "http")) {
+                                if (isWebsiteLink) {
                                     TextDecoration.Underline
                                 } else {
                                     TextDecoration.None

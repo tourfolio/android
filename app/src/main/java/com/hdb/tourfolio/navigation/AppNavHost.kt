@@ -57,8 +57,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         mutableStateOf(false)
     }
 
+    val exploreIntroFinished =
+        navBackStackEntry?.savedStateHandle
+            ?.getStateFlow(EXPLORE_INTRO_FINISHED_KEY, false)
+            ?.collectAsState()
+            ?.value ?: false
+
     val showBottomBar =
         !hideBottomBar &&
+            (currentRoute != Screen.Explore.route || exploreIntroFinished) &&
             bottomNavItems.any { bottomNavItem ->
                 bottomNavItem.screen.route == currentRoute
             }

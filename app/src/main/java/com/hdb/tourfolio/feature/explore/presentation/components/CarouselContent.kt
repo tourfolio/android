@@ -2,7 +2,6 @@
 
 package com.hdb.tourfolio.feature.explore.presentation.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,11 +28,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
-import com.hdb.tourfolio.domain.common.model.ThemeType
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural90
@@ -46,7 +46,6 @@ fun CarouselContent(
     content: String,
     place: String,
     tags: List<String>,
-    themeType: ThemeType,
     currentIndex: Int,
     totalCount: Int,
     modifier: Modifier = Modifier,
@@ -77,27 +76,11 @@ fun CarouselContent(
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 40.dp),
         ) {
-            Row(
+            Text(
+                text = title,
+                style = LocalAppTypography.current.headlineLarge.bold.copy(color = Natural100),
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = title,
-                    style =
-                        LocalAppTypography.current.headlineLarge.bold.copy(
-                            color = Natural100,
-                        ),
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(end = 16.dp),
-                )
-
-                CarouselThemeMark(
-                    themeType = themeType,
-                )
-            }
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -153,35 +136,6 @@ fun CarouselContent(
 }
 
 @Composable
-private fun CarouselThemeMark(
-    themeType: ThemeType,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier =
-            modifier
-                .size(56.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(Primary),
-        contentAlignment = Alignment.Center,
-    ) {
-        Image(
-            painter = painterResource(id = themeType.toIconRes()),
-            contentDescription = themeType.displayName,
-            modifier = Modifier.size(32.dp),
-        )
-    }
-}
-
-@DrawableRes
-private fun ThemeType.toIconRes(): Int =
-    when (this) {
-        ThemeType.HISTORY -> R.drawable.ic_theme_history
-        ThemeType.NATURE -> R.drawable.ic_theme_nature
-        ThemeType.CULTURE -> R.drawable.ic_theme_culture
-    }
-
-@Composable
 private fun CarouselTag(
     text: String,
     modifier: Modifier = Modifier,
@@ -189,12 +143,13 @@ private fun CarouselTag(
     Box(
         modifier =
             modifier
-                .width(47.dp)
+                .widthIn(min = 47.dp, max = 160.dp)
                 .height(31.dp)
                 .background(
                     color = Primary,
                     shape = RoundedCornerShape(10.dp),
-                ),
+                )
+                .padding(horizontal = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -204,6 +159,7 @@ private fun CarouselTag(
                     color = Natural95,
                 ),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -260,8 +216,7 @@ private fun CarouselContentPreview() {
             title = "경복궁",
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
-            tags = listOf("역사", "궁궐", "공원", "산책"),
-            themeType = ThemeType.HISTORY,
+            tags = listOf("역사", "궁궐", "가족과 함께 산책하기 좋은 관광지", "산책"),
             currentIndex = 0,
             totalCount = 3,
         )

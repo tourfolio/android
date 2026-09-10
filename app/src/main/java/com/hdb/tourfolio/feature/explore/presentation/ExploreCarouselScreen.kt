@@ -201,7 +201,6 @@ private fun ExploreCarouselPage(
             content = item.subTitle,
             place = item.location,
             tags = item.tags,
-            themeType = item.themeType,
             currentIndex = currentIndex,
             totalCount = totalCount,
             modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
