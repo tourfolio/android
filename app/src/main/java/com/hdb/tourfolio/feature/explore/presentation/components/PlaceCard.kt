@@ -39,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.hdb.tourfolio.R
 import coil.compose.AsyncImage
+import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Primary
@@ -272,7 +272,7 @@ fun PlaceCard(
                             .bold
                             .copy(
                                 color =
-                                    Natural100,
+                                Natural100,
                             ),
                     maxLines =
                     1,

@@ -57,9 +57,7 @@ fun SpotImage(
 }
 
 @Composable
-private fun SpotImagePlaceholder(
-    modifier: Modifier = Modifier,
-) {
+private fun SpotImagePlaceholder(modifier: Modifier = Modifier) {
     Box(
         modifier =
             modifier.background(

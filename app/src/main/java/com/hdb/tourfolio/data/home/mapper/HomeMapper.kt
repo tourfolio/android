@@ -13,7 +13,7 @@ fun HomeResponseDto.toDomain(cardCollection: HomeCardCollection): Home =
         portfolio =
             portfolio.toDomain(),
         cardCollection =
-            cardCollection,
+        cardCollection,
         recommendedSpots =
             recommendedSpots.map { spot ->
                 spot.toDomain()

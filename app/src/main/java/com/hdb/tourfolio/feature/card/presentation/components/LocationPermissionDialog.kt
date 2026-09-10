@@ -152,7 +152,7 @@ fun LocationPermissionDialog(
                 "위치 정보가 필요해요",
         notice =
             "※ 해당 위치 정보는 서버에 전송되지 않으며,\n" +
-                    "위치 인증 목적으로만 사용된 후 즉시 폐기됩니다.",
+                "위치 인증 목적으로만 사용된 후 즉시 폐기됩니다.",
         primaryButtonText = "위치 확인하기",
         onPrimaryClick = {
             requestLocationPermission()
@@ -172,7 +172,7 @@ fun LocationPermissionRequiredDialog(onDismissRequest: () -> Unit) {
         iconRes = R.drawable.ic_info,
         title = "위치 권한이 필요해요",
         description =
-                "기기 설정에서 해당 권한 허용을 눌러주세요",
+            "기기 설정에서 해당 권한 허용을 눌러주세요",
         primaryButtonText = "닫기",
         onPrimaryClick = onDismissRequest,
         onDismissRequest = onDismissRequest,
