@@ -126,15 +126,15 @@ fun CardDetailBottomSheet(
                         .padding(
                             horizontal = 22.dp,
                         ),
-                horizontalArrangement = Arrangement.spacedBy(18.dp),
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 CardDetailImage(
                     card = card,
                     onExpandImageClick = onExpandImageClick,
                     modifier =
                         Modifier
-                            .width(188.dp)
-                            .height(276.dp),
+                            .width(168.dp)
+                            .height(246.dp),
                 )
 
                 CardDetailInformation(
@@ -240,7 +240,7 @@ private fun CardDetailImage(
                         .matchParentSize()
                         .background(
                             Color.Black.copy(
-                                alpha = 0.92f,
+                                alpha = 0.85f,
                             ),
                         ),
             )
@@ -265,8 +265,8 @@ private fun CardDetailImage(
                         .align(
                             Alignment.BottomEnd,
                         )
-                        .padding(10.dp)
-                        .size(48.dp)
+                        .padding(8.dp)
+                        .size(42.dp)
                         .background(
                             color = Primary.copy(alpha = 0.8f),
                             shape = RoundedCornerShape(50),
@@ -282,7 +282,7 @@ private fun CardDetailImage(
                             id = R.drawable.ic_expand,
                         ),
                     contentDescription = "카드 이미지 확대",
-                    modifier = Modifier.size(22.dp),
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }

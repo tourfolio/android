@@ -46,7 +46,7 @@ fun TourCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(270.dp)
                 .clip(shape)
                 .clickable {
                     onClick(item.id)
@@ -73,17 +73,6 @@ fun TourCard(
             )
         }
 
-//        if (item.isAcquired && item.acquiredDate != null) {
-//            Text(
-//                text = "획득 ${item.acquiredDate}",
-//                style = LocalAppTypography.current.bodySmall.bold,
-//                color = Color.White,
-//                modifier =
-//                    Modifier.align(Alignment.TopStart)
-//                        .background(Color.Black.copy(alpha = 0.6f))
-//                        .padding(horizontal = 8.dp, vertical = 4.dp),
-//            )
-//        }
         if (!item.isAcquired) {
             Box(
                 modifier =
@@ -91,7 +80,7 @@ fun TourCard(
                         .fillMaxSize()
                         .background(
                             Color.Black.copy(
-                                alpha = 0.92f,
+                                alpha = 0.85f,
                             ),
                         ),
             )
