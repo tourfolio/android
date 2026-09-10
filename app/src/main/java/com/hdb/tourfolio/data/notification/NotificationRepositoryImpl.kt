@@ -2,6 +2,7 @@ package com.hdb.tourfolio.data.notification
 
 import com.hdb.tourfolio.data.notification.mapper.toDomain
 import com.hdb.tourfolio.data.notification.remote.NotificationApiService
+import com.hdb.tourfolio.data.notification.remote.dto.CardAcquiredNotificationRequestDto
 import com.hdb.tourfolio.domain.notification.model.NotificationList
 import com.hdb.tourfolio.domain.notification.repository.NotificationRepository
 import javax.inject.Inject
@@ -17,4 +18,18 @@ class NotificationRepositoryImpl
             notificationApiService
                 .getNotifications()
                 .toDomain()
+
+        override suspend fun createLocationPermissionNotification() {
+            notificationApiService
+                .createLocationPermissionNotification()
+        }
+
+        override suspend fun createCardAcquiredNotification(cardName: String) {
+            notificationApiService.createCardAcquiredNotification(
+                request =
+                    CardAcquiredNotificationRequestDto(
+                        cardName = cardName,
+                    ),
+            )
+        }
     }

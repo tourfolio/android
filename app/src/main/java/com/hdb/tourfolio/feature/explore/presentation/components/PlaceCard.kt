@@ -193,8 +193,7 @@ fun PlaceCard(
              * API thumbnailUrl 이미지
              */
             AsyncImage(
-                model =
-                imageUrl,
+                model = imageUrl,
                 contentDescription =
                 title,
                 modifier =
@@ -216,15 +215,9 @@ fun PlaceCard(
                                 Brush.horizontalGradient(
                                     colors =
                                         listOf(
-                                            Color.Black.copy(
-                                                alpha = 0.56f,
-                                            ),
-                                            Color.Black.copy(
-                                                alpha = 0.28f,
-                                            ),
-                                            Color.Black.copy(
-                                                alpha = 0.06f,
-                                            ),
+                                            Color.Black.copy(alpha = 0.56f),
+                                            Color.Black.copy(alpha = 0.28f),
+                                            Color.Black.copy(alpha = 0.06f),
                                         ),
                                 ),
                         ),
@@ -244,9 +237,7 @@ fun PlaceCard(
                                         listOf(
                                             Color.Transparent,
                                             Color.Transparent,
-                                            Color.Black.copy(
-                                                alpha = 0.45f,
-                                            ),
+                                            Color.Black.copy(alpha = 0.45f),
                                         ),
                                 ),
                         ),

@@ -26,6 +26,7 @@ data class ExploreCollectionSpotUiModel(
     val id: Long,
     val title: String,
     val imageUrl: String,
+    val hasImage: Boolean,
 )
 
 /*
@@ -39,6 +40,7 @@ data class ExploreMainCardUiModel(
     val location: String,
     val address: String,
     val imageUrl: String,
+    val hasImage: Boolean,
     val themeType: ThemeType,
     val tags: List<String>,
 )
@@ -54,6 +56,7 @@ data class ExploreCardUiModel(
     val themeTag: String,
     val tier: Int,
     val imageUrl: String,
+    val hasImage: Boolean,
     val description: String,
     val mapX: String,
     val mapY: String,
@@ -70,6 +73,7 @@ data class ExploreHubTrendingSpotUiModel(
     val location: String,
     val popularityRank: Int,
     val imageUrl: String,
+    val hasImage: Boolean,
     val address: String,
 )
 
@@ -82,6 +86,7 @@ data class ExploreSearchSpotUiModel(
     val location: String,
     val address: String,
     val imageUrl: String,
+    val hasImage: Boolean,
     val tags: List<String>,
 )
 
@@ -92,6 +97,7 @@ data class ExploreSpotDetailUiModel(
     val id: Long,
     val title: String,
     val imageUrl: String,
+    val hasImage: Boolean,
     val address: String,
     val tags: List<String>,
     val description: String,

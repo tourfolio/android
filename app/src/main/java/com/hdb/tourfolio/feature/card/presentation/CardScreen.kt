@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -369,7 +371,7 @@ fun CardScreen(
                 }
 
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(count = 3),
+                    columns = GridCells.Fixed(count = 2),
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -455,6 +457,9 @@ fun CardScreen(
         LocationDialogType.PERMISSION_REQUEST -> {
             LocationPermissionDialog(
                 onDismissRequest = { locationDialogType = null },
+                onLocationPermissionGranted = {
+                    viewModel.processIntent(CardIntent.LocationPermissionGranted)
+                },
                 onPreciseLocationGranted = {
                     locationDialogType = null
                     startLocationVerification()
@@ -526,7 +531,9 @@ private fun CardError(
                         )
                         .padding(horizontal = 28.dp, vertical = 24.dp)
                 } else {
-                    Modifier.padding(horizontal = 28.dp)
+                    Modifier
+                        .offset(y = 40.dp)
+                        .padding(horizontal = 28.dp)
                 },
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -540,9 +547,10 @@ private fun CardError(
             Text(
                 text = message,
                 style = LocalAppTypography.current.bodySmall.medium.copy(color = Natural60),
+                textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             TextButton(onClick = onRetryClick) {
                 Text(

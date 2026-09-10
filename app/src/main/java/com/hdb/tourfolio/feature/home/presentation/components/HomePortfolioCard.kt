@@ -67,7 +67,7 @@ fun HomePortfolioCard(
                     ),
         ) {
             Text(
-                text = "내 포트폴리오",
+                text = "총 자산",
                 style =
                     LocalAppTypography
                         .current

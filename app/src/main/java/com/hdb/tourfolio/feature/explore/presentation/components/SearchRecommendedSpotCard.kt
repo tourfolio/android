@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreHubTrendingSpotUiModel
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural60
@@ -39,7 +39,8 @@ fun SearchRecommendedSpotCard(
                 },
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AsyncImage(
+        SpotImage(
+            hasImage = item.hasImage,
             model = item.imageUrl,
             contentDescription = item.title,
             modifier =

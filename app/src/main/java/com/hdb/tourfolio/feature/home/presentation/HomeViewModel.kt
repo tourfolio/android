@@ -57,12 +57,6 @@ class HomeViewModel
             >(
             HomeState(),
         ) {
-        init {
-            processIntent(
-                HomeIntent.FetchHome,
-            )
-        }
-
         override suspend fun handleIntent(intent: HomeIntent) {
             when (intent) {
                 HomeIntent.FetchHome ->

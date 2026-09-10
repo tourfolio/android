@@ -57,8 +57,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         mutableStateOf(false)
     }
 
+    val exploreIntroFinished =
+        navBackStackEntry?.savedStateHandle
+            ?.getStateFlow(EXPLORE_INTRO_FINISHED_KEY, false)
+            ?.collectAsState()
+            ?.value ?: false
+
     val showBottomBar =
         !hideBottomBar &&
+            (currentRoute != Screen.Explore.route || exploreIntroFinished) &&
             bottomNavItems.any { bottomNavItem ->
                 bottomNavItem.screen.route == currentRoute
             }
@@ -391,11 +398,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
             composable(Screen.Trade.route) {
                 TradeScreen(
-                    onSearchClick = {
-                        // 추후 검색 화면 연결
-                    },
                     onNotificationClick = {
-                        // 추후 알림 화면 연결
+                        navController.navigate(
+                            Screen.Notification.route,
+                        ) {
+                            launchSingleTop = true
+                        }
                     },
                     onProfileClick = {
                         navController.navigate(
@@ -424,6 +432,18 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 route = Screen.Home.route,
             ) {
                 HomeScreen(
+                    onPortfolioClick = {
+                        navController.navigate(Screen.Trade.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onCardCollectionClick = {
+                        navController.navigate(Screen.Card.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
                     onProfileClick = {
                         navController.navigate(
                             Screen.MyPage.route,

@@ -4,6 +4,7 @@ package com.hdb.tourfolio.feature.home.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,11 +29,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.components.TourSpotCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomeCardCollectionCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomePortfolioCard
+import com.hdb.tourfolio.feature.home.presentation.components.PointBalanceCard
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -45,12 +48,19 @@ fun HomeScreen(
     onProfileClick: () -> Unit,
     onNotificationClick: () -> Unit,
     onTourSpotClick: (Long) -> Unit,
+    onPortfolioClick: () -> Unit,
+    onCardCollectionClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by
         viewModel.state
             .collectAsStateWithLifecycle()
+
+    LifecycleResumeEffect(viewModel) {
+        viewModel.processIntent(HomeIntent.FetchHome)
+        onPauseOrDispose {}
+    }
 
     when (
         val homeState =
@@ -90,6 +100,8 @@ fun HomeScreen(
                 onNotificationClick,
                 onTourSpotClick =
                 onTourSpotClick,
+                onPortfolioClick = onPortfolioClick,
+                onCardCollectionClick = onCardCollectionClick,
                 modifier =
                 modifier,
             )
@@ -105,6 +117,8 @@ private fun HomeContent(
     onProfileClick: () -> Unit,
     onNotificationClick: () -> Unit,
     onTourSpotClick: (Long) -> Unit,
+    onPortfolioClick: () -> Unit,
+    onCardCollectionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -241,9 +255,31 @@ private fun HomeContent(
                             )
                             .padding(
                                 horizontal = 22.dp,
-                            ),
+                            )
+                            .clickable(onClick = onPortfolioClick),
                 )
             }
+        }
+
+        /*
+         * 보유 포인트
+         */
+        item {
+            Spacer(
+                modifier =
+                    Modifier.height(
+                        10.dp,
+                    ),
+            )
+
+            PointBalanceCard(
+                pointBalance =
+                    portfolio.pointBalance,
+                modifier =
+                    Modifier.padding(
+                        horizontal = 22.dp,
+                    ),
+            )
         }
 
         /*
@@ -307,7 +343,7 @@ private fun HomeContent(
                     Modifier.padding(
                         horizontal =
                             22.dp,
-                    ),
+                    ).clickable(onClick = onCardCollectionClick),
             )
         }
 
@@ -378,6 +414,7 @@ private fun HomeContent(
                             spot.tags,
                         imageUrl =
                             spot.imageUrl,
+                        hasImage = spot.hasImage,
                         onClick =
                         onTourSpotClick,
                         modifier =

@@ -94,6 +94,7 @@ fun LocationPermissionDialog(
     onDismissRequest: () -> Unit,
     onPreciseLocationGranted: () -> Unit,
     onPreciseLocationDenied: () -> Unit = {},
+    onLocationPermissionGranted: () -> Unit = {},
 ) {
     val context =
         LocalContext.current
@@ -107,6 +108,10 @@ fun LocationPermissionDialog(
                 permissions[
                     Manifest.permission.ACCESS_FINE_LOCATION,
                 ] == true
+
+            if (fineLocationGranted || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                onLocationPermissionGranted()
+            }
 
             if (fineLocationGranted) {
                 onPreciseLocationGranted()
@@ -145,6 +150,9 @@ fun LocationPermissionDialog(
         description =
             "관광지 방문을 인증해 카드를 획득하려면\n" +
                 "위치 정보가 필요해요",
+        notice =
+            "※ 해당 위치 정보는 서버에 전송되지 않으며,\n" +
+                "위치 인증 목적으로만 사용된 후 즉시 폐기됩니다.",
         primaryButtonText = "위치 확인하기",
         onPrimaryClick = {
             requestLocationPermission()
@@ -164,8 +172,7 @@ fun LocationPermissionRequiredDialog(onDismissRequest: () -> Unit) {
         iconRes = R.drawable.ic_info,
         title = "위치 권한이 필요해요",
         description =
-            "관광지 카드를 획득하려면\n" +
-                "위치 권한을 허용해야 해요",
+            "기기 설정에서 해당 권한 허용을 눌러주세요",
         primaryButtonText = "닫기",
         onPrimaryClick = onDismissRequest,
         onDismissRequest = onDismissRequest,
@@ -180,6 +187,7 @@ private fun LocationGuideDialog(
     primaryButtonText: String,
     onPrimaryClick: () -> Unit,
     onDismissRequest: () -> Unit,
+    notice: String? = null,
     secondaryButtonText: String? = null,
     onSecondaryClick: (() -> Unit)? = null,
 ) {
@@ -200,9 +208,9 @@ private fun LocationGuideDialog(
                         shape = RoundedCornerShape(24.dp),
                     )
                     .padding(
-                        start = 28.dp,
+                        start = 26.dp,
                         top = 38.dp,
-                        end = 28.dp,
+                        end = 26.dp,
                         bottom = 30.dp,
                     ),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -256,8 +264,24 @@ private fun LocationGuideDialog(
                 textAlign = TextAlign.Center,
             )
 
+            if (notice != null) {
+                Spacer(
+                    modifier = Modifier.height(12.dp),
+                )
+
+                Text(
+                    text = notice,
+                    modifier = Modifier.fillMaxWidth(),
+                    style =
+                        LocalAppTypography.current.bodySmall.medium.copy(
+                            color = Natural60,
+                        ),
+                    textAlign = TextAlign.Start,
+                )
+            }
+
             Spacer(
-                modifier = Modifier.height(52.dp),
+                modifier = Modifier.height(44.dp),
             )
 
             Box(

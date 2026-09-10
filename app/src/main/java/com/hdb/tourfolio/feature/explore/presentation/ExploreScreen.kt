@@ -210,6 +210,7 @@ fun ExploreScreen(
                             content = item.description,
                             tags = item.tags,
                             imageUrl = item.imageUrl,
+                            hasImage = item.hasImage,
                             onClick = onTourSpotClick,
                             modifier = Modifier.width(360.dp),
                         )
@@ -250,6 +251,7 @@ fun ExploreScreen(
                             title = item.title,
                             regionName = item.areaName,
                             imageUrl = item.imageUrl,
+                            hasImage = item.hasImage,
                             onClick = onTourSpotClick,
                         )
                     }

@@ -23,9 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreSearchSpotUiModel
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -46,7 +46,8 @@ fun SearchResultCard(
         verticalAlignment =
             Alignment.Top,
     ) {
-        AsyncImage(
+        SpotImage(
+            hasImage = item.hasImage,
             model = item.imageUrl,
             contentDescription = item.title,
             modifier =

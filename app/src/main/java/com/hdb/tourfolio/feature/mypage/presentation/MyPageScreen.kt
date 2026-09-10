@@ -313,13 +313,6 @@ fun MyPageScreen(
                                 ),
                                 MyPageMenuItem(
                                     title =
-                                        "라이트 / 다크모드",
-                                    onClick = {
-                                        // 추후 구현
-                                    },
-                                ),
-                                MyPageMenuItem(
-                                    title =
                                         "위치 권한 설정",
                                     onClick = {
                                         // 추후 구현
@@ -345,7 +338,7 @@ fun MyPageScreen(
                         items =
                             listOf(
                                 MyPageMenuItem(
-                                    title = "공지사항",
+                                    title = "위치정보이용",
                                     onClick = {
                                         // 추후 구현
                                     },
