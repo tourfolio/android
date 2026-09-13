@@ -7,6 +7,8 @@ data class Portfolio(
     val totalStockValue: Long,
     val totalAssetValue: Long,
     val totalProfitLossRate: Double,
+    val monthlyProfit: Long,
+    val monthlyProfitRate: Double,
     val items: List<PortfolioItem>,
 )
 
@@ -14,7 +16,7 @@ data class PortfolioItem(
     val spotId: Long,
     val spotName: String,
     val quantity: Int,
-    val averagePurchasePrice: Long,
+    val averagePurchasePrice: Double,
     val currentPrice: Long,
     val evaluationAmount: Long,
     val profitLossRate: Double,

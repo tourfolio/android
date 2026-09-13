@@ -32,7 +32,7 @@ class AuthInterceptor
                 return chain.proceed(request)
             }
 
-            val headerValue = "TOKEN_$token"
+            val headerValue = token
             Log.d(TAG, "${request.url} -> Authorization: $headerValue")
 
             val authorizedRequest =

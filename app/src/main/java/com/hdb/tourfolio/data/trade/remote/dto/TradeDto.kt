@@ -9,7 +9,6 @@ data class TradeRequestDto(
 
 data class TradeResponseDto(
     val id: Long,
-    val memberId: Int,
     val spotId: Long,
     val type: String,
     val quantity: Int,

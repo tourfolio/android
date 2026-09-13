@@ -63,7 +63,7 @@ import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary95
 import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @Composable
 fun StockDetailScreen(
@@ -156,9 +156,9 @@ private fun StockDetailContent(
             }
         }
     val todayVolume = stock?.todayTradeVolume?.toInt() ?: 0
-    val demandIntensity = remember(stock?.demandIntensity) { (stock?.demandIntensity ?: 0.0).toFilledCount() }
-    val visitorForecast = remember(stock?.visitorForecast) { (stock?.visitorForecast ?: 0.0).toFilledCount() }
-    val resourceDemand = remember(stock?.resourceDemand) { (stock?.resourceDemand ?: 0.0).toFilledCount() }
+    val demandIntensity = PLACEHOLDER_DEMAND_INTENSITY
+    val visitorForecast = PLACEHOLDER_VISITOR_FORECAST
+    val resourceDemand = PLACEHOLDER_RESOURCE_DEMAND
 
     Column(
         modifier =
@@ -252,7 +252,7 @@ private fun StockDetailContent(
             buttonLabel = "판매하기",
             buttonColor = Natural20,
             currentPrice = currentPrice,
-            avgPrice = holding?.averagePurchasePrice ?: 0L,
+            avgPrice = holding?.averagePurchasePrice?.roundToLong() ?: 0L,
             maxQuantity = holding?.quantity ?: 0,
             tradeUiState = tradeUiState,
             onDismiss = {
@@ -274,7 +274,7 @@ private fun StockDetailContent(
             buttonLabel = "구매하기",
             buttonColor = Primary,
             currentPrice = currentPrice,
-            avgPrice = holding?.averagePurchasePrice ?: 0L,
+            avgPrice = holding?.averagePurchasePrice?.roundToLong() ?: 0L,
             maxQuantity = if (currentPrice > 0) (cashBalance / currentPrice).toInt() else 0,
             tradeUiState = tradeUiState,
             onDismiss = {
@@ -293,6 +293,9 @@ private fun StockDetailContent(
  * 실제 공모가가 연동되면 이 값만 교체하면 대비(%)는 그대로 계산된다.
  */
 private const val PLACEHOLDER_OFFERING_PRICE = 1_234L
+private const val PLACEHOLDER_DEMAND_INTENSITY = 2
+private const val PLACEHOLDER_VISITOR_FORECAST = 4
+private const val PLACEHOLDER_RESOURCE_DEMAND = 1
 
 @Composable
 private fun DetailInfoGrid(
@@ -406,7 +409,7 @@ private fun MyHoldingSummary(
     holding: PortfolioItem,
     modifier: Modifier = Modifier,
 ) {
-    val profitAmount = holding.evaluationAmount - holding.averagePurchasePrice * holding.quantity
+    val profitAmount = (holding.evaluationAmount - holding.averagePurchasePrice * holding.quantity).roundToLong()
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -414,7 +417,7 @@ private fun MyHoldingSummary(
     ) {
         DetailInfoTile(
             label = "1주 평균",
-            value = "%,dP".format(holding.averagePurchasePrice),
+            value = "%,dP".format(holding.averagePurchasePrice.roundToLong()),
         )
 
         DetailInfoTile(
@@ -507,11 +510,6 @@ private fun TourDataSection(
         )
     }
 }
-
-/*
- * 0.0~1.0 사이의 지표 값을 5칸짜리 도트미터의 채워진 칸 수로 환산한다.
- */
-private fun Double.toFilledCount(totalCount: Int = 5): Int = (this * totalCount).roundToInt().coerceIn(0, totalCount)
 
 @Composable
 private fun TourDataCard(

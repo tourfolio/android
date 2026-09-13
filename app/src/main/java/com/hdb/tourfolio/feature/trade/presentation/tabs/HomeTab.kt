@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hdb.tourfolio.core.compose.RefreshOnResume
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioAssetHistoryPoint
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioSummary
 import com.hdb.tourfolio.domain.stock.model.RegionalIndex
@@ -59,6 +60,8 @@ fun HomeTab(
     viewModel: TradeHomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    RefreshOnResume { viewModel.processIntent(TradeHomeIntent.Refresh) }
 
     HomeTabContent(
         modifier = modifier,
@@ -142,7 +145,7 @@ private fun HomeTabContent(
 
                     AssetChartCard(
                         label = "총 평가금액",
-                        totalAmount = summary.totalAsset,
+                        totalAmount = summary.totalEvaluation,
                         changeAmount = summary.totalProfitLoss,
                         changeRate = summary.profitRate,
                         assetHistory = assetHistory,

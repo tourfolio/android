@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hdb.tourfolio.core.compose.RefreshOnResume
 import com.hdb.tourfolio.domain.portfolio.model.Portfolio
 import com.hdb.tourfolio.domain.portfolio.model.PortfolioItem
 import com.hdb.tourfolio.feature.point.presentation.PointHistoryBottomSheet
@@ -47,6 +48,7 @@ import com.hdb.tourfolio.ui.theme.Red
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import java.text.NumberFormat
 import java.util.Locale
+import kotlin.math.roundToLong
 
 private data class HoldingStockItem(
     val id: Long,
@@ -65,6 +67,8 @@ fun HoldingsTab(
     viewModel: TradeHoldingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    RefreshOnResume { viewModel.processIntent(TradeHoldingsIntent.RefreshPortfolio) }
 
     HoldingsTabContent(
         modifier = modifier,
@@ -186,11 +190,8 @@ private fun HoldingsList(
             0.0
         }
 
-    /*
-     * TODO(backend): 월간 수익 API 연동 전까지 쓰는 placeholder. 다른 값과 구분하기 쉽도록 1234로 고정해둔다.
-     */
-    val monthlyProfit = 1_234L
-    val monthlyProfitRate = 1_234.0
+    val monthlyProfit = portfolio.monthlyProfit
+    val monthlyProfitRate = portfolio.monthlyProfitRate
 
     val holdingPoint = portfolio.cashBalance
 
@@ -340,7 +341,7 @@ private fun EmptyHoldings(modifier: Modifier = Modifier) {
 }
 
 private fun PortfolioItem.toHoldingStockItem(): HoldingStockItem {
-    val profitAmount = (currentPrice - averagePurchasePrice) * quantity
+    val profitAmount = ((currentPrice - averagePurchasePrice) * quantity).roundToLong()
 
     return HoldingStockItem(
         id = spotId,
@@ -558,13 +559,15 @@ private fun mockPortfolio(): Portfolio =
         totalStockValue = 12_560_000L,
         totalAssetValue = 12_580_000L,
         totalProfitLossRate = 8.72,
+        monthlyProfit = 1_234L,
+        monthlyProfitRate = 5.5,
         items =
             listOf(
                 PortfolioItem(
                     spotId = 1L,
                     spotName = "안압지",
                     quantity = 42,
-                    averagePurchasePrice = 8_000L,
+                    averagePurchasePrice = 8_000.0,
                     currentPrice = 9_200L,
                     evaluationAmount = 4_560_000L,
                     profitLossRate = 14.00,
@@ -573,7 +576,7 @@ private fun mockPortfolio(): Portfolio =
                     spotId = 2L,
                     spotName = "광안리",
                     quantity = 35,
-                    averagePurchasePrice = 10_240L,
+                    averagePurchasePrice = 10_240.0,
                     currentPrice = 11_280L,
                     evaluationAmount = 3_800_000L,
                     profitLossRate = 9.20,
@@ -582,7 +585,7 @@ private fun mockPortfolio(): Portfolio =
                     spotId = 3L,
                     spotName = "첨성대",
                     quantity = 28,
-                    averagePurchasePrice = 15_430L,
+                    averagePurchasePrice = 15_430.0,
                     currentPrice = 15_000L,
                     evaluationAmount = 4_200_000L,
                     profitLossRate = -2.78,

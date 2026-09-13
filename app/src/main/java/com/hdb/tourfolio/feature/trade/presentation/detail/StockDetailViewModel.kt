@@ -194,7 +194,7 @@ class StockDetailViewModel
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
-                    TradeUiState.Error(e.message ?: "거래에 실패했습니다.")
+                    TradeUiState.Error("주식 구매, 판매에 실패했습니다.")
                 }
             setState { copy(tradeState = result) }
 

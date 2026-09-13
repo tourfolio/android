@@ -17,6 +17,8 @@ fun PortfolioDto.toDomain(): Portfolio =
         totalStockValue = totalStockValue,
         totalAssetValue = totalAssetValue,
         totalProfitLossRate = totalProfitLossRate,
+        monthlyProfit = monthlyProfit,
+        monthlyProfitRate = monthlyProfitRate,
         items = items.map { it.toDomain() },
     )
 

@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Gson은 리플렉션으로 필드명과 JSON 키를 매칭한다. 필드명이 난독화되면
+# @SerializedName이 없는 필드는 매칭에 실패해 값이 비게 되므로,
+# Retrofit 응답/요청에 쓰이는 DTO는 필드명을 그대로 유지한다.
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.hdb.tourfolio.data.**.remote.dto.** { *; }
+
+-keep class * extends com.google.gson.TypeAdapter
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
