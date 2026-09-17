@@ -46,7 +46,7 @@ fun TourCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(270.dp)
+                .height(230.dp)
                 .clip(shape)
                 .clickable {
                     onClick(item.id)
