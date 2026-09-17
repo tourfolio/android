@@ -1,6 +1,7 @@
 package com.hdb.tourfolio.data.explore.remote
 
 import com.hdb.tourfolio.data.common.network.Authenticated
+import com.hdb.tourfolio.data.common.network.ReadTimeout
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreCardDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDetailDto
 import com.hdb.tourfolio.data.explore.remote.dto.ExploreCollectionDto
@@ -44,6 +45,7 @@ interface ExploreApiService {
 
     @Authenticated
     @GET("api/v1/explore/spots/{spotId}")
+    @ReadTimeout(seconds = 30)
     suspend fun getSpotDetail(
         @Path("spotId") spotId: Long,
     ): ExploreSpotDetailDto
