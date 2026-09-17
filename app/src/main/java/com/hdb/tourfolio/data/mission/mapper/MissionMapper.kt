@@ -2,15 +2,20 @@ package com.hdb.tourfolio.data.mission.mapper
 
 import com.hdb.tourfolio.data.mission.remote.dto.AttendanceCalendarResponseDto
 import com.hdb.tourfolio.data.mission.remote.dto.AttendanceCheckResponseDto
+import com.hdb.tourfolio.data.mission.remote.dto.MissionClaimResponseDto
 import com.hdb.tourfolio.data.mission.remote.dto.MissionItemDto
 import com.hdb.tourfolio.data.mission.remote.dto.MissionResponseDto
 import com.hdb.tourfolio.domain.mission.model.AttendanceCalendar
 import com.hdb.tourfolio.domain.mission.model.AttendanceCheckResult
 import com.hdb.tourfolio.domain.mission.model.Mission
 import com.hdb.tourfolio.domain.mission.model.MissionCategory
+import com.hdb.tourfolio.domain.mission.model.MissionClaimResult
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
 import com.hdb.tourfolio.domain.mission.model.WeeklyAttendanceStatus
 import java.time.LocalDate
+
+fun MissionClaimResponseDto.toDomain(): MissionClaimResult =
+    MissionClaimResult(missionId, isCompleted, alreadyRewarded, pointsAwarded, balance)
 
 fun MissionResponseDto.toDomain(): MissionOverview =
     MissionOverview(

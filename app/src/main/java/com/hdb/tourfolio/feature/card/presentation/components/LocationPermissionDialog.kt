@@ -352,7 +352,7 @@ private fun hasRequestedLocationPermission(context: Context): Boolean =
             false,
         )
 
-private fun markLocationPermissionRequested(context: Context) {
+fun markLocationPermissionRequested(context: Context) {
     context
         .getSharedPreferences(
             LOCATION_PERMISSION_PREFS,

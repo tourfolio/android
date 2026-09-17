@@ -9,6 +9,7 @@ import com.hdb.tourfolio.feature.explore.presentation.model.ExploreSpotDetailUiM
 import com.hdb.tourfolio.feature.explore.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import java.io.IOException
 import javax.inject.Inject
 
 sealed interface ExploreSpotDetailUiState {
@@ -60,6 +61,8 @@ class ExploreDetailViewModel
                     ExploreSpotDetailUiState.Success(detail = getSpotDetailUseCase(spotId).toUiModel())
                 } catch (e: CancellationException) {
                     throw e
+                } catch (e: IOException) {
+                    ExploreSpotDetailUiState.Error(message = "연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.")
                 } catch (e: Exception) {
                     ExploreSpotDetailUiState.Error(message = e.message ?: "관광지 정보를 불러오지 못했습니다.")
                 }

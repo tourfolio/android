@@ -11,6 +11,9 @@ import com.hdb.tourfolio.domain.explore.model.ExploreMainCard
 import com.hdb.tourfolio.domain.explore.model.ExploreSearchResult
 import com.hdb.tourfolio.domain.explore.model.ExploreSpotDetail
 import com.hdb.tourfolio.domain.explore.repository.ExploreRepository
+import kotlinx.coroutines.delay
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +44,21 @@ class ExploreRepositoryImpl
                 .searchSpots(keyword = keyword, regions = regions, themes = themes, tags = tags)
                 .toDomain()
 
-        override suspend fun getSpotDetail(spotId: Long): ExploreSpotDetail = exploreApiService.getSpotDetail(spotId).toDomain()
+        override suspend fun getSpotDetail(spotId: Long): ExploreSpotDetail {
+            // Retry only this read-only request, including timeouts while reading the response body.
+            val response =
+                try {
+                    exploreApiService.getSpotDetail(spotId)
+                } catch (e: SocketTimeoutException) {
+                    delay(500)
+                    exploreApiService.getSpotDetail(spotId)
+                } catch (e: HttpException) {
+                    if (e.code() !in setOf(502, 503, 504)) throw e
+                    delay(500)
+                    exploreApiService.getSpotDetail(spotId)
+                }
+            return response.toDomain()
+        }
 
         override suspend fun getCollections(): List<ExploreCollection> =
             exploreApiService

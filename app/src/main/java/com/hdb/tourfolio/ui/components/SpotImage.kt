@@ -33,7 +33,7 @@ fun SpotImage(
     }
 
     SubcomposeAsyncImage(
-        model = model,
+        model = secureSpotImageUrl(model),
         contentDescription = contentDescription,
         modifier = modifier,
         contentScale = contentScale,
@@ -54,6 +54,16 @@ fun SpotImage(
             SubcomposeAsyncImageContent()
         },
     )
+}
+
+private fun secureSpotImageUrl(url: String): String {
+    // 한국관광공사 이미지의 기존 HTTP 주소는 HTTPS에서도 동일한 파일을 제공한다.
+    val legacyPrefix = "http://tong.visitkorea.or.kr/"
+    return if (url.startsWith(legacyPrefix, ignoreCase = true)) {
+        "https://tong.visitkorea.or.kr/" + url.substring(legacyPrefix.length)
+    } else {
+        url
+    }
 }
 
 @Composable

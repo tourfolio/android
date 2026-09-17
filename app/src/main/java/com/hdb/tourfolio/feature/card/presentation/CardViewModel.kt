@@ -16,6 +16,7 @@ import com.hdb.tourfolio.domain.card.usecase.GetCardDetailUseCase
 import com.hdb.tourfolio.domain.card.usecase.VerifyLocationAndAcquireCardUseCase
 import com.hdb.tourfolio.domain.common.model.RegionType
 import com.hdb.tourfolio.domain.common.model.ThemeType
+import com.hdb.tourfolio.domain.mission.usecase.GetMissionsUseCase
 import com.hdb.tourfolio.domain.notification.usecase.CreateCardAcquiredNotificationUseCase
 import com.hdb.tourfolio.domain.notification.usecase.CreateLocationPermissionNotificationUseCase
 import com.hdb.tourfolio.feature.card.presentation.model.CardDetailUiModel
@@ -126,6 +127,7 @@ class CardViewModel
         private val verifyLocationAndAcquireCardUseCase: VerifyLocationAndAcquireCardUseCase,
         private val createCardAcquiredNotificationUseCase: CreateCardAcquiredNotificationUseCase,
         private val createLocationPermissionNotificationUseCase: CreateLocationPermissionNotificationUseCase,
+        private val getMissionsUseCase: GetMissionsUseCase,
     ) : MviViewModel<CardIntent, CardState, CardEffect>(CardState()) {
         /*
          * 재시도하거나 취소할 때 이전 요청의 결과가 뒤늦게 들어오는 것을 방지
@@ -235,6 +237,7 @@ class CardViewModel
                                     )
 
                                 is CardAcquireResult.Acquired -> {
+                                    syncCollectionMissions()
                                     createCardAcquiredNotification(acquireResult.acquisition.cardName)
                                     CardAcquireUiState.Success(
                                         cardId = acquireResult.acquisition.cardId,
@@ -270,6 +273,19 @@ class CardViewModel
                 throw e
             } catch (e: Exception) {
                 Log.w("CardViewModel", "카드 획득 알림을 생성하지 못했습니다.", e)
+            }
+        }
+
+        private fun syncCollectionMissions() {
+            viewModelScope.launch {
+                try {
+                    getMissionsUseCase()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // Card ownership is already saved; retry when the mission screen is opened.
+                    Log.w("CardViewModel", "수집 업적을 동기화하지 못했습니다.", e)
+                }
             }
         }
     }

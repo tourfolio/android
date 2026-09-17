@@ -4,6 +4,7 @@ import com.hdb.tourfolio.data.auth.local.SessionLocalDataSource
 import com.hdb.tourfolio.data.mypage.mapper.toDomain
 import com.hdb.tourfolio.data.mypage.remote.MyPageApiService
 import com.hdb.tourfolio.data.mypage.remote.dto.UpdateNicknameRequestDto
+import com.hdb.tourfolio.domain.card.repository.CardRepository
 import com.hdb.tourfolio.domain.mypage.model.MyPage
 import com.hdb.tourfolio.domain.mypage.model.MyPageException
 import com.hdb.tourfolio.domain.mypage.repository.MyPageRepository
@@ -17,11 +18,13 @@ class MyPageRepositoryImpl
     constructor(
         private val myPageApiService: MyPageApiService,
         private val sessionLocalDataSource: SessionLocalDataSource,
+        private val cardRepository: CardRepository,
     ) : MyPageRepository {
         override suspend fun getMyPage(): MyPage =
             myPageApiService
                 .getMyPage()
                 .toDomain()
+                .copy(cardCount = cardRepository.getCollection().ownedCount)
 
         override suspend fun updateNickname(nickname: String): String {
             try {

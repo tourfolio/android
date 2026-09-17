@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.card.presentation.components
 
+import android.R.attr.bottom
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,7 +45,7 @@ import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural90
-import com.hdb.tourfolio.ui.theme.Natural99
+import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary99
 
@@ -133,8 +134,8 @@ fun CardDetailBottomSheet(
                     onExpandImageClick = onExpandImageClick,
                     modifier =
                         Modifier
-                            .width(168.dp)
-                            .height(246.dp),
+                            .width(125.dp)
+                            .height(190.dp),
                 )
 
                 CardDetailInformation(
@@ -265,8 +266,8 @@ private fun CardDetailImage(
                         .align(
                             Alignment.BottomEnd,
                         )
-                        .padding(8.dp)
-                        .size(42.dp)
+                        .padding(6.dp)
+                        .size(36.dp)
                         .background(
                             color = Primary.copy(alpha = 0.8f),
                             shape = RoundedCornerShape(50),
@@ -282,7 +283,7 @@ private fun CardDetailImage(
                             id = R.drawable.ic_expand,
                         ),
                     contentDescription = "카드 이미지 확대",
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(16.dp),
                 )
             }
         }
@@ -295,7 +296,9 @@ private fun CardDetailInformation(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier =
+            modifier
+                .padding(top = 8.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -306,24 +309,24 @@ private fun CardDetailInformation(
                         id = R.drawable.ic_location,
                     ),
                 contentDescription = null,
-                modifier = Modifier.size(26.dp),
+                modifier = Modifier.size(22.dp),
             )
 
             Spacer(
-                modifier = Modifier.width(10.dp),
+                modifier = Modifier.width(8.dp),
             )
 
             Text(
                 text = card.title,
                 style =
-                    LocalAppTypography.current.titleSmall.bold.copy(
+                    LocalAppTypography.current.bodyLarge.bold.copy(
                         color = Natural10,
                     ),
             )
         }
 
         Spacer(
-            modifier = Modifier.height(22.dp),
+            modifier = Modifier.height(18.dp),
         )
 
         CardInformationRow(
@@ -362,13 +365,13 @@ private fun CardInformationRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(40.dp)
                 .background(
-                    color = Natural99,
+                    color = Natural95,
                     shape = RoundedCornerShape(10.dp),
                 )
                 .padding(
-                    horizontal = 18.dp,
+                    horizontal = 14.dp,
                 ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -376,7 +379,7 @@ private fun CardInformationRow(
         Text(
             text = label,
             style =
-                LocalAppTypography.current.bodySmall.medium.copy(
+                LocalAppTypography.current.labelLarge.medium.copy(
                     color = Natural60,
                 ),
         )
@@ -384,7 +387,7 @@ private fun CardInformationRow(
         Text(
             text = value,
             style =
-                LocalAppTypography.current.bodyLarge.bold.copy(
+                LocalAppTypography.current.labelLarge.bold.copy(
                     color = Natural10,
                 ),
         )
@@ -412,13 +415,13 @@ private fun CardThemeInformationRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(40.dp)
                 .background(
-                    color = Natural99,
+                    color = Natural95,
                     shape = RoundedCornerShape(10.dp),
                 )
                 .padding(
-                    horizontal = 18.dp,
+                    horizontal = 14.dp,
                 ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -426,7 +429,7 @@ private fun CardThemeInformationRow(
         Text(
             text = "테마",
             style =
-                LocalAppTypography.current.bodySmall.medium.copy(
+                LocalAppTypography.current.labelLarge.medium.copy(
                     color = Natural60,
                 ),
         )
@@ -437,7 +440,7 @@ private fun CardThemeInformationRow(
                     id = themeIconRes,
                 ),
             contentDescription = themeType.displayName,
-            modifier = Modifier.size(26.dp),
+            modifier = Modifier.size(18.dp),
         )
     }
 }
