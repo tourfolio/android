@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hdb.tourfolio.core.compose.RefreshOnResume
 import com.hdb.tourfolio.domain.mission.model.Mission
 import com.hdb.tourfolio.domain.mission.model.MissionCategory
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
@@ -63,6 +64,12 @@ fun MissionScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    RefreshOnResume { viewModel.processIntent(MissionIntent.FetchMissions) }
+
+    LaunchedEffect(viewModel) {
+        viewModel.processIntent(MissionIntent.FetchMissions)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -110,6 +117,7 @@ fun MissionScreen(
                 onAttendanceHistoryClick = onAttendanceHistoryClick,
                 onProfileClick = onProfileClick,
                 onNotificationClick = onNotificationClick,
+                onRetryCollectionClaims = { viewModel.processIntent(MissionIntent.FetchMissions) },
             )
         }
     }
@@ -124,6 +132,7 @@ private fun MissionScreenContent(
     onProfileClick: () -> Unit,
     onNotificationClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onRetryCollectionClaims: () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable {
         mutableStateOf(MissionTab.IN_PROGRESS)
@@ -177,6 +186,13 @@ private fun MissionScreenContent(
             contentPadding = PaddingValues(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
+            if (overview.hasPendingCollectionClaims) {
+                item {
+                    TextButton(onClick = onRetryCollectionClaims) {
+                        Text("수집 업적 보상을 받지 못했습니다. 다시 시도")
+                    }
+                }
+            }
             item {
                 HoldingPointCard(
                     point = overview.balance,

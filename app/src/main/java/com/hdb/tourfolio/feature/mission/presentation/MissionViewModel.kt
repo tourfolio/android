@@ -69,12 +69,6 @@ class MissionViewModel
     ) : MviViewModel<MissionIntent, MissionState, MissionEffect>(
             MissionState(),
         ) {
-        init {
-            processIntent(
-                MissionIntent.FetchMissions,
-            )
-        }
-
         override suspend fun handleIntent(intent: MissionIntent) {
             when (intent) {
                 MissionIntent.FetchMissions ->

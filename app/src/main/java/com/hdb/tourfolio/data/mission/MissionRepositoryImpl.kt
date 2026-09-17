@@ -4,6 +4,7 @@ import com.hdb.tourfolio.data.mission.mapper.toDomain
 import com.hdb.tourfolio.data.mission.remote.MissionApiService
 import com.hdb.tourfolio.domain.mission.model.AttendanceCalendar
 import com.hdb.tourfolio.domain.mission.model.AttendanceCheckResult
+import com.hdb.tourfolio.domain.mission.model.MissionClaimResult
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
 import com.hdb.tourfolio.domain.mission.repository.MissionRepository
 import javax.inject.Inject
@@ -15,6 +16,9 @@ class MissionRepositoryImpl
     constructor(
         private val missionApiService: MissionApiService,
     ) : MissionRepository {
+        override suspend fun claimCollectionMission(missionId: Long): MissionClaimResult =
+            missionApiService.claimCollectionMission(missionId).toDomain()
+
         override suspend fun getMissions(): MissionOverview =
             missionApiService
                 .getMissions()
