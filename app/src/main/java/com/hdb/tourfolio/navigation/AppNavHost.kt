@@ -38,6 +38,8 @@ import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
 import com.hdb.tourfolio.feature.home.presentation.HomeScreen
 import com.hdb.tourfolio.feature.mission.presentation.MissionScreen
+import com.hdb.tourfolio.feature.mypage.presentation.AppInfoDocument
+import com.hdb.tourfolio.feature.mypage.presentation.AppInfoScreen
 import com.hdb.tourfolio.feature.mypage.presentation.MyPageScreen
 import com.hdb.tourfolio.feature.notification.presentation.NotificationScreen
 import com.hdb.tourfolio.feature.splash.presentation.SplashScreen
@@ -574,9 +576,17 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             composable(
+                route = "app_info/{document}",
+                arguments = listOf(navArgument("document") { type = NavType.StringType }),
+            ) { entry ->
+                val document = AppInfoDocument.valueOf(requireNotNull(entry.arguments?.getString("document")))
+                AppInfoScreen(document = document, onBackClick = { navController.popBackStack() })
+            }
+            composable(
                 route = Screen.MyPage.route,
             ) {
                 MyPageScreen(
+                    onDocumentClick = { document -> navController.navigate("app_info/${document.name}") },
                     onBackClick = {
                         navController.popBackStack()
                     },

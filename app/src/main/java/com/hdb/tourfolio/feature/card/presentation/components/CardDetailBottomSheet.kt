@@ -46,7 +46,6 @@ import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Natural95
-import com.hdb.tourfolio.ui.theme.Natural99
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary99
 

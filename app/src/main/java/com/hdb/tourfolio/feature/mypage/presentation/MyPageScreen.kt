@@ -29,7 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.hdb.tourfolio.BuildConfig
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.mypage.presentation.components.MyPageMenuCard
 import com.hdb.tourfolio.feature.mypage.presentation.components.MyPageMenuItem
@@ -50,6 +50,7 @@ private enum class AccountDialogType {
 @Composable
 fun MyPageScreen(
     onBackClick: () -> Unit,
+    onDocumentClick: (AppInfoDocument) -> Unit = {},
     onLogoutSuccess: () -> Unit = {},
     onDeleteAccountSuccess: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -61,6 +62,8 @@ fun MyPageScreen(
 
     val context =
         LocalContext.current
+
+    val requestPermission = rememberMyPagePermissionRequest()
 
     val isNicknameUpdating =
         state.nicknameUpdateState is
@@ -308,14 +311,14 @@ fun MyPageScreen(
                                     title =
                                         "알림 설정",
                                     onClick = {
-                                        // 추후 구현
+                                        requestPermission(MyPagePermission.NOTIFICATION)
                                     },
                                 ),
                                 MyPageMenuItem(
                                     title =
                                         "위치 권한 설정",
                                     onClick = {
-                                        // 추후 구현
+                                        requestPermission(MyPagePermission.LOCATION)
                                     },
                                 ),
                             ),
@@ -338,28 +341,26 @@ fun MyPageScreen(
                         items =
                             listOf(
                                 MyPageMenuItem(
-                                    title = "위치정보이용",
+                                    title = "위치정보이용 안내",
                                     onClick = {
-                                        // 추후 구현
+                                        onDocumentClick(AppInfoDocument.LOCATION)
                                     },
                                 ),
                                 MyPageMenuItem(
                                     title = "이용약관",
                                     onClick = {
-                                        // 추후 구현
+                                        onDocumentClick(AppInfoDocument.TERMS)
                                     },
                                 ),
                                 MyPageMenuItem(
                                     title = "개인정보처리방침",
                                     onClick = {
-                                        // 추후 구현
+                                        onDocumentClick(AppInfoDocument.PRIVACY)
                                     },
                                 ),
                                 MyPageMenuItem(
                                     title = "앱버전",
-                                    onClick = {
-                                        // 추후 구현
-                                    },
+                                    value = BuildConfig.VERSION_NAME,
                                 ),
                             ),
                     )

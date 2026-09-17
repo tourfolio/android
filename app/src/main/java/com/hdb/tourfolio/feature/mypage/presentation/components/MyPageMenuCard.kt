@@ -30,7 +30,8 @@ import com.hdb.tourfolio.ui.theme.Natural90
 
 data class MyPageMenuItem(
     val title: String,
-    val onClick: () -> Unit,
+    val onClick: (() -> Unit)? = null,
+    val value: String? = null,
 )
 
 @Composable
@@ -97,26 +98,33 @@ fun MyPageMenuCard(
         )
 
         items.forEach { item ->
-            Text(
-                text = item.title,
-                style =
-                    LocalAppTypography
-                        .current
-                        .bodyLarge
-                        .medium
-                        .copy(
-                            color = Natural60,
-                        ),
+            Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            onClick = item.onClick,
-                        )
-                        .padding(
-                            vertical = 16.dp,
-                        ),
-            )
+                        .then(item.onClick?.let { Modifier.clickable(onClick = it) } ?: Modifier)
+                        .padding(vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    text = item.title,
+                    style =
+                        LocalAppTypography
+                            .current
+                            .bodyLarge
+                            .medium
+                            .copy(
+                                color = Natural60,
+                            ),
+                    modifier =
+                        Modifier
+                            .weight(1f),
+                )
+                item.value?.let { value ->
+                    Text(text = value, style = LocalAppTypography.current.bodyLarge.medium, color = Natural60)
+                }
+            }
         }
     }
 }
