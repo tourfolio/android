@@ -55,14 +55,14 @@ import com.hdb.tourfolio.ui.theme.TourfolioTheme
 
 private val RECOMMENDED_SEARCH_TAGS =
     listOf(
-        TagType.HISTORY,
+        TagType.TRADITIONAL_MARKET,
         TagType.PALACE,
-        TagType.NATURE,
-        TagType.SEA,
+        TagType.WALKING_TRAIL,
+        TagType.BEACH,
         TagType.NIGHT_VIEW,
         TagType.MOUNTAIN,
-        TagType.HEALING,
-        TagType.HANOK,
+        TagType.SCENIC_VIEW,
+        TagType.TEMPLE,
     )
 
 private val POPULAR_SEARCH_KEYWORDS =

@@ -35,9 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -285,21 +283,8 @@ private fun TourSpotHero(
             hasImage = hasImage,
             model = imageUrl,
             contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Black.copy(alpha = if (hasImage) 0.28f else 0f), Color.Transparent),
-                            ),
-                    ),
+            modifier = Modifier.fillMaxSize().padding(bottom = 28.dp),
+            matchImageAspectRatio = false,
         )
 
         Row(
@@ -313,11 +298,9 @@ private fun TourSpotHero(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DetailHeaderButton(
-                iconRes = R.drawable.ic_chevron_right_white,
+                iconRes = R.drawable.ic_arrow_left_black,
                 contentDescription = "뒤로 가기",
                 onClick = onBackClick,
-                rotationDegrees = 180f,
-                tint = if (hasImage) Color.White else Color.Gray,
             )
         }
     }
@@ -330,7 +313,6 @@ private fun DetailHeaderButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     rotationDegrees: Float = 0f,
-    tint: Color = Color.White,
 ) {
     Box(
         modifier = modifier.size(44.dp).clickable(onClick = onClick),
@@ -340,7 +322,6 @@ private fun DetailHeaderButton(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
             modifier = Modifier.size(26.dp).rotate(rotationDegrees),
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(tint),
         )
     }
 }

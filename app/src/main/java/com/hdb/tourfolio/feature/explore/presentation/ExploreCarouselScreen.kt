@@ -4,15 +4,20 @@ package com.hdb.tourfolio.feature.explore.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,8 +27,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,7 +34,7 @@ import com.hdb.tourfolio.feature.explore.presentation.components.CarouselContent
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreMainCardUiModel
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.components.CommonHeaderType
-import com.hdb.tourfolio.ui.components.SpotImage
+import com.hdb.tourfolio.ui.components.SpotImageOverlay
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -40,7 +43,6 @@ import com.hdb.tourfolio.ui.theme.Primary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlin.math.absoluteValue
 
 private const val SLIDE_DURATION_MS = 3000L
 
@@ -138,39 +140,27 @@ private fun ExploreCarouselContent(
         modifier = modifier.fillMaxSize(),
         beyondViewportPageCount = 1,
     ) { page ->
-        val pageOffset =
-            ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-
-        val pageAlpha = 1f - pageOffset.coerceIn(minimumValue = 0f, maximumValue = 1f).times(0.55f)
-
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { alpha = pageAlpha },
+                    .fillMaxSize(),
         ) {
             if (page < carouselItems.size) {
                 val item = carouselItems[page]
 
-                ExploreCarouselPage(
-                    item = item,
-                    currentIndex = page,
-                    totalCount = carouselItems.size,
-                    onClick = { onTourSpotClick(item.id) },
-                )
-
-                CommonHeader(
-                    type = CommonHeaderType.SEARCH,
-                    onSearchClick = onFinished,
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopStart)
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 20.dp,
-                                vertical = 16.dp,
-                            ),
-                )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    CommonHeader(
+                        type = CommonHeaderType.SEARCH,
+                        onSearchClick = onFinished,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
+                    )
+                    ExploreCarouselPage(
+                        item = item,
+                        currentIndex = page,
+                        totalCount = carouselItems.size,
+                        onClick = { onTourSpotClick(item.id) },
+                    )
+                }
             } else {
                 ExploreScreen(modifier = Modifier.fillMaxSize())
             }
@@ -186,27 +176,29 @@ private fun ExploreCarouselPage(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize().clickable(onClick = onClick),
-    ) {
-        SpotImage(
-            hasImage = item.hasImage,
-            model = item.imageUrl,
-            contentDescription = item.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-
-        CarouselContent(
-            hasImage = item.hasImage,
-            title = item.title,
-            content = item.subTitle,
-            place = item.location,
-            tags = item.tags,
-            currentIndex = currentIndex,
-            totalCount = totalCount,
-            modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
-        )
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val viewportHeight = maxHeight
+        Column(
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = viewportHeight),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            SpotImageOverlay(
+                hasImage = item.hasImage,
+                model = item.imageUrl,
+                contentDescription = item.title,
+                modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+            ) {
+                CarouselContent(
+                    title = item.title,
+                    content = item.subTitle,
+                    place = item.location,
+                    tags = item.tags,
+                    currentIndex = currentIndex,
+                    totalCount = totalCount,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
     }
 }
 

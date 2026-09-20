@@ -36,7 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.domain.common.model.RegionType
 import com.hdb.tourfolio.domain.common.model.TagType
@@ -107,11 +109,6 @@ fun SearchFilterBottomSheet(
         )
     }
 
-    val allTags =
-        remember {
-            TagType.entries.toSet()
-        }
-
     val allThemes =
         remember {
             ThemeType.entries.toSet()
@@ -126,18 +123,6 @@ fun SearchFilterBottomSheet(
         temporaryTags.isNotEmpty() ||
             temporaryThemes.isNotEmpty() ||
             temporaryRegions.isNotEmpty()
-
-    val allTagsSelected =
-        temporaryTags.isNotEmpty() &&
-            temporaryTags.containsAll(allTags)
-
-    val allThemesSelected =
-        temporaryThemes.isNotEmpty() &&
-            temporaryThemes.containsAll(allThemes)
-
-    val allRegionsSelected =
-        temporaryRegions.isNotEmpty() &&
-            temporaryRegions.containsAll(allRegions)
 
     val isApplyEnabled =
         hasAnySelection &&
@@ -171,7 +156,7 @@ fun SearchFilterBottomSheet(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(600.dp)
+                    .height(450.dp)
                     .navigationBarsPadding(),
         ) {
             Text(
@@ -213,14 +198,7 @@ fun SearchFilterBottomSheet(
                                 }
                                 .toSet(),
                         columns = 3,
-                        onAllClick = {
-                            temporaryTags =
-                                if (temporaryTags.containsAll(allTags)) {
-                                    emptySet()
-                                } else {
-                                    allTags
-                                }
-                        },
+                        onAllClick = null,
                         onOptionClick = { key ->
                             temporaryTags =
                                 temporaryTags.toggle(
@@ -312,30 +290,7 @@ fun SearchFilterBottomSheet(
                             horizontal = 22.dp,
                             vertical = 18.dp,
                         ),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .height(54.dp)
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFB8B8B8),
-                                shape = RoundedCornerShape(10.dp),
-                            )
-                            .clickable(onClick = onDismissRequest),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "취소",
-                        style =
-                            LocalAppTypography.current.bodyLarge.bold.copy(
-                                color = Natural70,
-                            ),
-                    )
-                }
-
                 Box(
                     modifier =
                         Modifier
@@ -390,17 +345,21 @@ private fun FilterOptionGrid(
     options: List<FilterOption>,
     selectedKeys: Set<String>,
     columns: Int,
-    onAllClick: () -> Unit,
+    onAllClick: (() -> Unit)?,
     onOptionClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val displayOptions =
-        listOf(
-            FilterOption(
-                key = FILTER_ALL_KEY,
-                displayName = "전체",
-            ),
-        ) + options
+        if (onAllClick != null) {
+            listOf(
+                FilterOption(
+                    key = FILTER_ALL_KEY,
+                    displayName = "전체",
+                ),
+            ) + options
+        } else {
+            options
+        }
 
     val optionKeys =
         remember(options) {
@@ -449,7 +408,7 @@ private fun FilterOptionGrid(
                 selected = selected,
                 onClick = {
                     if (isAllOption) {
-                        onAllClick()
+                        onAllClick?.invoke()
                     } else {
                         onOptionClick(option.key)
                     }
@@ -472,7 +431,7 @@ private fun FilterCheckItem(
                 .fillMaxWidth()
                 .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(9.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         if (selected) {
             Image(
@@ -481,13 +440,13 @@ private fun FilterCheckItem(
                         id = R.drawable.ic_checkbox,
                     ),
                 contentDescription = null,
-                modifier = Modifier.size(28.dp),
+                modifier = Modifier.size(20.dp),
             )
         } else {
             Box(
                 modifier =
                     Modifier
-                        .size(28.dp)
+                        .size(20.dp)
                         .border(
                             width = 1.2.dp,
                             color = Color(0xFFB8B8B8),
@@ -498,8 +457,13 @@ private fun FilterCheckItem(
 
         Text(
             text = text,
+            modifier = Modifier.weight(1f),
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
             style =
                 LocalAppTypography.current.bodyLarge.medium.copy(
+                    fontSize = 14.sp,
                     color =
                         if (selected) {
                             Natural10

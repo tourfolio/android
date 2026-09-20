@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,8 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,7 +40,6 @@ import com.hdb.tourfolio.ui.theme.TourfolioTheme
 @Composable
 fun CarouselContent(
     title: String,
-    hasImage: Boolean,
     content: String,
     place: String,
     tags: List<String>,
@@ -52,34 +48,16 @@ fun CarouselContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors =
-                                    listOf(
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = if (hasImage) 0.5f else 0f),
-                                        Color.Black.copy(alpha = if (hasImage) 0.9f else 0f),
-                                    ),
-                            ),
-                    ),
-        )
-
         Column(
             modifier =
                 Modifier
-                    .align(Alignment.BottomStart)
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 40.dp),
+                    .padding(top = 20.dp, bottom = 40.dp),
         ) {
             Text(
                 text = title,
-                style = LocalAppTypography.current.headlineLarge.bold.copy(color = if (hasImage) Natural100 else Color.Gray),
+                style = LocalAppTypography.current.titleLarge.copy(color = Natural100),
                 modifier = Modifier.fillMaxWidth(),
             )
 
@@ -89,7 +67,7 @@ fun CarouselContent(
                 text = content,
                 style =
                     LocalAppTypography.current.bodyLarge.medium.copy(
-                        color = if (hasImage) Natural90 else Color.Gray,
+                        color = Natural90,
                         letterSpacing = 0.1.sp,
                     ),
             )
@@ -111,7 +89,7 @@ fun CarouselContent(
                     text = place,
                     style =
                         LocalAppTypography.current.bodySmall.medium.copy(
-                            color = if (hasImage) Natural90 else Color.Gray,
+                            color = Natural90,
                         ),
                 )
             }
@@ -129,7 +107,6 @@ fun CarouselContent(
             Spacer(modifier = Modifier.height(20.dp))
 
             CarouselIndicator(
-                hasImage = hasImage,
                 currentIndex = currentIndex,
                 totalCount = totalCount,
             )
@@ -168,7 +145,6 @@ private fun CarouselTag(
 
 @Composable
 private fun CarouselIndicator(
-    hasImage: Boolean,
     currentIndex: Int,
     totalCount: Int,
     modifier: Modifier = Modifier,
@@ -195,9 +171,9 @@ private fun CarouselIndicator(
                         .clip(CircleShape)
                         .background(
                             if (isSelected) {
-                                if (hasImage) Natural100 else Color.Gray
+                                Natural100
                             } else {
-                                (if (hasImage) Natural100 else Color.Gray).copy(alpha = 0.4f)
+                                Natural100.copy(alpha = 0.4f)
                             },
                         ),
             )
@@ -216,7 +192,6 @@ private fun CarouselIndicator(
 private fun CarouselContentPreview() {
     TourfolioTheme {
         CarouselContent(
-            hasImage = true,
             title = "경복궁",
             content = "조선의 시간을 품은 궁궐\n500년의 역사가 살아 숨 쉬는 곳",
             place = "서울특별시 종로구",
