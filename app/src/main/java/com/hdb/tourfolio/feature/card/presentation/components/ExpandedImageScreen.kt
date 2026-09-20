@@ -52,11 +52,7 @@ fun ExpandedImageScreen(
                 contentDescription = card.title,
                 modifier =
                     Modifier
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 70.dp,
-                        ),
+                        .fillMaxSize(),
                 contentScale = ContentScale.Fit,
             )
         } else if (displayedImageRes != null) {
@@ -69,10 +65,6 @@ fun ExpandedImageScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 70.dp,
-                        )
                         .clickable(
                             enabled = card.backImageRes != null,
                             indication = null,
@@ -97,7 +89,7 @@ fun ExpandedImageScreen(
                         Alignment.TopStart,
                     )
                     .padding(
-                        start = 20.dp,
+                        start = 15.dp,
                         top = 22.dp,
                     )
                     .size(46.dp)

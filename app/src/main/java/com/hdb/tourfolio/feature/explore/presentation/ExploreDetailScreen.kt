@@ -140,7 +140,6 @@ private fun ExploreDetailContent(
             imageUrl = detail.imageUrl,
             hasImage = detail.hasImage,
             onBackClick = onBackClick,
-            onShareClick = onShareClick,
         )
 
         Column(
@@ -273,7 +272,6 @@ private fun TourSpotHero(
     imageUrl: String,
     hasImage: Boolean,
     onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -292,10 +290,8 @@ private fun TourSpotHero(
                 Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .offset(y = (-4).dp)
-                    .padding(horizontal = 18.dp),
+                    .padding(horizontal = 15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             DetailHeaderButton(
                 iconRes = R.drawable.ic_arrow_left_black,
@@ -312,16 +308,14 @@ private fun DetailHeaderButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    rotationDegrees: Float = 0f,
 ) {
     Box(
-        modifier = modifier.size(44.dp).clickable(onClick = onClick),
+        modifier = modifier.size(20.dp).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(26.dp).rotate(rotationDegrees),
         )
     }
 }
