@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural60
@@ -42,11 +45,13 @@ fun MyPageSummaryCard(
                     vertical = 20.dp,
                 ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         SummaryItem(
             value = "${"%,d".format(balance)}P",
             label = "보유 포인트",
+            horizontalAlignment = Alignment.End,
+            textAlign = TextAlign.End,
             modifier = Modifier.weight(1f),
         )
 
@@ -55,7 +60,6 @@ fun MyPageSummaryCard(
         SummaryItem(
             value = "${cardCount}장",
             label = "보유 카드",
-            modifier = Modifier.weight(1f),
         )
 
         SummaryDivider()
@@ -68,6 +72,8 @@ fun MyPageSummaryCard(
                     "%.2f%%".format(totalProfitRate)
                 },
             label = "총 수익률",
+            horizontalAlignment = Alignment.Start,
+            textAlign = TextAlign.Start,
             modifier = Modifier.weight(1f),
         )
     }
@@ -78,14 +84,25 @@ private fun SummaryItem(
     value: String,
     label: String,
     modifier: Modifier = Modifier,
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    textAlign: TextAlign = TextAlign.Center,
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = horizontalAlignment,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = value,
+            modifier =
+                Modifier.wrapContentWidth(
+                    align = horizontalAlignment,
+                    unbounded = true,
+                ),
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Visible,
+            textAlign = textAlign,
             style =
                 LocalAppTypography
                     .current
@@ -98,6 +115,9 @@ private fun SummaryItem(
 
         Text(
             text = label,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = textAlign,
             style =
                 LocalAppTypography
                     .current

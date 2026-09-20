@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,7 +46,10 @@ fun CommonHeader(
 ) {
     Row(
         modifier =
-            modifier.fillMaxWidth(),
+            modifier.fillMaxWidth()
+                    .padding(
+                        top = 2.dp,
+                    ),
         verticalAlignment =
             Alignment.CenterVertically,
         horizontalArrangement =
@@ -62,11 +67,14 @@ fun CommonHeader(
                     ),
         )
 
+        val rightContentModifier = Modifier.offset(y = 4.dp)
+
         when (type) {
             CommonHeaderType.DEFAULT -> {
                 Row(
+                    modifier = rightContentModifier,
                     horizontalArrangement =
-                        Arrangement.spacedBy(22.dp),
+                        Arrangement.spacedBy(16.dp),
                     verticalAlignment =
                         Alignment.CenterVertically,
                 ) {
@@ -78,7 +86,7 @@ fun CommonHeader(
                         contentDescription = "내 정보",
                         modifier =
                             Modifier
-                                .size(24.dp)
+                                .size(17.dp)
                                 .clickable {
                                     onProfileClick()
                                 },
@@ -96,7 +104,7 @@ fun CommonHeader(
                         contentDescription = "알림",
                         modifier =
                             Modifier
-                                .size(24.dp)
+                                .size(20.dp)
                                 .clickable {
                                     onNotificationClick()
                                 },
@@ -110,6 +118,7 @@ fun CommonHeader(
 
             CommonHeaderType.SEARCH -> {
                 CommonHeaderIconButton(
+                    modifier = rightContentModifier,
                     iconRes =
                         R.drawable.ic_search,
                     contentDescription =
@@ -117,7 +126,7 @@ fun CommonHeader(
                     onClick =
                     onSearchClick,
                     iconSize =
-                        30.dp,
+                        20.dp,
                     tint =
                     contentColor,
                 )

@@ -263,7 +263,7 @@ private fun SearchHeader(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(start = 14.dp, top = 18.dp, bottom = 18.dp, end = 22.dp),
+                .padding(start = 16.dp, top = 18.dp, bottom = 18.dp, end = 22.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -271,7 +271,7 @@ private fun SearchHeader(
             contentDescription = "뒤로 가기",
             modifier =
                 Modifier
-                    .size(26.dp)
+                    .size(14.dp)
                     .rotate(backIconRotation)
                     .clickable(onClick = onBackClick),
         )

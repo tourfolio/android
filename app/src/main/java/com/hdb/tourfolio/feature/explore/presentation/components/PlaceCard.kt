@@ -99,7 +99,7 @@ fun PlaceCard(
                             end = 16.dp,
                         )
                         .size(
-                            24.dp,
+                            20.dp,
                         ),
             )
         }

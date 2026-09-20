@@ -91,7 +91,7 @@ fun SearchBar(
                 )
                 .padding(
                     start = 20.dp,
-                    end = 16.dp,
+                    end = 20.dp,
                 ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -151,7 +151,7 @@ fun SearchBar(
             contentDescription = "검색",
             modifier =
                 Modifier
-                    .size(26.dp)
+                    .size(17.dp)
                     .clickable {
                         if (onClick != null) {
                             onClick()

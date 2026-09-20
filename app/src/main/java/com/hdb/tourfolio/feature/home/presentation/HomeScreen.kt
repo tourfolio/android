@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -163,7 +164,8 @@ private fun HomeContent(
                         modifier =
                             Modifier.fillMaxSize(),
                         contentScale =
-                            ContentScale.Crop,
+                            ContentScale.FillWidth,
+                        alignment = Alignment.TopCenter,
                     )
 
                     CommonHeader(
@@ -192,7 +194,7 @@ private fun HomeContent(
                                 )
                                 .padding(
                                     start = 22.dp,
-                                    top = 110.dp,
+                                    top = 120.dp,
                                     end = 22.dp,
                                 ),
                     ) {
@@ -204,6 +206,7 @@ private fun HomeContent(
                                     .current
                                     .titleLarge
                                     .copy(
+                                        lineHeight = 32.sp,
                                         color =
                                         Natural100,
                                     ),
@@ -259,27 +262,6 @@ private fun HomeContent(
                             .clickable(onClick = onPortfolioClick),
                 )
             }
-        }
-
-        /*
-         * 보유 포인트
-         */
-        item {
-            Spacer(
-                modifier =
-                    Modifier.height(
-                        10.dp,
-                    ),
-            )
-
-            PointBalanceCard(
-                pointBalance =
-                    portfolio.pointBalance,
-                modifier =
-                    Modifier.padding(
-                        horizontal = 22.dp,
-                    ),
-            )
         }
 
         /*

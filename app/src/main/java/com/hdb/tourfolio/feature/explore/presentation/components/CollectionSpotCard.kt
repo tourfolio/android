@@ -38,7 +38,7 @@ fun CollectionSpotCard(
             style =
                 LocalAppTypography
                     .current
-                    .titleSmall
+                    .bodySmall
                     .bold
                     .copy(
                         color =

@@ -89,8 +89,8 @@ fun ExpandedImageScreen(
                         Alignment.TopStart,
                     )
                     .padding(
-                        start = 15.dp,
-                        top = 22.dp,
+                        start = 10.dp,
+                        top = 15.dp,
                     )
                     .size(46.dp)
                     .background(
@@ -120,7 +120,7 @@ fun ExpandedImageScreen(
                     "확대 이미지 닫기",
                 modifier =
                     Modifier
-                        .size(24.dp)
+                        .size(12.dp)
                         .rotate(
                             180f,
                         ),
