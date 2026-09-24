@@ -47,9 +47,9 @@ fun CommonHeader(
     Row(
         modifier =
             modifier.fillMaxWidth()
-                    .padding(
-                        top = 2.dp,
-                    ),
+                .padding(
+                    top = 2.dp,
+                ),
         verticalAlignment =
             Alignment.CenterVertically,
         horizontalArrangement =

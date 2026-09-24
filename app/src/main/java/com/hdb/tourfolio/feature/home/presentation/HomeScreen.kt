@@ -36,7 +36,6 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.feature.explore.presentation.components.TourSpotCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomeCardCollectionCard
 import com.hdb.tourfolio.feature.home.presentation.components.HomePortfolioCard
-import com.hdb.tourfolio.feature.home.presentation.components.PointBalanceCard
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10

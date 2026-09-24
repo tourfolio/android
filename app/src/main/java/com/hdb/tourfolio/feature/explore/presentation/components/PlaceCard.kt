@@ -118,7 +118,7 @@ private fun PlaceCardPreview() {
             title =
                 "대한민국 유네스코 세계문화유산",
             places =
-                26,
+            26,
             imageUrl =
                 "",
             modifier =
