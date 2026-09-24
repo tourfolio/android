@@ -80,7 +80,7 @@ fun OwnedCardStatus(
             Text(
                 text = "$ownedCardCount / $totalCardCount",
                 style =
-                    LocalAppTypography.current.titleMedium.bold.copy(
+                    LocalAppTypography.current.bodyLarge.bold.copy(
                         color = Natural10,
                     ),
             )

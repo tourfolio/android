@@ -28,8 +28,9 @@ fun SpotImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     matchImageAspectRatio: Boolean = true,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
-    // Natural-height cards follow the image; fixed thumbnail/hero frames use Fit with letterboxing.
+    // Natural-height cards follow the image; fixed frames choose how to scale it.
     var aspectRatio by remember(model) { mutableFloatStateOf(4f / 3f) }
     val imageModifier = if (matchImageAspectRatio) modifier.aspectRatio(aspectRatio) else modifier
     if (!hasImage || model == null || (model is String && model.isBlank())) {
@@ -44,7 +45,7 @@ fun SpotImage(
         model = if (model is String) secureSpotImageUrl(model) else model,
         contentDescription = contentDescription,
         modifier = imageModifier,
-        contentScale = ContentScale.Fit,
+        contentScale = contentScale,
         onSuccess = { state ->
             val size = state.painter.intrinsicSize
             if (size.width > 0f && size.height > 0f) {

@@ -4,15 +4,12 @@ package com.hdb.tourfolio.feature.explore.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -27,6 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,7 +34,7 @@ import com.hdb.tourfolio.feature.explore.presentation.components.CarouselContent
 import com.hdb.tourfolio.feature.explore.presentation.model.ExploreMainCardUiModel
 import com.hdb.tourfolio.ui.components.CommonHeader
 import com.hdb.tourfolio.ui.components.CommonHeaderType
-import com.hdb.tourfolio.ui.components.SpotImageOverlay
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
@@ -148,17 +148,17 @@ private fun ExploreCarouselContent(
             if (page < carouselItems.size) {
                 val item = carouselItems[page]
 
-                Column(modifier = Modifier.fillMaxSize()) {
-                    CommonHeader(
-                        type = CommonHeaderType.SEARCH,
-                        onSearchClick = onFinished,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
-                    )
+                Box(modifier = Modifier.fillMaxSize()) {
                     ExploreCarouselPage(
                         item = item,
                         currentIndex = page,
                         totalCount = carouselItems.size,
                         onClick = { onTourSpotClick(item.id) },
+                    )
+                    CommonHeader(
+                        type = CommonHeaderType.SEARCH,
+                        onSearchClick = onFinished,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
                     )
                 }
             } else {
@@ -176,28 +176,44 @@ private fun ExploreCarouselPage(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val viewportHeight = maxHeight
+    Box(modifier = modifier.fillMaxSize().background(Natural10).clickable(onClick = onClick)) {
+        SpotImage(
+            hasImage = item.hasImage,
+            model = item.imageUrl,
+            contentDescription = item.title,
+            modifier = Modifier.fillMaxSize(),
+            matchImageAspectRatio = false,
+            contentScale = ContentScale.Crop,
+        )
+        Box(
+            modifier =
+                Modifier.matchParentSize().background(
+                    Brush.verticalGradient(
+                        0f to Color.Black.copy(alpha = 0.2f),
+                        0.25f to Color.Transparent,
+                        0.5f to Color.Transparent,
+                        0.75f to Color.Black.copy(alpha = 0.3f),
+                        1f to Color.Black.copy(alpha = 0.8f),
+                    ),
+                ),
+        )
         Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).heightIn(min = viewportHeight),
-            verticalArrangement = Arrangement.Center,
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(top = 88.dp)
+                    .verticalScroll(rememberScrollState()),
         ) {
-            SpotImageOverlay(
-                hasImage = item.hasImage,
-                model = item.imageUrl,
-                contentDescription = item.title,
-                modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-            ) {
-                CarouselContent(
-                    title = item.title,
-                    content = item.subTitle,
-                    place = item.location,
-                    tags = item.tags,
-                    currentIndex = currentIndex,
-                    totalCount = totalCount,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
+            CarouselContent(
+                title = item.title,
+                content = item.subTitle,
+                place = item.location,
+                tags = item.tags,
+                currentIndex = currentIndex,
+                totalCount = totalCount,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

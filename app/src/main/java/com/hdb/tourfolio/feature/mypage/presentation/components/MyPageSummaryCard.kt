@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
+import com.hdb.tourfolio.ui.theme.Natural50
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Primary
@@ -106,8 +107,8 @@ private fun SummaryItem(
             style =
                 LocalAppTypography
                     .current
-                    .titleMedium
-                    .bold
+                    .bodyLarge
+                    .heavy
                     .copy(
                         color = Primary,
                     ),
@@ -124,7 +125,7 @@ private fun SummaryItem(
                     .bodySmall
                     .medium
                     .copy(
-                        color = Natural60,
+                        color = Natural50,
                     ),
         )
     }

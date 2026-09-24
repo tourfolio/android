@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,9 +55,10 @@ fun SearchResultCard(
             modifier =
                 Modifier
                     .size(
-                        width = 120.dp,
-                        height = 120.dp,
-                    ),
+                        width = 100.dp,
+                        height = 100.dp,
+                    )
+                    .offset(y = -(2.dp)),
             matchImageAspectRatio = false,
         )
 
@@ -146,7 +148,7 @@ private fun SearchResultTag(text: String) {
         Text(
             text = "#$text",
             style =
-                LocalAppTypography.current.bodySmall.bold.copy(
+                LocalAppTypography.current.labelLarge.bold.copy(
                     color = Natural100,
                 ),
             maxLines = 1,

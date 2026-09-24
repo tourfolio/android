@@ -3,6 +3,7 @@
 package com.hdb.tourfolio.feature.explore.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,10 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,6 +26,7 @@ import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural60
+import com.hdb.tourfolio.ui.theme.Natural99
 
 @Composable
 fun SearchRecommendedSpotCard(
@@ -31,7 +35,20 @@ fun SearchRecommendedSpotCard(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().clickable { onClick(item.id) }.padding(vertical = 10.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(
+                    color = Natural99,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .clickable {
+                    onClick(item.id)
+                }
+                .padding(
+                    horizontal = 15.dp,
+                    vertical = 10.dp
+                ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -42,7 +59,7 @@ fun SearchRecommendedSpotCard(
             modifier = Modifier.size(64.dp),
             matchImageAspectRatio = false,
         )
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
                 text = item.title,
                 style = LocalAppTypography.current.bodyLarge.bold,

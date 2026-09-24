@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -201,7 +202,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소", iconSize = 18.dp) {
                 Text(
                     text = detail.website,
                     modifier =
@@ -233,7 +234,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소", iconSize = 22.dp) {
                 Text(
                     text = detail.address,
                     style = detailBodyStyle,
@@ -242,7 +243,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간", iconSize = 21.dp) {
                 Text(
                     text = detail.operatingHours,
                     style = detailBodyStyle,
@@ -260,7 +261,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료", iconSize = 22.dp) {
                 Text(
                     text = detail.admissionFee,
                     style = detailBodyStyle,
@@ -388,6 +389,7 @@ private fun TourSpotInformationCard(
     iconRes: Int,
     title: String,
     modifier: Modifier = Modifier,
+    iconSize: Dp = 20.dp,
     content: @Composable () -> Unit,
 ) {
     Row(
@@ -401,7 +403,7 @@ private fun TourSpotInformationCard(
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = null,
-            modifier = Modifier.size(20.dp).offset(y = 3.dp),
+            modifier = Modifier.size(iconSize).offset(y = 3.dp),
         )
 
         Spacer(modifier = Modifier.width(12.dp))

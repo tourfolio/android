@@ -148,7 +148,7 @@ private fun TourSpotTag(
                     Primary,
                     shape =
                         RoundedCornerShape(
-                            7.dp,
+                            10.dp,
                         ),
                 )
                 .padding(
@@ -166,7 +166,7 @@ private fun TourSpotTag(
             style =
                 LocalAppTypography
                     .current
-                    .bodySmall
+                    .labelLarge
                     .bold
                     .copy(
                         color =

@@ -20,11 +20,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural30
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural90
 
@@ -46,7 +48,7 @@ fun MyPageMenuCard(
             modifier
                 .fillMaxWidth()
                 .background(
-                    color = Natural100,
+                    color = Color(0xFFFCFCFC),
                     shape = RoundedCornerShape(12.dp),
                 )
                 .padding(
@@ -69,7 +71,7 @@ fun MyPageMenuCard(
                 contentDescription = null,
                 modifier =
                     Modifier.size(
-                        26.dp,
+                        24.dp,
                     ),
             )
 
@@ -115,7 +117,7 @@ fun MyPageMenuCard(
                             .bodyLarge
                             .medium
                             .copy(
-                                color = Natural60,
+                                color = Natural30,
                             ),
                     modifier =
                         Modifier

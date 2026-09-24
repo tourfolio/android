@@ -345,7 +345,7 @@ private fun HomeContent(
                 style =
                     LocalAppTypography
                         .current
-                        .titleMedium
+                        .titleSmall
                         .bold
                         .copy(
                             color =
