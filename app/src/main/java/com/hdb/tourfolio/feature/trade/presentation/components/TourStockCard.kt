@@ -22,12 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
+import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.Blue
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -94,14 +94,11 @@ fun TourStockCard(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (imageRes != null) {
-            Image(
-                painter = painterResource(id = imageRes),
+            SpotImage(
+                hasImage = true,
+                model = imageRes,
                 contentDescription = title,
-                modifier =
-                    Modifier
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(6.dp)),
-                contentScale = ContentScale.Crop,
+                modifier = Modifier.width(50.dp),
             )
 
             Spacer(modifier = Modifier.width(12.dp))

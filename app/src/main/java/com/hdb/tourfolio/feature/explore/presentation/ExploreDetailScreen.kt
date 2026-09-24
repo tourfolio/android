@@ -2,6 +2,7 @@
 
 package com.hdb.tourfolio.feature.explore.presentation
 
+import android.R.id.bold
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,15 +35,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hdb.tourfolio.R
@@ -124,6 +123,11 @@ private fun ExploreDetailContent(
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
+    val detailBodyStyle =
+        LocalAppTypography.current.bodyLarge.medium.copy(
+            color = Natural60,
+            lineHeight = 20.sp,
+        )
     val websiteUrl = detail.website.trim()
     val isWebsiteLink =
         websiteUrl.startsWith("https://", ignoreCase = true) ||
@@ -142,7 +146,6 @@ private fun ExploreDetailContent(
             imageUrl = detail.imageUrl,
             hasImage = detail.hasImage,
             onBackClick = onBackClick,
-            onShareClick = onShareClick,
         )
 
         Column(
@@ -156,14 +159,14 @@ private fun ExploreDetailContent(
         ) {
             Text(
                 text = detail.title,
-                style = LocalAppTypography.current.headlineLarge.bold.copy(color = Natural10),
+                style = LocalAppTypography.current.titleLarge.copy(color = Natural10),
             )
 
             Spacer(modifier = Modifier.height(14.dp))
 
             Text(
                 text = detail.description,
-                style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                style = detailBodyStyle,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -180,7 +183,7 @@ private fun ExploreDetailContent(
             if (detail.attractionPoints.isNotEmpty()) {
                 Text(
                     text = "매력 포인트",
-                    style = LocalAppTypography.current.titleMedium.bold.copy(color = Natural10),
+                    style = LocalAppTypography.current.titleSmall.bold.copy(color = Natural10),
                 )
 
                 Spacer(modifier = Modifier.height(18.dp))
@@ -192,12 +195,12 @@ private fun ExploreDetailContent(
 
             Text(
                 text = "상세 정보",
-                style = LocalAppTypography.current.titleMedium.bold.copy(color = Natural10),
+                style = LocalAppTypography.current.titleSmall.bold.copy(color = Natural10),
             )
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소", iconSize = 18.dp) {
                 Text(
                     text = detail.website,
                     modifier =
@@ -207,8 +210,7 @@ private fun ExploreDetailContent(
                             Modifier
                         },
                     style =
-                        LocalAppTypography.current.bodyLarge.medium.copy(
-                            color = Natural60,
+                        detailBodyStyle.copy(
                             textDecoration =
                                 if (isWebsiteLink) {
                                     TextDecoration.Underline
@@ -224,25 +226,25 @@ private fun ExploreDetailContent(
             TourSpotInformationCard(iconRes = R.drawable.ic_phone, title = "전화번호") {
                 Text(
                     text = detail.phoneNumber,
-                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                    style = detailBodyStyle,
                 )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소", iconSize = 22.dp) {
                 Text(
                     text = detail.address,
-                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                    style = detailBodyStyle,
                 )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간", iconSize = 21.dp) {
                 Text(
                     text = detail.operatingHours,
-                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                    style = detailBodyStyle,
                 )
             }
 
@@ -251,16 +253,16 @@ private fun ExploreDetailContent(
             TourSpotInformationCard(iconRes = R.drawable.ic_closed, title = "쉬는 날") {
                 Text(
                     text = detail.closedDays,
-                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                    style = detailBodyStyle,
                 )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료") {
+            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료", iconSize = 22.dp) {
                 Text(
                     text = detail.admissionFee,
-                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
+                    style = detailBodyStyle,
                 )
             }
 
@@ -275,7 +277,6 @@ private fun TourSpotHero(
     imageUrl: String,
     hasImage: Boolean,
     onBackClick: () -> Unit,
-    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -285,21 +286,8 @@ private fun TourSpotHero(
             hasImage = hasImage,
             model = imageUrl,
             contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
-
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(130.dp)
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors = listOf(Color.Black.copy(alpha = if (hasImage) 0.28f else 0f), Color.Transparent),
-                            ),
-                    ),
+            modifier = Modifier.fillMaxSize().padding(bottom = 28.dp),
+            matchImageAspectRatio = false,
         )
 
         Row(
@@ -307,17 +295,14 @@ private fun TourSpotHero(
                 Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .offset(y = (-4).dp)
-                    .padding(horizontal = 18.dp),
+                    .padding(horizontal = 15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             DetailHeaderButton(
-                iconRes = R.drawable.ic_chevron_right_white,
+                iconRes = R.drawable.ic_arrow_left_black,
                 contentDescription = "뒤로 가기",
                 onClick = onBackClick,
-                rotationDegrees = 180f,
-                tint = if (hasImage) Color.White else Color.Gray,
+                modifier = Modifier.offset(y = (-8).dp),
             )
         }
     }
@@ -329,18 +314,14 @@ private fun DetailHeaderButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    rotationDegrees: Float = 0f,
-    tint: Color = Color.White,
 ) {
     Box(
-        modifier = modifier.size(44.dp).clickable(onClick = onClick),
+        modifier = modifier.size(12.dp).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
-            modifier = Modifier.size(26.dp).rotate(rotationDegrees),
-            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(tint),
         )
     }
 }
@@ -406,6 +387,7 @@ private fun TourSpotInformationCard(
     iconRes: Int,
     title: String,
     modifier: Modifier = Modifier,
+    iconSize: Dp = 20.dp,
     content: @Composable () -> Unit,
 ) {
     Row(
@@ -419,7 +401,7 @@ private fun TourSpotInformationCard(
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(iconSize).offset(y = 3.dp),
         )
 
         Spacer(modifier = Modifier.width(12.dp))

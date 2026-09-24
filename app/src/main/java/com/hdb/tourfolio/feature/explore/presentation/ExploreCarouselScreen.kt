@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -22,7 +24,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +43,6 @@ import com.hdb.tourfolio.ui.theme.Primary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlin.math.absoluteValue
 
 private const val SLIDE_DURATION_MS = 3000L
 
@@ -138,39 +140,27 @@ private fun ExploreCarouselContent(
         modifier = modifier.fillMaxSize(),
         beyondViewportPageCount = 1,
     ) { page ->
-        val pageOffset =
-            ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-
-        val pageAlpha = 1f - pageOffset.coerceIn(minimumValue = 0f, maximumValue = 1f).times(0.55f)
-
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .graphicsLayer { alpha = pageAlpha },
+                    .fillMaxSize(),
         ) {
             if (page < carouselItems.size) {
                 val item = carouselItems[page]
 
-                ExploreCarouselPage(
-                    item = item,
-                    currentIndex = page,
-                    totalCount = carouselItems.size,
-                    onClick = { onTourSpotClick(item.id) },
-                )
-
-                CommonHeader(
-                    type = CommonHeaderType.SEARCH,
-                    onSearchClick = onFinished,
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopStart)
-                            .fillMaxWidth()
-                            .padding(
-                                horizontal = 20.dp,
-                                vertical = 16.dp,
-                            ),
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ExploreCarouselPage(
+                        item = item,
+                        currentIndex = page,
+                        totalCount = carouselItems.size,
+                        onClick = { onTourSpotClick(item.id) },
+                    )
+                    CommonHeader(
+                        type = CommonHeaderType.SEARCH,
+                        onSearchClick = onFinished,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
+                    )
+                }
             } else {
                 ExploreScreen(modifier = Modifier.fillMaxSize())
             }
@@ -186,27 +176,45 @@ private fun ExploreCarouselPage(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize().clickable(onClick = onClick),
-    ) {
+    Box(modifier = modifier.fillMaxSize().background(Natural10).clickable(onClick = onClick)) {
         SpotImage(
             hasImage = item.hasImage,
             model = item.imageUrl,
             contentDescription = item.title,
             modifier = Modifier.fillMaxSize(),
+            matchImageAspectRatio = false,
             contentScale = ContentScale.Crop,
         )
-
-        CarouselContent(
-            hasImage = item.hasImage,
-            title = item.title,
-            content = item.subTitle,
-            place = item.location,
-            tags = item.tags,
-            currentIndex = currentIndex,
-            totalCount = totalCount,
-            modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
+        Box(
+            modifier =
+                Modifier.matchParentSize().background(
+                    Brush.verticalGradient(
+                        0f to Color.Black.copy(alpha = 0.2f),
+                        0.25f to Color.Transparent,
+                        0.5f to Color.Transparent,
+                        0.75f to Color.Black.copy(alpha = 0.3f),
+                        1f to Color.Black.copy(alpha = 0.8f),
+                    ),
+                ),
         )
+        Column(
+            modifier =
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .padding(top = 88.dp)
+                    .verticalScroll(rememberScrollState()),
+        ) {
+            CarouselContent(
+                title = item.title,
+                content = item.subTitle,
+                place = item.location,
+                tags = item.tags,
+                currentIndex = currentIndex,
+                totalCount = totalCount,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 

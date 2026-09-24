@@ -279,9 +279,6 @@ fun MyPageScreen(
                             ),
                     )
 
-                    /*
-                     * API 데이터
-                     */
                     MyPageSummaryCard(
                         balance =
                             myPage.balance,

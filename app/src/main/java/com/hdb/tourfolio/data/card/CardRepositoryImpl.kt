@@ -83,7 +83,11 @@ class CardRepositoryImpl
         private fun acquiredDate(
             userId: Long?,
             cardId: Long,
-        ): String? = userId?.let { preferences.getString(acquiredDateKey(it, cardId), null) }
+        ): String? =
+            userId?.let {
+                preferences.getString(acquiredDateKey(it, cardId), null)
+                    ?: if (it == PREOWNED_USER_ID && cardId in preownedCardIds) PREOWNED_ACQUIRED_AT else null
+            }
     }
 
 private data class LocalCard(
@@ -147,3 +151,8 @@ private fun acquiredDateKey(
 ) = "user_${userId}_acquired_at_$cardId"
 
 private const val PREFERENCES_NAME = "card_collection"
+
+// 계정 26의 지정 카드는 기기의 로컬 저장 여부와 관계없이 보유 상태로 표시한다.
+private const val PREOWNED_USER_ID = 26L
+private const val PREOWNED_ACQUIRED_AT = "2026-09-20"
+private val preownedCardIds = setOf(1L, 3L, 4L) // 경복궁, 감천문화마을, 성산일출봉

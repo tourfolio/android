@@ -4,9 +4,14 @@ package com.hdb.tourfolio.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,24 +24,34 @@ import com.hdb.tourfolio.ui.theme.Primary70
 @Composable
 fun SpotImage(
     hasImage: Boolean,
-    model: String?,
+    model: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop,
+    matchImageAspectRatio: Boolean = true,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
-    if (!hasImage || model.isNullOrBlank()) {
+    // Natural-height cards follow the image; fixed frames choose how to scale it.
+    var aspectRatio by remember(model) { mutableFloatStateOf(4f / 3f) }
+    val imageModifier = if (matchImageAspectRatio) modifier.aspectRatio(aspectRatio) else modifier
+    if (!hasImage || model == null || (model is String && model.isBlank())) {
         SpotImagePlaceholder(
-            modifier = modifier,
+            modifier = imageModifier,
         )
 
         return
     }
 
     SubcomposeAsyncImage(
-        model = secureSpotImageUrl(model),
+        model = if (model is String) secureSpotImageUrl(model) else model,
         contentDescription = contentDescription,
-        modifier = modifier,
+        modifier = imageModifier,
         contentScale = contentScale,
+        onSuccess = { state ->
+            val size = state.painter.intrinsicSize
+            if (size.width > 0f && size.height > 0f) {
+                aspectRatio = size.width / size.height
+            }
+        },
         loading = {
             Box(
                 modifier = Modifier.fillMaxSize(),

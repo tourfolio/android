@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.domain.card.model.CardRarity
@@ -272,6 +273,7 @@ private fun <T> FilterDropdownButton(
 
         DropdownMenu(
             expanded = expanded,
+            offset = DpOffset(x = 0.dp, y = 8.dp),
             onDismissRequest = {
                 expanded = false
             },

@@ -25,14 +25,14 @@ fun CommonBackHeader(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    iconSize: Dp = 24.dp,
+    iconSize: Dp = 12.dp,
 ) {
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 14.dp,
+                    horizontal = 12.dp,
                     vertical = 14.dp,
                 ),
         verticalAlignment =
@@ -69,7 +69,7 @@ fun CommonBackHeader(
             style =
                 LocalAppTypography
                     .current
-                    .titleMedium
+                    .titleSmall
                     .bold
                     .copy(
                         color =

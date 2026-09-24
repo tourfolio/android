@@ -194,7 +194,7 @@ private fun SearchSectionTitle(title: String) {
     Text(
         text = title,
         style =
-            LocalAppTypography.current.titleMedium.bold.copy(
+            LocalAppTypography.current.bodySmall.bold.copy(
                 color = Natural10,
             ),
     )

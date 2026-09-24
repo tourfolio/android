@@ -94,7 +94,7 @@ fun HomeCardCollectionCard(
             style =
                 LocalAppTypography
                     .current
-                    .titleMedium
+                    .bodyLarge
                     .bold
                     .copy(
                         color = Natural10,
@@ -285,7 +285,7 @@ fun HomeCardCollectionCard(
                     style =
                         LocalAppTypography
                             .current
-                            .bodySmall
+                            .labelLarge
                             .medium
                             .copy(
                                 color = Natural10,

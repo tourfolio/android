@@ -52,11 +52,7 @@ fun ExpandedImageScreen(
                 contentDescription = card.title,
                 modifier =
                     Modifier
-                        .fillMaxSize()
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 70.dp,
-                        ),
+                        .fillMaxSize(),
                 contentScale = ContentScale.Fit,
             )
         } else if (displayedImageRes != null) {
@@ -69,10 +65,6 @@ fun ExpandedImageScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(
-                            horizontal = 18.dp,
-                            vertical = 70.dp,
-                        )
                         .clickable(
                             enabled = card.backImageRes != null,
                             indication = null,
@@ -97,8 +89,8 @@ fun ExpandedImageScreen(
                         Alignment.TopStart,
                     )
                     .padding(
-                        start = 20.dp,
-                        top = 22.dp,
+                        start = 10.dp,
+                        top = 15.dp,
                     )
                     .size(46.dp)
                     .background(
@@ -128,7 +120,7 @@ fun ExpandedImageScreen(
                     "확대 이미지 닫기",
                 modifier =
                     Modifier
-                        .size(24.dp)
+                        .size(12.dp)
                         .rotate(
                             180f,
                         ),

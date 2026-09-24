@@ -274,7 +274,7 @@ private fun ExploreSectionTitle(
     ) {
         Text(
             text = title,
-            style = LocalAppTypography.current.titleMedium.bold.copy(color = Natural10),
+            style = LocalAppTypography.current.titleSmall.bold.copy(color = Natural10),
         )
 
         if (showMoreIcon) {
