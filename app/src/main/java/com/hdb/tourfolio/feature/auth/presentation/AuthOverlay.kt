@@ -5,14 +5,18 @@ package com.hdb.tourfolio.feature.auth.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,9 +42,13 @@ import com.hdb.tourfolio.R
 import com.hdb.tourfolio.domain.auth.model.User
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
+import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
+import com.hdb.tourfolio.ui.theme.Natural90
+import com.hdb.tourfolio.ui.theme.Natural95
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Primary70
+import com.hdb.tourfolio.ui.theme.Primary99
 import com.hdb.tourfolio.ui.theme.TourfolioTheme
 import com.kakao.sdk.auth.AuthCodeClient
 import com.kakao.sdk.common.model.ClientError
@@ -114,21 +124,40 @@ private fun AuthOverlayContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(Natural100),
     ) {
-        Spacer(modifier = Modifier.weight(3f))
+        Spacer(modifier = Modifier.weight(2f))
 
-        Text(
-            text = "Tourfolio",
-            style =
-                LocalAppTypography.current.headlineLarge.heavy.copy(
-                    color = Primary70,
-                ),
-            textAlign = TextAlign.Center,
+        Box(
             modifier = Modifier.fillMaxWidth(),
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.bg_login),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(Primary99),
+                contentScale = ContentScale.FillWidth,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .offset(y = (-16).dp),
+            )
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = "Tourfolio",
+                style =
+                    LocalAppTypography.current.headlineLarge.heavy.copy(
+                        color = Primary70,
+                    ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -162,26 +191,11 @@ private fun AuthOverlayContent(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = "회원가입",
-                style = LocalAppTypography.current.bodySmall.medium,
-                color = Natural60,
-                textAlign = TextAlign.Center,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onSignupClick),
-            )
+            SignupPrompt(onSignupClick = onSignupClick)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "또는",
-                style = LocalAppTypography.current.bodySmall.medium,
-                color = Natural60,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            DividerWithLabel(label = "또는")
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -195,7 +209,73 @@ private fun AuthOverlayContent(
             AuthResult(uiState = uiState)
         }
 
-        Spacer(modifier = Modifier.weight(2f))
+        Spacer(modifier = Modifier.weight(3f))
+    }
+}
+
+@Composable
+private fun SignupPrompt(
+    onSignupClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(Natural95)
+                .clickable(onClick = onSignupClick),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "투어폴리오가 처음이에요",
+            style = LocalAppTypography.current.titleSmall.bold,
+            color = Natural60,
+        )
+
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Text(
+            text = "가입하기",
+            style = LocalAppTypography.current.titleSmall.bold,
+            color = Primary,
+        )
+    }
+}
+
+@Composable
+private fun DividerWithLabel(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .height(1.dp)
+                    .background(Natural90),
+        )
+
+        Text(
+            text = label,
+            style = LocalAppTypography.current.bodySmall.medium,
+            color = Natural60,
+            modifier = Modifier.padding(horizontal = 12.dp),
+        )
+
+        Box(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .height(1.dp)
+                    .background(Natural90),
+        )
     }
 }
 
