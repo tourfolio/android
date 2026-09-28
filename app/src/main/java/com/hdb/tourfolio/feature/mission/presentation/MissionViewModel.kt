@@ -4,9 +4,11 @@ import com.hdb.tourfolio.core.mvi.MviEffect
 import com.hdb.tourfolio.core.mvi.MviIntent
 import com.hdb.tourfolio.core.mvi.MviState
 import com.hdb.tourfolio.core.mvi.MviViewModel
+import com.hdb.tourfolio.domain.mission.model.MissionClaimResult
 import com.hdb.tourfolio.domain.mission.model.MissionOverview
 import com.hdb.tourfolio.domain.mission.model.WeeklyAttendanceStatus
 import com.hdb.tourfolio.domain.mission.usecase.CheckAttendanceUseCase
+import com.hdb.tourfolio.domain.mission.usecase.ClaimCollectionMissionUseCase
 import com.hdb.tourfolio.domain.mission.usecase.GetMissionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -35,6 +37,10 @@ sealed interface MissionIntent : MviIntent {
     data object FetchMissions : MissionIntent
 
     data object CheckAttendance : MissionIntent
+
+    data class ClaimMission(
+        val missionId: Long,
+    ) : MissionIntent
 }
 
 /*
@@ -44,6 +50,7 @@ data class MissionState(
     val missionState: MissionRequestState =
         MissionRequestState.Loading,
     val isCheckingAttendance: Boolean = false,
+    val claimingMissionIds: Set<Long> = emptySet(),
 ) : MviState
 
 /*
@@ -53,6 +60,10 @@ sealed interface MissionEffect : MviEffect {
     data class AttendanceChecked(
         val pointsAwarded: Int,
         val consecutiveDays: Int,
+    ) : MissionEffect
+
+    data class RewardClaimed(
+        val pointsAwarded: Int,
     ) : MissionEffect
 
     data class Error(
@@ -66,6 +77,7 @@ class MissionViewModel
     constructor(
         private val getMissionsUseCase: GetMissionsUseCase,
         private val checkAttendanceUseCase: CheckAttendanceUseCase,
+        private val claimCollectionMissionUseCase: ClaimCollectionMissionUseCase,
     ) : MviViewModel<MissionIntent, MissionState, MissionEffect>(
             MissionState(),
         ) {
@@ -76,6 +88,9 @@ class MissionViewModel
 
                 MissionIntent.CheckAttendance ->
                     checkAttendance()
+
+                is MissionIntent.ClaimMission ->
+                    claimMission(intent.missionId)
             }
         }
 
@@ -185,6 +200,47 @@ class MissionViewModel
                 )
             }
         }
+
+        private suspend fun claimMission(missionId: Long) {
+            if (missionId in currentState.claimingMissionIds) return
+
+            setState { copy(claimingMissionIds = claimingMissionIds + missionId) }
+
+            try {
+                val result = claimCollectionMissionUseCase(missionId)
+
+                setState {
+                    copy(
+                        claimingMissionIds = claimingMissionIds - missionId,
+                        missionState =
+                            when (val state = missionState) {
+                                is MissionRequestState.Success ->
+                                    MissionRequestState.Success(
+                                        overview = state.overview.withMissionClaimed(result),
+                                    )
+
+                                else -> state
+                            },
+                    )
+                }
+
+                sendEffect(MissionEffect.RewardClaimed(pointsAwarded = result.pointsAwarded))
+
+                refreshMissionsSilently()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                setState { copy(claimingMissionIds = claimingMissionIds - missionId) }
+
+                sendEffect(
+                    MissionEffect.Error(
+                        message =
+                            e.message
+                                ?: "보상 수령에 실패했습니다.",
+                    ),
+                )
+            }
+        }
     }
 
 /*
@@ -202,5 +258,23 @@ private fun MissionOverview.withAttendanceChecked(newBalance: Long): MissionOver
         balance = newBalance,
         attendedToday = true,
         weeklyAttendance = updatedAttendance,
+    )
+}
+
+/*
+ * 보상 수령 성공 시 서버 재조회 전까지 화면을 즉시 갱신하기 위한 로컬 반영
+ */
+private fun MissionOverview.withMissionClaimed(result: MissionClaimResult): MissionOverview {
+    val missions =
+        missions.map { mission ->
+            if (mission.id != result.missionId) return@map mission
+            mission.copy(isCompleted = result.isCompleted, isClaimable = false)
+        }
+
+    return copy(
+        balance = result.balance,
+        missions = missions,
+        inProgressCount = missions.count { !it.isCompleted },
+        completedCount = missions.count { it.isCompleted },
     )
 }

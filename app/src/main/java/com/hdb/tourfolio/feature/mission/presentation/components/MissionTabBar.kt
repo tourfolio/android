@@ -34,6 +34,7 @@ fun MissionTabBar(
     selectedTab: MissionTab,
     onTabSelected: (MissionTab) -> Unit,
     inProgressCount: Int,
+    completedCount: Int,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -46,7 +47,11 @@ fun MissionTabBar(
                 MissionTabItem(
                     tab = tab,
                     selected = selectedTab == tab,
-                    badgeCount = if (tab == MissionTab.IN_PROGRESS) inProgressCount else 0,
+                    badgeCount =
+                        when (tab) {
+                            MissionTab.IN_PROGRESS -> inProgressCount
+                            MissionTab.COMPLETED -> completedCount
+                        },
                     onClick = {
                         onTabSelected(tab)
                     },
@@ -91,7 +96,7 @@ private fun MissionTabItem(
                 color = if (selected) Primary10 else Natural60,
             )
 
-            if (badgeCount > 0) {
+            if (selected && badgeCount > 0) {
                 Spacer(modifier = Modifier.width(6.dp))
 
                 CountBadge(count = badgeCount)

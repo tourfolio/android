@@ -39,7 +39,7 @@ fun SplashScreen(
             ExoPlayer.Builder(context).build().apply {
                 setMediaItem(
                     MediaItem.fromUri(
-                        "android.resource://${context.packageName}/${R.raw.splash_video}",
+                        "android.resource://${context.packageName}/${R.raw.splash}",
                     ),
                 )
                 volume = 0f

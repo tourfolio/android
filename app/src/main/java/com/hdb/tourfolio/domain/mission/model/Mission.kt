@@ -10,7 +10,6 @@ data class MissionOverview(
     val inProgressCount: Int,
     val completedCount: Int,
     val missions: List<Mission>,
-    val hasPendingCollectionClaims: Boolean = false,
 )
 
 enum class WeeklyAttendanceStatus {
@@ -39,6 +38,7 @@ data class Mission(
     val currentProgress: Int,
     val conditionTarget: Int,
     val isCompleted: Boolean,
+    val isClaimable: Boolean = false,
 )
 
 enum class MissionCategory {

@@ -84,6 +84,16 @@ fun MissionScreen(
                         .show()
                 }
 
+                is MissionEffect.RewardClaimed -> {
+                    Toast
+                        .makeText(
+                            context,
+                            "보상 ${effect.pointsAwarded}P 받기 완료!",
+                            Toast.LENGTH_SHORT,
+                        )
+                        .show()
+                }
+
                 is MissionEffect.Error -> {
                     Toast
                         .makeText(context, effect.message, Toast.LENGTH_SHORT)
@@ -111,13 +121,16 @@ fun MissionScreen(
             MissionScreenContent(
                 overview = missionState.overview,
                 isCheckingAttendance = state.isCheckingAttendance,
+                claimingMissionIds = state.claimingMissionIds,
                 onCheckInClick = {
                     viewModel.processIntent(MissionIntent.CheckAttendance)
+                },
+                onClaimMission = { missionId ->
+                    viewModel.processIntent(MissionIntent.ClaimMission(missionId))
                 },
                 onAttendanceHistoryClick = onAttendanceHistoryClick,
                 onProfileClick = onProfileClick,
                 onNotificationClick = onNotificationClick,
-                onRetryCollectionClaims = { viewModel.processIntent(MissionIntent.FetchMissions) },
             )
         }
     }
@@ -132,7 +145,8 @@ private fun MissionScreenContent(
     onProfileClick: () -> Unit,
     onNotificationClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onRetryCollectionClaims: () -> Unit = {},
+    claimingMissionIds: Set<Long> = emptySet(),
+    onClaimMission: (Long) -> Unit = {},
 ) {
     var selectedTab by rememberSaveable {
         mutableStateOf(MissionTab.IN_PROGRESS)
@@ -186,13 +200,6 @@ private fun MissionScreenContent(
             contentPadding = PaddingValues(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            if (overview.hasPendingCollectionClaims) {
-                item {
-                    TextButton(onClick = onRetryCollectionClaims) {
-                        Text("수집 업적 보상을 받지 못했습니다. 다시 시도")
-                    }
-                }
-            }
             item {
                 HoldingPointCard(
                     point = overview.balance,
@@ -219,6 +226,7 @@ private fun MissionScreenContent(
                         selectedTab = tab
                     },
                     inProgressCount = overview.missions.count { mission -> !mission.isCompleted },
+                    completedCount = overview.missions.count { mission -> mission.isCompleted },
                     modifier = Modifier.padding(top = 4.dp),
                 )
             }
@@ -254,6 +262,8 @@ private fun MissionScreenContent(
                 ) { mission ->
                     MissionListItem(
                         mission = mission,
+                        isClaiming = mission.id in claimingMissionIds,
+                        onClaim = { onClaimMission(mission.id) },
                         modifier = Modifier.padding(horizontal = 22.dp),
                     )
                 }
@@ -430,6 +440,16 @@ private fun MissionScreenPreview() {
                                 currentProgress = 1,
                                 conditionTarget = 3,
                                 isCompleted = false,
+                            ),
+                            Mission(
+                                id = 3L,
+                                category = MissionCategory.COLLECTION,
+                                title = "첫 발도장",
+                                rewardPoints = 100,
+                                currentProgress = 1,
+                                conditionTarget = 1,
+                                isCompleted = false,
+                                isClaimable = true,
                             ),
                         ),
                 ),
