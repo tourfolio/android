@@ -31,6 +31,8 @@ import com.hdb.tourfolio.feature.attendance.presentation.MonthlyAttendanceScreen
 import com.hdb.tourfolio.feature.auth.presentation.AuthOverlay
 import com.hdb.tourfolio.feature.auth.presentation.AuthViewModel
 import com.hdb.tourfolio.feature.auth.presentation.SignupScreen
+import com.hdb.tourfolio.feature.auth.presentation.SignupTermsType
+import com.hdb.tourfolio.feature.auth.presentation.TermsDetailScreen
 import com.hdb.tourfolio.feature.card.presentation.CardScreen
 import com.hdb.tourfolio.feature.explore.presentation.CollectionDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
@@ -49,6 +51,9 @@ import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
     "explore_intro_finished"
+
+private const val SIGNUP_AGREED_TERMS_TYPE_KEY =
+    "signup_agreed_terms_type"
 
 @Composable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
@@ -192,12 +197,44 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
              */
             composable(
                 route = Screen.Signup.route,
-            ) {
+            ) { signupBackStackEntry ->
+                val agreedTermsTypeName by
+                    signupBackStackEntry.savedStateHandle
+                        .getStateFlow<String?>(SIGNUP_AGREED_TERMS_TYPE_KEY, null)
+                        .collectAsState()
+
                 SignupScreen(
                     onBackClick = {
                         navController.popBackStack()
                     },
+                    onTermsDetailClick = { type ->
+                        navController.navigate("terms_detail/${type.name}")
+                    },
+                    agreedTermsType = agreedTermsTypeName?.let { SignupTermsType.valueOf(it) },
                     modifier = Modifier.fillMaxSize(),
+                )
+            }
+
+            /*
+             * 회원가입 약관 상세
+             */
+            composable(
+                route = "terms_detail/{type}",
+                arguments = listOf(navArgument("type") { type = NavType.StringType }),
+            ) { entry ->
+                val type = SignupTermsType.valueOf(requireNotNull(entry.arguments?.getString("type")))
+
+                TermsDetailScreen(
+                    type = type,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onAgreeClick = {
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set(SIGNUP_AGREED_TERMS_TYPE_KEY, type.name)
+                        navController.popBackStack()
+                    },
                 )
             }
 

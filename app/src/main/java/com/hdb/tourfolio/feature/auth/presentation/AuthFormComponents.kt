@@ -43,6 +43,7 @@ import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Natural80
+import com.hdb.tourfolio.ui.theme.Natural90
 import com.hdb.tourfolio.ui.theme.Primary
 import com.hdb.tourfolio.ui.theme.Red
 
@@ -105,7 +106,36 @@ fun AuthPasswordField(
     placeholder: String,
     modifier: Modifier = Modifier,
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            style = LocalAppTypography.current.bodySmall.bold,
+            color = Natural10,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        PasswordInputRow(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = placeholder,
+        )
+    }
+}
+
+@Composable
+fun AuthPasswordGroup(
+    label: String,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordPlaceholder: String,
+    passwordConfirm: String,
+    onPasswordConfirmChange: (String) -> Unit,
+    passwordConfirmPlaceholder: String,
+    modifier: Modifier = Modifier,
+    showVisibilityToggle: Boolean = true,
+) {
+    val mismatch = passwordConfirm.isNotEmpty() && password != passwordConfirm
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -116,45 +146,84 @@ fun AuthPasswordField(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Natural100)
-                    .border(
-                        width = 1.dp,
-                        color = Natural80,
-                        shape = RoundedCornerShape(12.dp),
-                    )
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(modifier = Modifier.weight(1f)) {
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
-                    )
-                }
+        PasswordInputRow(
+            value = password,
+            onValueChange = onPasswordChange,
+            placeholder = passwordPlaceholder,
+            showVisibilityToggle = showVisibilityToggle,
+        )
 
-                BasicTextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    singleLine = true,
-                    textStyle = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural10),
-                    cursorBrush = SolidColor(Primary),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    visualTransformation =
-                        if (passwordVisible) {
-                            VisualTransformation.None
-                        } else {
-                            PasswordVisualTransformation()
-                        },
-                    modifier = Modifier.fillMaxWidth(),
+        Spacer(modifier = Modifier.height(8.dp))
+
+        PasswordInputRow(
+            value = passwordConfirm,
+            onValueChange = onPasswordConfirmChange,
+            placeholder = passwordConfirmPlaceholder,
+            showVisibilityToggle = showVisibilityToggle,
+        )
+
+        if (mismatch) {
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = "비밀번호가 일치하지 않습니다.",
+                style = LocalAppTypography.current.bodySmall.medium,
+                color = Red,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PasswordInputRow(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    showVisibilityToggle: Boolean = true,
+) {
+    var passwordVisible by remember { mutableStateOf(!showVisibilityToggle) }
+
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(Natural100)
+                .border(
+                    width = 1.dp,
+                    color = Natural80,
+                    shape = RoundedCornerShape(12.dp),
+                )
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(modifier = Modifier.weight(1f)) {
+            if (value.isEmpty()) {
+                Text(
+                    text = placeholder,
+                    style = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural60),
                 )
             }
 
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                textStyle = LocalAppTypography.current.bodyLarge.medium.copy(color = Natural10),
+                cursorBrush = SolidColor(Primary),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                visualTransformation =
+                    if (passwordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        if (showVisibilityToggle) {
             Image(
                 painter =
                     painterResource(
@@ -180,20 +249,21 @@ fun AuthButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     height: Dp = 56.dp,
+    enabled: Boolean = true,
 ) {
     Box(
         modifier =
             modifier
                 .height(height)
                 .clip(RoundedCornerShape(14.dp))
-                .background(containerColor)
-                .clickable(onClick = onClick),
+                .background(if (enabled) containerColor else Natural90)
+                .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = label,
             style = LocalAppTypography.current.titleSmall.bold,
-            color = Natural100,
+            color = if (enabled) Natural100 else Natural60,
         )
     }
 }
