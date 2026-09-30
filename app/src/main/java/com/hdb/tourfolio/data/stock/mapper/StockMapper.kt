@@ -15,6 +15,7 @@ fun StockDto.toDomain(): Stock =
         tier = tier,
         currentPrice = currentPrice,
         prevPrice = prevPrice,
+        ipoPrice = ipoPrice,
         changeRate = changeRate,
         lastUpdated = lastUpdated,
         regionName = regionName,

@@ -31,3 +31,8 @@
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
+
+# 카카오 SDK도 내부적으로 Gson 리플렉션(getField)을 사용해 model enum/데이터 클래스를
+# 역직렬화한다. 필드명이 난독화되면 NoSuchFieldException으로 즉시 크래시가 나므로
+# (예: com.kakao.sdk.common.model.ClientErrorCause.TokenNotFound) 필드명을 유지한다.
+-keep class com.kakao.sdk.**.model.* { <fields>; }

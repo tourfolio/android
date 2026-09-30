@@ -33,8 +33,8 @@ android {
         applicationId = "com.hdb.tourfolio"
         minSdk = 28
         targetSdk = 36
-        versionCode = 5
-        versionName = "1.0.0"
+        versionCode = 10
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -45,6 +45,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

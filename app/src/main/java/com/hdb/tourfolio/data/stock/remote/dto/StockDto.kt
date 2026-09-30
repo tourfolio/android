@@ -8,6 +8,7 @@ data class StockDto(
     val tier: Int,
     val currentPrice: Long,
     val prevPrice: Long,
+    val ipoPrice: Long,
     val changeRate: Double,
     val lastUpdated: String,
     val address: String,

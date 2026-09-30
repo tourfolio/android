@@ -7,6 +7,7 @@ data class Stock(
     val tier: Int,
     val currentPrice: Long,
     val prevPrice: Long,
+    val ipoPrice: Long,
     val changeRate: Double,
     val lastUpdated: String,
     val regionName: String,

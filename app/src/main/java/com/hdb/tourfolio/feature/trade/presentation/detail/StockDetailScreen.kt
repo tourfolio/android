@@ -147,10 +147,11 @@ private fun StockDetailContent(
     val changeRate =
         stock?.changeRate ?: if (prevDayPrice != 0L) changeAmount * 100.0 / prevDayPrice else 0.0
 
+    val offeringPrice = stock?.ipoPrice ?: 0L
     val offeringChangeRate =
-        remember(currentPrice) {
-            if (PLACEHOLDER_OFFERING_PRICE != 0L) {
-                (currentPrice - PLACEHOLDER_OFFERING_PRICE) * 100.0 / PLACEHOLDER_OFFERING_PRICE
+        remember(currentPrice, offeringPrice) {
+            if (offeringPrice != 0L) {
+                (currentPrice - offeringPrice) * 100.0 / offeringPrice
             } else {
                 0.0
             }
@@ -194,7 +195,7 @@ private fun StockDetailContent(
             Spacer(modifier = Modifier.height(24.dp))
 
             DetailInfoGrid(
-                offeringPrice = PLACEHOLDER_OFFERING_PRICE,
+                offeringPrice = offeringPrice,
                 offeringChangeRate = offeringChangeRate,
                 prevDayPrice = prevDayPrice,
                 todayVolume = todayVolume,
@@ -288,11 +289,6 @@ private fun StockDetailContent(
     }
 }
 
-/*
- * TODO(backend): 공모가 API 연동 전까지 쓰는 placeholder. 다른 값과 구분하기 쉽도록 1234로 고정해둔다.
- * 실제 공모가가 연동되면 이 값만 교체하면 대비(%)는 그대로 계산된다.
- */
-private const val PLACEHOLDER_OFFERING_PRICE = 1_234L
 private const val PLACEHOLDER_DEMAND_INTENSITY = 2
 private const val PLACEHOLDER_VISITOR_FORECAST = 4
 private const val PLACEHOLDER_RESOURCE_DEMAND = 1
