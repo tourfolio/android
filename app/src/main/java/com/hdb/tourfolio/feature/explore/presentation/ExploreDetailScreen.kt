@@ -34,7 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -51,6 +51,7 @@ import com.hdb.tourfolio.ui.components.SpotImage
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Natural40
 import com.hdb.tourfolio.ui.theme.Natural60
 import com.hdb.tourfolio.ui.theme.Primary70
 import com.hdb.tourfolio.ui.theme.Primary99
@@ -125,7 +126,7 @@ private fun ExploreDetailContent(
     val uriHandler = LocalUriHandler.current
     val detailBodyStyle =
         LocalAppTypography.current.bodyLarge.medium.copy(
-            color = Natural60,
+            color = Natural40,
             lineHeight = 20.sp,
         )
     val websiteUrl = detail.website.trim()
@@ -152,10 +153,10 @@ private fun ExploreDetailContent(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .offset(y = (-28).dp)
-                    .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+//                    .offset(y = (-28).dp)
+//                    .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
                     .background(Natural100)
-                    .padding(start = 22.dp, top = 34.dp, end = 22.dp, bottom = 16.dp),
+                    .padding(start = 22.dp, top = 32.dp, end = 22.dp, bottom = 16.dp),
         ) {
             Text(
                 text = detail.title,
@@ -200,7 +201,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소", iconSize = 18.dp) {
+            TourSpotInformationCard(iconRes = R.drawable.ic_link, title = "홈페이지 주소") {
                 Text(
                     text = detail.website,
                     modifier =
@@ -232,7 +233,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소", iconSize = 22.dp) {
+            TourSpotInformationCard(iconRes = R.drawable.ic_location, title = "관광지 주소") {
                 Text(
                     text = detail.address,
                     style = detailBodyStyle,
@@ -241,7 +242,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간", iconSize = 21.dp) {
+            TourSpotInformationCard(iconRes = R.drawable.ic_clock, title = "관람 시간") {
                 Text(
                     text = detail.operatingHours,
                     style = detailBodyStyle,
@@ -259,7 +260,7 @@ private fun ExploreDetailContent(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료", iconSize = 22.dp) {
+            TourSpotInformationCard(iconRes = R.drawable.ic_info, title = "입장료") {
                 Text(
                     text = detail.admissionFee,
                     style = detailBodyStyle,
@@ -280,14 +281,14 @@ private fun TourSpotHero(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().height(430.dp),
+        modifier = modifier.fillMaxWidth(),
     ) {
         SpotImage(
             hasImage = hasImage,
             model = imageUrl,
             contentDescription = title,
-            modifier = Modifier.fillMaxSize().padding(bottom = 28.dp),
-            matchImageAspectRatio = false,
+            modifier = Modifier.fillMaxWidth(),
+            matchImageAspectRatio = true,
         )
 
         Row(
@@ -295,14 +296,14 @@ private fun TourSpotHero(
                 Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(horizontal = 15.dp),
+                    .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             DetailHeaderButton(
-                iconRes = R.drawable.ic_arrow_left_black,
+                iconRes = R.drawable.ic_chevron_right_white,
                 contentDescription = "뒤로 가기",
                 onClick = onBackClick,
-                modifier = Modifier.offset(y = (-8).dp),
+                modifier = Modifier.offset(y = (-8).dp).rotate(180f),
             )
         }
     }
@@ -316,7 +317,7 @@ private fun DetailHeaderButton(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier.size(12.dp).clickable(onClick = onClick),
+        modifier = modifier.size(14.dp).clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Image(
@@ -387,7 +388,7 @@ private fun TourSpotInformationCard(
     iconRes: Int,
     title: String,
     modifier: Modifier = Modifier,
-    iconSize: Dp = 20.dp,
+    iconSize: Dp = 26.dp,
     content: @Composable () -> Unit,
 ) {
     Row(
@@ -395,16 +396,16 @@ private fun TourSpotInformationCard(
             modifier
                 .fillMaxWidth()
                 .background(color = Primary99, shape = RoundedCornerShape(12.dp))
-                .padding(horizontal = 18.dp, vertical = 18.dp),
+                .padding(horizontal = 16.dp, vertical = 18.dp),
         verticalAlignment = Alignment.Top,
     ) {
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = null,
-            modifier = Modifier.size(iconSize).offset(y = 3.dp),
+            modifier = Modifier.size(iconSize).offset(y = (-2).dp),
         )
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(

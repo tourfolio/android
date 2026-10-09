@@ -197,7 +197,7 @@ fun SearchFilterBottomSheet(
                                     type.name
                                 }
                                 .toSet(),
-                        columns = 3,
+                        columns = 2,
                         onAllClick = null,
                         onOptionClick = { key ->
                             temporaryTags =
@@ -258,7 +258,7 @@ fun SearchFilterBottomSheet(
                                     type.name
                                 }
                                 .toSet(),
-                        columns = 3,
+                        columns = 2,
                         onAllClick = {
                             temporaryRegions =
                                 if (temporaryRegions.containsAll(allRegions)) {

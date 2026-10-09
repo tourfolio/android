@@ -13,11 +13,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -126,9 +127,9 @@ private fun CollectionDetailContent(
             onBackClick,
         )
 
-        LazyVerticalGrid(
+        LazyVerticalStaggeredGrid(
             columns =
-                GridCells.Fixed(
+                StaggeredGridCells.Fixed(
                     2,
                 ),
             modifier =
@@ -141,10 +142,7 @@ private fun CollectionDetailContent(
                 Arrangement.spacedBy(
                     10.dp,
                 ),
-            verticalArrangement =
-                Arrangement.spacedBy(
-                    10.dp,
-                ),
+            verticalItemSpacing = 10.dp,
             contentPadding =
                 PaddingValues(
                     start = 20.dp,
@@ -156,25 +154,13 @@ private fun CollectionDetailContent(
              * 관광지 개수
              */
             item(
-                span = {
-                    GridItemSpan(
-                        maxLineSpan,
-                    )
-                },
+                span = StaggeredGridItemSpan.FullLine,
             ) {
                 CollectionPlaceCount(
                     placeCount =
                         detail.placeCount,
+                    modifier = Modifier.padding(bottom = 10.dp),
                 )
-            }
-
-            item(
-                span = {
-                    GridItemSpan(
-                        maxLineSpan,
-                    )
-                },
-            ) {
             }
 
             items(
