@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.hdb.tourfolio.R
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural10
@@ -118,6 +119,7 @@ fun HomeCardCollectionCard(
                     .medium
                     .copy(
                         color = Natural60,
+                        lineHeight = 17.sp
                     ),
         )
 
@@ -289,6 +291,7 @@ fun HomeCardCollectionCard(
                             .medium
                             .copy(
                                 color = Natural10,
+                                lineHeight = 15.sp
                             ),
                 )
 

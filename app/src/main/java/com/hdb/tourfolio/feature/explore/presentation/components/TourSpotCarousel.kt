@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import com.hdb.tourfolio.feature.explore.presentation.model.ExploreCardUiModel
 import com.hdb.tourfolio.ui.components.SpotImageOverlay
 import com.hdb.tourfolio.ui.theme.LocalAppTypography
 import com.hdb.tourfolio.ui.theme.Natural100
+import com.hdb.tourfolio.ui.theme.Primary
 
 @Composable
 fun TourSpotCarousel(
@@ -51,17 +53,37 @@ fun TourSpotCarousel(
                 contentDescription = item.title,
                 modifier = Modifier.fillMaxWidth().clickable { onItemClick(item.id) },
             ) {
-                Text(
-                    text = item.areaName,
-                    style = LocalAppTypography.current.bodySmall.medium,
-                    color = Natural100,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                )
+                Box(
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 20.dp)
+                            .clip(
+                                RoundedCornerShape(
+                                    50,
+                                ),
+                            )
+                            .background(
+                                Primary,
+                            )
+                            .padding(
+                                horizontal =
+                                    8.dp,
+                                vertical =
+                                    4.dp,
+                            ),
+                ) {
+                    Text(
+                        text = item.areaName,
+                        style = LocalAppTypography.current.labelSmall.bold,
+                        color = Natural100,
+                    )
+                }
+
                 Text(
                     text = item.title,
                     style = LocalAppTypography.current.titleMedium.bold,
                     color = Natural100,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 20.dp),
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 3.dp, bottom = 20.dp),
                 )
                 CarouselPageIndicator(
                     currentPage = pagerState.settledPage,

@@ -208,7 +208,7 @@ private fun ExploreCarouselPage(
             CarouselContent(
                 title = item.title,
                 content = item.subTitle,
-                place = item.location,
+                place = item.address,
                 tags = item.tags,
                 currentIndex = currentIndex,
                 totalCount = totalCount,

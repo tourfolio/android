@@ -4,8 +4,10 @@ package com.hdb.tourfolio.feature.explore.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -67,18 +69,41 @@ fun PlaceCard(
                     color = Natural100,
                 )
 
-                Text(
-                    text = "$places places",
-                    style =
-                        LocalAppTypography.current
-                            .bodySmall
-                            .medium,
-                    color = Natural100,
-                    modifier =
-                        Modifier.padding(
-                            top = 6.dp,
+                Row(
+                    horizontalArrangement =
+                        Arrangement.spacedBy(
+                            5.dp,
                         ),
-                )
+                    verticalAlignment =
+                        Alignment.CenterVertically,
+                    modifier =
+                        Modifier
+                            .padding(
+                                top = 6.dp,
+                            ),
+                ) {
+                    Image(
+                        painter =
+                            painterResource(
+                                id =
+                                    R.drawable.ic_location,
+                            ),
+                        contentDescription =
+                            null,
+                        modifier =
+                            Modifier.size(
+                                24.dp,
+                            ),
+                    )
+                    Text(
+                        text = "$places places",
+                        style =
+                            LocalAppTypography.current
+                                .bodySmall
+                                .medium,
+                        color = Natural100,
+                    )
+                }
             }
 
             /*
