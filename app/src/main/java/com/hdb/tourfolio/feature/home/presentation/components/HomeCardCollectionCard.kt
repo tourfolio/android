@@ -119,7 +119,7 @@ fun HomeCardCollectionCard(
                     .medium
                     .copy(
                         color = Natural60,
-                        lineHeight = 17.sp
+                        lineHeight = 17.sp,
                     ),
         )
 
@@ -291,7 +291,7 @@ fun HomeCardCollectionCard(
                             .medium
                             .copy(
                                 color = Natural10,
-                                lineHeight = 15.sp
+                                lineHeight = 15.sp,
                             ),
                 )
 

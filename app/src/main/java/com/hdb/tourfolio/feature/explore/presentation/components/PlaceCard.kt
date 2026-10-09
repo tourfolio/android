@@ -89,7 +89,7 @@ fun PlaceCard(
                                     R.drawable.ic_location,
                             ),
                         contentDescription =
-                            null,
+                        null,
                         modifier =
                             Modifier.size(
                                 24.dp,
