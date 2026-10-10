@@ -65,11 +65,13 @@ class HomeViewModel
         }
 
         private suspend fun fetchHome() {
+            // 이미 표시 중인 홈 데이터가 있다면 재조회 중에도 화면을 유지한다.
             setState {
-                copy(
-                    homeState =
-                        HomeRequestState.Loading,
-                )
+                if (homeState is HomeRequestState.Success) {
+                    this
+                } else {
+                    copy(homeState = HomeRequestState.Loading)
+                }
             }
 
             val result =
@@ -89,9 +91,12 @@ class HomeViewModel
                 }
 
             setState {
-                copy(
-                    homeState = result,
-                )
+                // 갱신 실패 시에도 기존 데이터를 유지하며 다음 복귀 때 다시 조회한다.
+                if (result is HomeRequestState.Error && homeState is HomeRequestState.Success) {
+                    this
+                } else {
+                    copy(homeState = result)
+                }
             }
         }
     }

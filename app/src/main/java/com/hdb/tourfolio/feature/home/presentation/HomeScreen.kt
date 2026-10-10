@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -50,6 +51,7 @@ fun HomeScreen(
     onTourSpotClick: (Long) -> Unit,
     onPortfolioClick: () -> Unit,
     onCardCollectionClick: () -> Unit,
+    onGuideClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -102,6 +104,7 @@ fun HomeScreen(
                 onTourSpotClick,
                 onPortfolioClick = onPortfolioClick,
                 onCardCollectionClick = onCardCollectionClick,
+                onGuideClick = onGuideClick,
                 modifier =
                 modifier,
             )
@@ -119,6 +122,7 @@ private fun HomeContent(
     onTourSpotClick: (Long) -> Unit,
     onPortfolioClick: () -> Unit,
     onCardCollectionClick: () -> Unit,
+    onGuideClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -269,19 +273,19 @@ private fun HomeContent(
         item {
             Spacer(
                 modifier =
-                    Modifier.height(
-                        28.dp,
-                    ),
+                    Modifier
+                        .height(
+                            28.dp,
+                        )
+                        .padding(
+                            horizontal = 20.dp,
+                        ),
             )
 
+            val noticePainter = painterResource(R.drawable.img_home_notice)
             Image(
-                painter =
-                    painterResource(
-                        id =
-                            R.drawable.img_home_notice,
-                    ),
-                contentDescription =
-                    "축제 안내",
+                painter = noticePainter,
+                contentDescription = "축제 안내",
                 modifier =
                     Modifier
                         .padding(
@@ -289,16 +293,14 @@ private fun HomeContent(
                                 22.dp,
                         )
                         .fillMaxWidth()
-                        .height(
-                            190.dp,
-                        )
+                        .aspectRatio(noticePainter.intrinsicSize.width / noticePainter.intrinsicSize.height)
                         .clip(
                             RoundedCornerShape(
                                 10.dp,
                             ),
-                        ),
-                contentScale =
-                    ContentScale.Crop,
+                        )
+                        .clickable(onClick = onGuideClick),
+                contentScale = ContentScale.Fit,
             )
         }
 

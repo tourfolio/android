@@ -6,7 +6,6 @@ package com.hdb.tourfolio.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,41 +49,34 @@ fun CommonModal(
                         ),
             )
         },
-        confirmButton = {},
-        dismissButton = {},
-        text = {
-            Column(
+        confirmButton = {
+            Row(
                 modifier =
                     Modifier.fillMaxWidth(),
+                horizontalArrangement =
+                    Arrangement.spacedBy(
+                        10.dp,
+                    ),
             ) {
-                Row(
+                DialogButton(
+                    text = "취소",
+                    onClick = onDismissClick,
                     modifier =
-                        Modifier.fillMaxWidth(),
-                    horizontalArrangement =
-                        Arrangement.spacedBy(
-                            10.dp,
+                        Modifier.weight(
+                            1f,
                         ),
-                ) {
-                    DialogButton(
-                        text = "취소",
-                        onClick = onDismissClick,
-                        modifier =
-                            Modifier.weight(
-                                1f,
-                            ),
-                        isPrimary = false,
-                    )
+                    isPrimary = false,
+                )
 
-                    DialogButton(
-                        text = "확인",
-                        onClick = onConfirmClick,
-                        modifier =
-                            Modifier.weight(
-                                1f,
-                            ),
-                        isPrimary = true,
-                    )
-                }
+                DialogButton(
+                    text = "확인",
+                    onClick = onConfirmClick,
+                    modifier =
+                        Modifier.weight(
+                            1f,
+                        ),
+                    isPrimary = true,
+                )
             }
         },
     )

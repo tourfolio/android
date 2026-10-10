@@ -47,6 +47,7 @@ import com.hdb.tourfolio.feature.explore.presentation.ExploreDetailScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreEntryScreen
 import com.hdb.tourfolio.feature.explore.presentation.ExploreSearchScreen
 import com.hdb.tourfolio.feature.home.presentation.HomeScreen
+import com.hdb.tourfolio.feature.home.presentation.UsageGuideScreen
 import com.hdb.tourfolio.feature.mission.presentation.MissionScreen
 import com.hdb.tourfolio.feature.mypage.presentation.AppInfoDocument
 import com.hdb.tourfolio.feature.mypage.presentation.AppInfoScreen
@@ -522,6 +523,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 route = Screen.Home.route,
             ) {
                 HomeScreen(
+                    onGuideClick = {
+                        navController.navigate(Screen.UsageGuide.route) {
+                            launchSingleTop = true
+                        }
+                    },
                     onPortfolioClick = {
                         navController.navigate(Screen.Trade.route) {
                             popUpTo(Screen.Home.route) { saveState = true }
@@ -559,6 +565,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         )
                     },
                 )
+            }
+
+            composable(Screen.UsageGuide.route) {
+                UsageGuideScreen(onBackClick = { navController.popBackStack() })
             }
 
             composable(Screen.Mission.route) {

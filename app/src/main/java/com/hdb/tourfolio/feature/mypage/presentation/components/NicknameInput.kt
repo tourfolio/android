@@ -63,7 +63,7 @@ fun NicknameInput(
             modifier =
                 Modifier
                     .fillMaxWidth(
-                        0.7f,
+                        0.6f,
                     )
                     .height(
                         1.5.dp,
