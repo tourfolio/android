@@ -275,7 +275,7 @@ private fun HomeContent(
                 modifier =
                     Modifier
                         .height(
-                        28.dp,
+                            28.dp,
                         )
                         .padding(
                             horizontal = 20.dp,

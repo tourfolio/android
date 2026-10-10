@@ -49,36 +49,35 @@ fun CommonModal(
                         ),
             )
         },
-
         confirmButton = {
-                Row(
+            Row(
+                modifier =
+                    Modifier.fillMaxWidth(),
+                horizontalArrangement =
+                    Arrangement.spacedBy(
+                        10.dp,
+                    ),
+            ) {
+                DialogButton(
+                    text = "취소",
+                    onClick = onDismissClick,
                     modifier =
-                        Modifier.fillMaxWidth(),
-                    horizontalArrangement =
-                        Arrangement.spacedBy(
-                            10.dp,
+                        Modifier.weight(
+                            1f,
                         ),
-                ) {
-                    DialogButton(
-                        text = "취소",
-                        onClick = onDismissClick,
-                        modifier =
-                            Modifier.weight(
-                                1f,
-                            ),
-                        isPrimary = false,
-                    )
+                    isPrimary = false,
+                )
 
-                    DialogButton(
-                        text = "확인",
-                        onClick = onConfirmClick,
-                        modifier =
-                            Modifier.weight(
-                                1f,
-                            ),
-                        isPrimary = true,
-                    )
-                }
+                DialogButton(
+                    text = "확인",
+                    onClick = onConfirmClick,
+                    modifier =
+                        Modifier.weight(
+                            1f,
+                        ),
+                    isPrimary = true,
+                )
+            }
         },
     )
 }
