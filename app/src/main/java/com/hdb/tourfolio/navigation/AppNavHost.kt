@@ -1,6 +1,8 @@
 package com.hdb.tourfolio.navigation
 
+import android.app.Activity
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -10,14 +12,20 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -48,6 +56,7 @@ import com.hdb.tourfolio.feature.splash.presentation.SplashScreen
 import com.hdb.tourfolio.feature.trade.presentation.TradeScreen
 import com.hdb.tourfolio.feature.trade.presentation.detail.RegionalIndexDetailScreen
 import com.hdb.tourfolio.feature.trade.presentation.detail.StockDetailScreen
+import kotlinx.coroutines.launch
 
 private const val EXPLORE_INTRO_FINISHED_KEY =
     "explore_intro_finished"
@@ -77,7 +86,49 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 bottomNavItem.screen.route == currentRoute
             }
 
+    /*
+     * 뒤로가기 정책:
+     * - 홈이 아닌 바텀탭에서 뒤로가기 -> 홈으로 이동
+     * - 홈에서 뒤로가기 -> 스낵바 표시, 2초 안에 한 번 더 누르면 앱 종료
+     * - 그 외(상세 화면 등)는 기본 동작(이전 화면, 즉 해당 탭)을 그대로 따른다.
+     */
+    val isHomeRoute = currentRoute == Screen.Home.route
+    val isOtherBottomTabRoute =
+        currentRoute != null &&
+            !isHomeRoute &&
+            bottomNavItems.any { bottomNavItem -> bottomNavItem.screen.route == currentRoute }
+
+    BackHandler(enabled = isOtherBottomTabRoute) {
+        val popped = navController.popBackStack(Screen.Home.route, inclusive = false)
+        if (!popped) {
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Home.route) { inclusive = false }
+                launchSingleTop = true
+            }
+        }
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val activity = LocalContext.current as? Activity
+    var lastBackPressAt by remember { mutableLongStateOf(0L) }
+
+    BackHandler(enabled = isHomeRoute) {
+        val now = System.currentTimeMillis()
+        if (now - lastBackPressAt < 2000L) {
+            activity?.finish()
+        } else {
+            lastBackPressAt = now
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("뒤로가기를 한 번 더 누르시면 종료됩니다")
+            }
+        }
+    }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             AnimatedVisibility(
                 visible = showBottomBar,

@@ -38,8 +38,13 @@ fun BottomNavBar(
                 selected = selected,
                 onClick = {
                     if (currentRoute != item.screen.route) {
+                        /*
+                         * 그래프 시작 지점(Splash)은 로그인/홈 분기 후 back stack에서 사라지므로
+                         * 거기로 popUpTo하면 탭을 바꿀 때마다 계속 쌓인다. 홈을 고정 앵커로 써서
+                         * 탭 전환 시 back stack이 [Home, 선택한 탭] 형태를 유지하도록 한다.
+                         */
                         navController.navigate(item.screen.route) {
-                            popUpTo(navController.graph.startDestinationId) {
+                            popUpTo(Screen.Home.route) {
                                 saveState = true
                             }
                             launchSingleTop = true
